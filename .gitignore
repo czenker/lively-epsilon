@@ -1,0 +1,10 @@
+.*
+!.git*
+*~
+
+*.lua
+
+!scenario_00_aaa.lua
+!/src/*.lua
+!/test/*.lua
+!/resources/*.lua
