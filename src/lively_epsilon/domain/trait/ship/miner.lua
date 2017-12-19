@@ -143,7 +143,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
                                 logInfo(ship:getCallSign() .. " gathered " .. amount .. " " .. product .. " from mining")
 
                                 if ship:getEmptyProductStorage(product) == 0 then
-                                    timeToGoHome = nil
+                                    timeToGoHome = 0
                                     logInfo(ship:getCallSign() .. " will head home, because store for " .. product .. " is full")
                                 end
                             end
