@@ -84,7 +84,6 @@ Station.withProduction = function (self, station, configuration)
 
             for _, produce in pairs(conf.produces) do
                 local product = produce.product
-                local amount = produce.amount
 
                 local emptySpace = station:getEmptyProductStorage(produce.product)
 
