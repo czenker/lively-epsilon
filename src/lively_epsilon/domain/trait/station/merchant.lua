@@ -34,13 +34,13 @@ Station.withMerchant = function (self, station, configuration)
             merchant[productId] = {
                 product = product,
                 buyingPrice = conf.buyingPrice,
-                maxBuying = conf.maxBuying or nil
+                buyingLimit = conf.buyingLimit or nil
             }
         elseif conf.sellingPrice ~= nil then
             merchant[productId] = {
                 product = product,
                 sellingPrice = conf.sellingPrice,
-                maxSelling = conf.maxSelling or nil
+                sellingLimit = conf.sellingLimit or nil
             }
         end
     end
@@ -80,10 +80,17 @@ Station.withMerchant = function (self, station, configuration)
 
         if buying == nil then
             return nil
-        elseif type(buying.maxBuying) == "function" then
-            return buying.maxBuying(station)
         else
-            return self:getMaxProductStorage(product) - self:getProductStorage(product)
+            local limit = self:getMaxProductStorage(product)
+            if isNumber(buying.buyingLimit) then
+                limit = buying.buyingLimit
+            end
+
+            if limit <= self:getProductStorage(product) then
+                return 0
+            else
+                return limit - self:getProductStorage(product)
+            end
         end
     end
 
@@ -120,10 +127,17 @@ Station.withMerchant = function (self, station, configuration)
 
         if selling == nil then
             return nil
-        elseif type(selling.maxSelling) == "function" then
-            return selling.maxSelling(station)
         else
-            return self:getProductStorage(product)
+            local limit = 0
+            if isNumber(selling.sellingLimit) then
+                limit = selling.sellingLimit
+            end
+
+            if limit >= self:getProductStorage(product) then
+                return 0
+            else
+                return self:getProductStorage(product) - limit
+            end
         end
     end
 
