@@ -29,13 +29,13 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/ship/trader.lua",
 
     "src/lively_epsilon/chit_chat.lua",
-    "src/lively_epsilon/al/route.lua",
 
     "src/lively_epsilon/missions/side_missions.lua",
     "src/lively_epsilon/missions/generator.lua",
     "src/lively_epsilon/missions/generator_transport.lua",
 
-    "resources/personNames.lua"
+    "resources/personNames.lua",
+    "resources/products.lua"
 }
 
 if package ~= nil and package.path ~= nil then

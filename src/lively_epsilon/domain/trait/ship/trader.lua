@@ -104,11 +104,9 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
             target:modifyProductStorage(product, -1 * amount)
             print(ship:getCallSign() .. " bought " .. amount .. " " .. product .. " at " .. target:getCallSign())
             target = nil
-        else
-            if dockingTo ~= target then
-                ship:orderDock(target)
-                dockingTo = target
-            end
+        elseif dockingTo ~= target then
+            ship:orderDock(target)
+            dockingTo = target
         end
     end, 5, 1)
 end
