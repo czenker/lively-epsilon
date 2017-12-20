@@ -6,7 +6,7 @@ Cron = {
         now = now + delta
 
         for key, value in pairs(events) do
-            if value.next < now then
+            if value.next <= now then
                 local status, error = pcall(value.func)
                 if not status then
                     if type(error) == "string" then
