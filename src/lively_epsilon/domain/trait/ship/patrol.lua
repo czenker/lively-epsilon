@@ -61,7 +61,10 @@ Ship.patrol = function(self, ship, waypoints)
     local delay = 0
 
     Cron.regular(cronId, function()
-        if delay > 0 then
+        if not ship:isValid() then
+            print("ship for " .. cronId .. " is no longer valid")
+            Cron.abort(cronId)
+        elseif delay > 0 then
             delay = delay - tick
         else
             if waypointId == 0 then
