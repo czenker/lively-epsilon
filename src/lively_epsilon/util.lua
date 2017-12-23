@@ -63,9 +63,8 @@ Util = {
     --- copies a thing (table) recursive
     -- @ see http://lua-users.org/wiki/CopyTable
     deepCopy = function (orig)
-        local orig_type = type(orig)
         local copy
-        if orig_type == 'table' then
+        if isTable(orig) and not isEeObject(orig) then
             copy = {}
             for orig_key, orig_value in next, orig, nil do
                 copy[Util.deepCopy(orig_key)] = Util.deepCopy(orig_value)

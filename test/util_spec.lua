@@ -96,6 +96,42 @@ insulate("Util", function()
         end)
     end)
 
+    describe("deepCopy()", function()
+        it("should copy primitive types", function()
+            local thing = {
+                foo = "bar",
+                baz = 42
+            }
+            local copied = Util.deepCopy(thing)
+
+            thing.foo = "fake"
+            thing.baz = 12
+            thing.blu = "some"
+
+            assert.equal("bar", copied.foo)
+            assert.equal(42, copied.baz)
+            assert.is_nil(copied.blu)
+        end)
+
+        it("should not copy objects from Empty Epsilon", function()
+            -- Copying them would cause the object to exists twice in memory.
+            -- This would cause an inconsistent state and might cause the game to crash
+            -- because of access to invalid memory segments.
+
+            require "test.mocks"
+
+            local thing = {
+                foo = "bar",
+                station = eeStationMock()
+            }
+            local copied = Util.deepCopy(thing)
+
+            thing.station.foo = "bar"
+
+            assert.same("bar", copied.station.foo)
+        end)
+    end)
+
     describe("mkString()", function()
         describe("with lastSeparator parameter", function()
             it("should return an empty string if table is empty", function()

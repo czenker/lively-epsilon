@@ -1,17 +1,20 @@
+function isEeObject(thing)
+    return type(thing) == "table" and thing.typeName ~= nil
+end
 
 -- check if the given variable is a CpuShip object from EmptyEpsilon
 function isEeShip(thing)
-    return type(thing) == "table" and thing.typeName ~= nil and thing.typeName == "CpuShip"
+    return isEeObject(thing) and thing.typeName == "CpuShip"
 end
 
 -- check if the given variable is a PlayerSpaceship object from EmptyEpsilon
 function isEePlayer(thing)
-    return type(thing) == "table" and thing.typeName ~= nil and thing.typeName == "PlayerSpaceship"
+    return isEeObject(thing) and thing.typeName == "PlayerSpaceship"
 end
 
 -- check if the given variable is a SpaceStation object from EmptyEpsilon
 function isEeStation(thing)
-    return type(thing) == "table" and thing.typeName ~= nil and thing.typeName == "SpaceStation"
+    return isEeObject(thing) and thing.typeName == "SpaceStation"
 end
 
 -- check if the given variable is a ShipTemplateBased object from EmptyEpsilon
@@ -21,7 +24,7 @@ end
 
 -- check if the given variable is an Asteroid object from EmptyEpsilon
 function isEeAsteroid(thing)
-    return type(thing) == "table" and thing.typeName ~= nil and thing.typeName == "Asteroid"
+    return isEeObject(thing) and thing.typeName == "Asteroid"
 end
 
 function isVector2f(thing)
