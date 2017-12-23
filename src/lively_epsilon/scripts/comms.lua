@@ -12,11 +12,11 @@ require "src/lively_epsilon/util.lua"
 function mainMenu()
     setCommsMessage("Hello World")
     if comms_target.getMissions ~= nil then
-        addCommsReply("Habt ihr einen Auftrag fuer uns?", function() missionsMenu() end)
+        addCommsReply("Do you have any missions for us?", function() missionsMenu() end)
     end
 
     if comms_target.getProductsSold ~= nil or comms_target.getProductsBought ~= nil then
-        addCommsReply("Handelsbrett", function() tradeMenu() end)
+        addCommsReply("Trading Board", function() tradeMenu() end)
     end
 end
 
@@ -28,16 +28,16 @@ mainMenu()
 
 function missionsMenu()
     if Util.size(comms_target:getMissions()) == 0 then
-        setCommsMessage("Leider nein");
+        setCommsMessage("Unfortunately we don't.");
     else
-        local message = "Ja!!!\n\n"
+        local message = "Yes.\n\n"
         for _, value in pairs(comms_target:getMissions()) do
             message = message .. " * " .. value.title .. "\n"
             addCommsReply(value.title, function() missionDetail(value) end)
         end
         setCommsMessage(message);
     end
-    addCommsReply("zurueck", function() mainMenu() end)
+    addCommsReply("back", function() mainMenu() end)
 end
 
 function missionDetail(mission)
@@ -47,18 +47,18 @@ function missionDetail(mission)
     end
 
     if player.mission ~= nil then
-        setCommsMessage(text .. "\n\nBitte beenden Sie zunaechst ihre aktuelle Mission, bevor Sie eine neue annehmen.")
+        setCommsMessage(text .. "\n\nPlease finish your current mission before accepting a new one.")
     elseif player:isDocked(comms_target) then
         setCommsMessage(text)
-        addCommsReply("Annehmen", function()
+        addCommsReply("Accept", function()
             comms_target:removeMission(mission.id)
             player:setMission(mission)
-            setCommsMessage(mission.acceptMessage or "Bitte bringen Sie die Mission so bald wie möglich zu Ende.")
+            setCommsMessage(mission.acceptMessage or "Please finish the mission as soon as possible.")
         end)
     else
-        setCommsMessage(text .. "\n\nBitte docken Sie an unserer Station um den Auftrag anzunehmen.")
+        setCommsMessage(text .. "\n\nPlease dock with our station to accept the mission.")
     end
-    addCommsReply("zurueck", function() missionsMenu() end)
+    addCommsReply("back", function() missionsMenu() end)
 end
 
 --
@@ -74,24 +74,24 @@ function tradeMenu()
     -- We sell...
     --
     if Util.size(selling) > 0 then
-        message = message .. "Wir verkaufen:\n"
+        message = message .. "We sell:\n"
         for _, product in pairs(selling) do
-            message = message .. " * " .. product.name .. " fuer " .. comms_target:getProductSellingPrice(product) .. "$ pro Einheit\n"
+            message = message .. " * " .. product.name .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n"
         end
         message = message .. "\n"
-        addCommsReply("Ich moechte etwas kaufen", function() tradeSell() end)
+        addCommsReply("I want to buy something", function() tradeSell() end)
     end
 
     --
     -- We buy...
     --
     if Util.size(buying) > 0 then
-        message = message .. "Wir kaufen:\n"
+        message = message .. "We buy:\n"
         for _, product in pairs(buying) do
-            message = message .. " * " .. product.name .. " fuer " .. comms_target:getProductBuyingPrice(product) .. "$ pro Einheit\n"
+            message = message .. " * " .. product.name .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n"
         end
         message = message .. "\n"
-        addCommsReply("Ich moechte etwas verkaufen", function() tradeBuy() end)
+        addCommsReply("I want to sell something", function() tradeBuy() end)
     end
 
     --
@@ -104,64 +104,64 @@ function tradeMenu()
             for k, v in pairs(produces) do
                 produces[k] = v.name
             end
-            message = message .. "Wir produzieren " .. Util.mkString(produces, ", ", " und ") .. ".\n"
+            message = message .. "We produce " .. Util.mkString(produces, ", ", " and ") .. ".\n"
         end
     end
     if type(comms_target.getConsumedProducts) == "function" then
         local consumes = comms_target:getConsumedProducts()
         if Util.size(consumes) > 0 then
             for k, v in pairs(consumes) do consumes[k] = v.name end
-            message = message .. "Wir konsumieren " .. Util.mkString(consumes, ", ", " und ") .. ".\n"
+            message = message .. "We consume " .. Util.mkString(consumes, ", ", " and ") .. ".\n"
         end
     end
 
     setCommsMessage(message)
-    addCommsReply("zurueck", function() mainMenu() end)
+    addCommsReply("back", function() mainMenu() end)
 end
 
 function tradeSell()
-    local message = "Wir verkaufen:\n"
+    local message = "We sell:\n"
 
     for _, product in pairs(comms_target:getProductsSold()) do
-        message = message .. " * max. " .. comms_target:getMaxProductSelling(product) .. "x " .. product.name .. " fuer " .. comms_target:getProductSellingPrice(product) .. "$ pro Einheit\n"
-        addCommsReply(product.name .. " kaufen", function() tradeSellProduct(product) end)
+        message = message .. " * max. " .. comms_target:getMaxProductSelling(product) .. "x " .. product.name .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n"
+        addCommsReply("buy " .. product.name, function() tradeSellProduct(product) end)
     end
 
     setCommsMessage(message)
 
-    addCommsReply("zurueck", function() tradeMenu() end)
+    addCommsReply("back", function() tradeMenu() end)
 end
 
 function tradeSellProduct(product)
 
     if comms_target:getMaxProductSelling(product) == 0 then
-        setCommsMessage("Augrund geringer Bestaende koennen wir " .. product.name .. " im Augenblick nicht verkaufen.")
+        setCommsMessage("We are short of supplies, so we can't sell " .. product.name .. " at the moment.")
     else
-        setCommsMessage("Wir sind bereit bis zu " .. comms_target:getMaxProductSelling(product) .. " Einheiten " .. product.name .. " zu einem Preis von " .. comms_target:getProductSellingPrice(product) .. "$ pro Einheit zu verkaufen.")
+        setCommsMessage("We are willing to sell up to " .. comms_target:getMaxProductSelling(product) .. " units of " .. product.name .. " at a price of " .. comms_target:getProductSellingPrice(product) .. "$ per unit.")
     end
 
-    addCommsReply("zurueck", function() tradeSell() end)
+    addCommsReply("back", function() tradeSell() end)
 end
 
 function tradeBuy()
-    local message = "Wir kaufen:\n"
+    local message = "We buy:\n"
 
     for _, product in pairs(comms_target:getProductsBought()) do
-        message = message .. " * max. " .. comms_target:getMaxProductBuying(product) .. "x " .. product.name .. " fuer " .. comms_target:getProductBuyingPrice(product) .. "$ pro Einheit\n"
-        addCommsReply(product.name .. " verkaufen", function() tradeBuyProduct(product) end)
+        message = message .. " * max. " .. comms_target:getMaxProductBuying(product) .. "x " .. product.name .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n"
+        addCommsReply("sell " .. product.name, function() tradeBuyProduct(product) end)
     end
 
     setCommsMessage(message)
-    addCommsReply("zurueck", function() tradeMenu() end)
+    addCommsReply("back", function() tradeMenu() end)
 end
 
 function tradeBuyProduct(product)
 
     if comms_target:getMaxProductBuying(product) == 0 then
-        setCommsMessage("Wir haben im Augenblick keinen Bedarf an " .. product.name .. ", aber vielleicht zu einem spaeteren Zeitpunkt.")
+        setCommsMessage("We are not in demand of " .. product.name .. ". Maybe check back at a later point.")
     else
-        setCommsMessage("Wir sind bereit bis zu " .. comms_target:getMaxProductBuying(product) .. " Einheiten " .. product.name .. " zu einem Preis von " .. comms_target:getProductBuyingPrice(product) .. "$ pro Einheit zu kaufen.")
+        setCommsMessage("We would buy up to " .. comms_target:getMaxProductBuying(product) .. " units of " .. product.name .. " at a price of " .. comms_target:getProductBuyingPrice(product) .. "$ per unit.")
     end
 
-    addCommsReply("zurueck", function() tradeBuy() end)
+    addCommsReply("back", function() tradeBuy() end)
 end

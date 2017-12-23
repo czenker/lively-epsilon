@@ -1,9 +1,9 @@
 products = {
-    o2 = { name = "Sauerstoff"},
-    power = { name = "Energiezellen"},
-    waste = { name = "Giftmuell"},
-    ore = { name = "Erz"},
-    plutoniumOre = { name = "Plutoniumerz"},
+    o2 = { name = "Oxygen"},
+    power = { name = "Power Cells"},
+    waste = { name = "Toxic Waste"},
+    ore = { name = "Ore"},
+    plutoniumOre = { name = "Plutonium Ore"},
 }
 
 -- add id to object

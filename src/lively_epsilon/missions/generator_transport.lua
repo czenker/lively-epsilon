@@ -7,19 +7,19 @@ function MissionGenerator.transport(from, to)
     end
 
     -- @TODO: randomize
-    local cargo = "Rote Heringe"
+    local cargo = "Red Herrings"
 
     return {
         -- meta to allow this mission to be accepted
         id = Util.randomUuid(),
-        title = "Transportiere " .. cargo .. " nach " .. to:getCallSign(),
-        description = "Es ist super-wichtig, dass die Roten Heringe heil ankommen. Wir koennen Ihnen leider keine Bezahlung anbieten, aber das Gefuehl etwas Gutes getan zu haben sollte Belohnung genug fuer Sie sein.",
-        acceptMessage = "Vielen Dank, dass sie sich um den Transportauftrag kuemmern. Wir haben die Waren in ihren Laderaum geladen.",
+        title = "Ship " .. cargo .. " to " .. to:getCallSign(),
+        description = "It is very important that the Red Herrings are shipped without harming them. We can't offer payment at the moment, but the feeling of having done a good deed should be enough of a reward.",
+        acceptMessage = "Thanks for taking care of this transport mission. We brought the cargo to your ships storage already.",
 
         --
 
-        acceptReminder = "Transport nach " .. to:getCallSign(),
-        completeLog = cargo .. " erfolgreich ausgeliefert",
+        acceptReminder = "shipment for " .. to:getCallSign(),
+        completeLog = cargo .. " shipped successfuly",
         player = nil,
 
         start = function(self, player)
