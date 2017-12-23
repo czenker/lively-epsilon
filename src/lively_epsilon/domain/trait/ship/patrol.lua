@@ -123,6 +123,6 @@ Ship.patrol = function(self, ship, waypoints)
                 end
             end
         end
-    end, tick, 1)
+    end, tick)
 
 end
