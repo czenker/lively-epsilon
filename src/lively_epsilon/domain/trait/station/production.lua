@@ -57,17 +57,21 @@ Station.withProduction = function (self, station, configuration)
             end
             consumes[Product.toId(consume.product.id)] = consume.product
         end
-        for _, produce in pairs(conf.produces) do
-            if produce.product == nil then
-                error("product is required to configure production circle", 4)
+        if isTable(conf.produces) then
+            for _, produce in pairs(conf.produces) do
+                if produce.product == nil then
+                    error("product is required to configure production circle", 5)
+                end
+                if produce.amount == nil then
+                    error("amount is required to configure production circle", 5)
+                end
+                if not station:canStoreProduct(produce.product) then
+                    error("there is no storage for " .. produce.product.id .. " configured in " .. station:getCallSign(), 4)
+                end
+                produces[Product.toId(produce.product.id)] = produce.product
             end
-            if produce.amount == nil then
-                error("amount is required to configure production circle", 4)
-            end
-            if not station:canStoreProduct(produce.product) then
-                error("there is no storage for " .. produce.product.id .. " configured in " .. station:getCallSign(), 4)
-            end
-            produces[Product.toId(produce.product.id)] = produce.product
+        elseif not isFunction(conf.produces) then
+            error("production needs to be a table or a function", 3)
         end
 
         local canProduce = function()
@@ -82,14 +86,16 @@ Station.withProduction = function (self, station, configuration)
                 elseif availableAmount < amount then return false end
             end
 
-            for _, produce in pairs(conf.produces) do
-                local product = produce.product
+            if isTable(conf.produces) then
+                for _, produce in pairs(conf.produces) do
+                    local product = produce.product
 
-                local emptySpace = station:getEmptyProductStorage(produce.product)
+                    local emptySpace = station:getEmptyProductStorage(produce.product)
 
-                if emptySpace == nil then
-                    error("there is no storage for " .. product.id .. " configured in " .. station:getCallSign(), 5)
-                elseif emptySpace == 0 then return false end -- we would produce as long as even a part can be stored
+                    if emptySpace == nil then
+                        error("there is no storage for " .. product.id .. " configured in " .. station:getCallSign(), 5)
+                    elseif emptySpace == 0 then return false end -- we would produce as long as even a part can be stored
+                end
             end
             return true
         end
@@ -100,10 +106,21 @@ Station.withProduction = function (self, station, configuration)
                     station:modifyProductStorage(consume.product, -1 * consume.amount)
                 end
 
-                for _, produce in pairs(conf.produces) do
-                    station:modifyProductStorage(produce.product, produce.amount)
+                if isTable(conf.produces) then
+                    for _, produce in pairs(conf.produces) do
+                        station:modifyProductStorage(produce.product, produce.amount)
 
-                    print(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product.id)
+                        print(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product.id)
+                    end
+                elseif isFunction(conf.produces) then
+                    local status, error = pcall(conf.produces)
+                    if not status then
+                        if type(error) == "string" then
+                            error("An error occured during the production cycle:" .. error)
+                        else
+                            error("An error occured during the production cycle")
+                        end
+                    end
                 end
             end
         end, conf.productionTime, conf.productionTime)

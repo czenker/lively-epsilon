@@ -134,5 +134,29 @@ insulate("Station", function()
             assert.is_same(990, station:getProductStorage(power))
             assert.is_same(1000, station:getProductStorage(herring))
         end)
+
+
+
+        it("produces with callbacks", function()
+            local station = eeStationMock()
+            local wasProduced = false
+            Station:withStorageRooms(station, {
+                [power] = 1000,
+            })
+            Station:withProduction(station, {
+                {
+                    productionTime = 5,
+                    produces = function() wasProduced = true end,
+                    consumes = {
+                        { product = power, amount = 10 },
+                    }
+                }
+            })
+            station:modifyProductStorage(power, 1000)
+
+            Cron.tick(5)
+            assert.is_true(wasProduced)
+            assert.is_same(990, station:getProductStorage(power))
+        end)
     end)
 end)
