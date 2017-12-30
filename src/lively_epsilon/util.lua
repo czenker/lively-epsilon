@@ -77,6 +77,10 @@ Util = {
     end,
 
     mkString = function(table, separator, lastSeparator)
+        if not Util.isNumericTable(table) then
+            error("The given table needs to have numerical indices.", 2)
+        end
+
         local string = ""
 
         local lastIndex = 0
@@ -90,7 +94,6 @@ Util = {
                 string = string .. value
                 isFirst = false
             else
-                local nextKey, nextValue = next(table)
                 if k == lastIndex and lastSeparator ~= nil then
                     -- if last element
                     string = string .. lastSeparator .. value

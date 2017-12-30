@@ -158,10 +158,12 @@ insulate("Util", function()
                 assert.equal(Util.mkString(table, ", ", " and "), "one, two and three")
             end)
 
-            it("should return a string for three values when using an indexed table", function()
+            it("should fail when using an associative table", function()
                 local table = { a = "one", c = "two", b = "three" }
 
-                assert.equal(Util.mkString(table, ", ", " and "), "one, two and three")
+                assert.has_error(function()
+                    Util.mkString(table, ", ", " and ")
+                end)
             end)
         end)
 
