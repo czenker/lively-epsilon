@@ -120,6 +120,35 @@ insulate("Cron", function()
             Cron.tick(1)
             assert.is_same(3, called)
         end)
+
+        it("allows the callback function to return the interval for the next try", function()
+            local called = 0
+
+            Cron.regular("foobar", function()
+                called = called + 1
+                if called == 2 then return 3 end
+            end, 1)
+
+            assert.is_same(0, called)
+
+            Cron.tick(0.5)
+            assert.is_same(1, called)
+
+            Cron.tick(1)
+            assert.is_same(2, called)
+
+            Cron.tick(1)
+            assert.is_same(2, called)
+
+            Cron.tick(1)
+            assert.is_same(2, called)
+
+            Cron.tick(1)
+            assert.is_same(3, called)
+
+            Cron.tick(1)
+            assert.is_same(4, called)
+        end)
     end)
 
 
