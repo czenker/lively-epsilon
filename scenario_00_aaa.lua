@@ -4,6 +4,13 @@
 
 require "src/lively_epsilon/init.lua"
 
+function MySpaceStation(template)
+    local station = Station:enrich(SpaceStation():setTemplate(template))
+    Station:withComms(station)
+    station:setHailText("Hello World")
+    return station
+end
+
 function init()
 
     player = Player:enrich(
@@ -11,12 +18,13 @@ function init()
     )
 
     addGMFunction("Test Missions", function()
-        local station1 = Station:enrich(SpaceStation():setPosition(8000, 8000):setTemplate('Small Station'):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("Eine Erzbergbaustation"))
-        local station2 = Station:enrich(SpaceStation():setPosition(-8000, 8000):setTemplate('Medium Station'):setFaction("Human Navy"):setRotation(random(0, 360)))
-        local station3 = Station:enrich(SpaceStation():setPosition(8000, -8000):setTemplate('Large Station'):setFaction("Human Navy"):setRotation(random(0, 360)))
-        local station4 = Station:enrich(SpaceStation():setPosition(-8000, -8000):setTemplate('Huge Station'):setFaction("Human Navy"):setRotation(random(0, 360)))
+        local station1 = MySpaceStation("Small Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
+        local station2 = MySpaceStation("Medium Station"):setPosition(-8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360))
+        local station3 = MySpaceStation("Large Station"):setPosition(8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
+        local station4 = MySpaceStation("Huge Station"):setPosition(-8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
 
         Station:withMissions(station1)
+        station1:addComms("Mission Board", Comms.defaultMissionBoard)
         station1:addMission(MissionGenerator.transport(station1, station2))
         station1:addMission(MissionGenerator.transport(station1, station3))
         station1:addMission(MissionGenerator.transport(station1, station4))
@@ -27,15 +35,12 @@ function init()
 
     addGMFunction("Test Production", function()
 
-        local stationSolar = Station:enrich(
-            SpaceStation():setPosition(-5000, 10000):setTemplate('Medium Station'):setFaction("Human Navy")
-        )
-        local stationFabricate = Station:enrich(
-            SpaceStation():setPosition(0, 10000):setTemplate('Medium Station'):setFaction("Human Navy")
-        )
-        local stationConsume = Station:enrich(
-            SpaceStation():setPosition(5000, 10000):setTemplate('Medium Station'):setFaction("Human Navy")
-        )
+        local stationSolar = MySpaceStation("Medium Station"):setPosition(-5000, 10000):setFaction("Human Navy")
+        local stationFabricate = MySpaceStation("Medium Station"):setPosition(0, 10000):setFaction("Human Navy")
+        local stationConsume = MySpaceStation("Medium Station"):setPosition(5000, 10000):setFaction("Human Navy")
+        stationSolar:addComms("Merchant", Comms.defaultMerchant)
+        stationFabricate:addComms("Merchant", Comms.defaultMerchant)
+        stationConsume:addComms("Merchant", Comms.defaultMerchant)
 
         Station:withStorageRooms(stationSolar, {
             [products.power] = 1000
@@ -108,9 +113,7 @@ function init()
     end)
 
     addGMFunction("Test Mining", function()
-        local stationMine = Station:enrich(
-            SpaceStation():setPosition(50000, 0):setTemplate('Medium Station'):setFaction("Human Navy")
-        )
+        local stationMine = MySpaceStation("Medium Station"):setPosition(50000, 0):setFaction("Human Navy")
 
         setCirclePos(Asteroid(), 70000, 0, 0, 3000)
         setCirclePos(Asteroid(), 70000, 0, 60, 3000)
@@ -154,11 +157,11 @@ function init()
     end)
 
     addGMFunction("Test Patrol", function()
-        local northPole = Station:enrich(SpaceStation():setTemplate('Small Station'):setFaction("Human Navy"))
-        local station1 = Station:enrich(SpaceStation():setTemplate('Medium Station'):setFaction("Human Navy"))
-        local station2 = Station:enrich(SpaceStation():setTemplate('Medium Station'):setFaction("Human Navy"))
-        local station3 = Station:enrich(SpaceStation():setTemplate('Medium Station'):setFaction("Human Navy"))
-        local station4 = Station:enrich(SpaceStation():setTemplate('Medium Station'):setFaction("Human Navy"))
+        local northPole = MySpaceStation("Small Station"):setFaction("Human Navy")
+        local station1 = MySpaceStation("Medium Station"):setFaction("Human Navy")
+        local station2 = MySpaceStation("Medium Station"):setFaction("Human Navy")
+        local station3 = MySpaceStation("Medium Station"):setFaction("Human Navy")
+        local station4 = MySpaceStation("Medium Station"):setFaction("Human Navy")
 
         setCirclePos(northPole, 0, -30000, 0, 20000)
         setCirclePos(station1, 0, -30000, 72, 20000)

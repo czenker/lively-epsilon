@@ -41,3 +41,8 @@ function hasMerchant(station)
             isFunction(station.isSellingProduct) and
             isFunction(station.getProductsSold)
 end
+
+function hasComms(station)
+    return isFunction(station.getHailText) and
+        isFunction(station.setHailText)
+end
