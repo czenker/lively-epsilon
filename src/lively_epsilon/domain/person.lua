@@ -1,21 +1,14 @@
-local prototype = {
-    name = function(self)
-        return self.firstName .. " " .. self.lastName
-    end
-}
-
 Person = {
-    new = function(self)
-        local gender, firstName, lastName = personNames.getName()
+    byName = function(name)
+        return {
+            getFormalName = function() return name end,
+            getNickName = function() return name end,
+        }
+    end,
 
-
-        return  setmetatable({
-            firstName = firstName,
-            lastName = lastName
-        }, {__index = prototype})
-    end
+    isPerson = function(thing)
+        return isTable(thing) and
+                isFunction(thing.getFormalName) and
+                isFunction(thing.getNickName)
+    end,
 }
-
-function isRichPerson(person)
-    return type(person) == "table" and person.firstName ~= nil and person.lastName ~= nil
-end

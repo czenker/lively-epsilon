@@ -34,8 +34,8 @@ end
 
 local function sendFromEeObject(thing, message)
     local sender = thing:getCallSign()
-    if thing.captain ~= nil then
-        sender = thing.captain:name() .. " (" .. sender .. ")"
+    if hasCrew(thing) and thing:getCrewAtPosition("captain") then
+        sender = thing:getCrewAtPosition("captain"):getNickName() .. " (" .. sender .. ")"
     end
 
     sendFromString(sender, message)

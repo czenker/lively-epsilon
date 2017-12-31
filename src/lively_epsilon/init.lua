@@ -28,6 +28,7 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/station/production.lua",
 
     "src/lively_epsilon/domain/ship.lua",
+    "src/lively_epsilon/domain/trait/ship/crew.lua",
     "src/lively_epsilon/domain/trait/ship/miner.lua",
     "src/lively_epsilon/domain/trait/ship/patrol.lua",
     "src/lively_epsilon/domain/trait/ship/trader.lua",

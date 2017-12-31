@@ -161,7 +161,7 @@ the second one.
         [products.power] = { buyingPrice = 1 },
     })
 
-    local ship = Ship:enrich(CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0))
+    local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
     Ship:withStorageRooms(ship, {
         [products.power] = 1000,
     })
@@ -180,7 +180,7 @@ unload the products at its home base.
         [products.ore] = 1000
     })
 
-    local ship = Ship:enrich(CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0))
+    local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
     Ship:withStorageRooms(ship, {
         [products.ore] = 1000,
     })

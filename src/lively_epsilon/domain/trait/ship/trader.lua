@@ -32,7 +32,6 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    ship = Ship:enrich(ship)
     homeStation = Station:enrich(homeStation)
 
     ship:setFactionId(homeStation:getFactionId())
@@ -47,7 +46,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
             object = Station:enrich(object)
 
             local stationSelling = object:getMaxProductSelling(product)
-            local minBuying = ship.maxStorage / 10
+            local minBuying = ship:getMaxProductStorage(product) / 10
 
             if homeStation:getEmptyProductStorage(product) < minBuying then return false end
 
@@ -95,7 +94,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
             target = nil
         elseif ship:isDocked(target) then
             local amount = math.min(
-                ship.maxStorage,
+                ship:getMaxProductStorage(product),
                 target:getMaxProductSelling(product),
                 homeStation:getEmptyProductStorage(product)
             )

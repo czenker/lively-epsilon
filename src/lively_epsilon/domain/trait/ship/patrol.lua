@@ -40,7 +40,6 @@ Ship.patrol = function(self, ship, waypoints)
     if not isEeShip(ship) or not ship:isValid() then
         error("Invalid ship given", 2)
     end
-    ship = Ship:enrich(ship)
 
     if not Util.isNumericTable(waypoints) then
         error("Waypoints should be a table with numerical indices", 2)

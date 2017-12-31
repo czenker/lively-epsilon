@@ -46,3 +46,7 @@ function hasComms(station)
     return isFunction(station.getHailText) and
         isFunction(station.setHailText)
 end
+
+function hasCrew(ship)
+    return isFunction(ship.hasCrewAtPosition) and isFunction(ship.getCrewAtPosition)
+end

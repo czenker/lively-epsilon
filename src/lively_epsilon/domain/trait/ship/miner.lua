@@ -29,7 +29,6 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    ship = Ship:enrich(ship)
     homeStation = Station:enrich(homeStation)
 
     if ship:getBeamWeaponRange(0) == 0 then

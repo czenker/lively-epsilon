@@ -11,6 +11,12 @@ function MySpaceStation(template)
     return station
 end
 
+function MyCpuShip(template)
+    local ship = CpuShip():setTemplate(template)
+
+    return ship
+end
+
 function init()
 
     player = Player:enrich(
@@ -101,9 +107,7 @@ function init()
             },
         })
 
-        local ship = Ship:enrich(
-            CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(250):setRotationMaxSpeed(50)
-        )
+        local ship = MyCpuShip("Goods Freighter 1"):setPosition(11000, 0):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(250):setRotationMaxSpeed(50)
         Ship:withStorageRooms(ship, {
             [products.power] = 1000,
         })
@@ -133,9 +137,7 @@ function init()
             [products.plutoniumOre] = 100,
         })
 
-        local minerShip = Ship:enrich(
-            CpuShip():setTemplate("Goods Freighter 1"):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(100):setRotationMaxSpeed(20)
-        )
+        local minerShip = MyCpuShip("Goods Freighter 1"):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(100):setRotationMaxSpeed(20)
         Util.spawnAtStation(stationMine, minerShip)
 
         Ship:withStorageRooms(minerShip, {
@@ -172,25 +174,22 @@ function init()
         northPole:setDescription("A mysterious place")
 
         Cron.once(function()
-            local rudolph = Ship:enrich(
-                CpuShip():setTemplate("MU52 Hornet"):setRotation(0):setFaction("Human Navy")
-                :setDescription("A ship with strange readings. It clearly does not satisfy any of the safety regulations put out by the Human Navy.")
-            ):setCallSign("XMAS17"):setCommsFunction(function()
+            local rudolph = MyCpuShip("MU52 Hornet"):setRotation(0):setFaction("Human Navy")
+            :setDescription("A ship with strange readings. It clearly does not satisfy any of the safety regulations put out by the Human Navy.")
+            :setCallSign("XMAS17"):setCommsFunction(function()
                 setCommsMessage("Ho! Ho! Ho!\n\nHave you been naughty or nice this year?")
                 addCommsReply("Naughty", function()
                     setCommsMessage("I can't accept that. You have to be punished.")
                     Cron.once(function()
                         local x,y = player:getPosition()
-                        setCirclePos(CpuShip():setTemplate("Atlantis X23"):setFaction("Ghosts"), x, y, math.random(0, 360), 5000):orderAttack(player)
+                        setCirclePos(MyCpuShip("Atlantis X23"):setFaction("Ghosts"), x, y, math.random(0, 360), 5000):orderAttack(player)
                     end, 2)
                 end)
                 addCommsReply("Nice", function()
                     setCommsMessage("That's great. Keep it that way.")
                 end)
             end):setWarpDrive(true)
-
-            rudolph.captain.firstName = "Santa"
-            rudolph.captain.lastName = "Claus"
+            Ship:withCaptain(rudolph, Person.byName("Santa Claus"))
 
             Util.spawnAtStation(northPole, rudolph)
 
@@ -290,7 +289,7 @@ local narratives = {
             "robots",
         }
 
-        local ship = Ship:enrich(CpuShip():setTemplate("Goods Freighter " .. math.random(1,5)):setWarpDrive(true):setFaction("Human Navy"))
+        local ship = MyCpuShip("Goods Freighter " .. math.random(1,5)):setWarpDrive(true):setFaction("Human Navy")
         Util.spawnAtStation(fromStation, ship)
         local cargo = Util.random(cargoList)
 
@@ -320,7 +319,7 @@ local narratives = {
         }
 
         local i = math.random(1,5)
-        local ship = Ship:enrich(CpuShip():setTemplate("Personnel Freighter " .. i):setWarpDrive(true):setFaction("Human Navy"))
+        local ship = MyCpuShip("Personnel Freighter " .. i):setWarpDrive(true):setFaction("Human Navy")
         Util.spawnAtStation(fromStation, ship)
         local passengers = Util.random(passengerList)
         local number = math.random(1, 5) * (i-1) + math.random(1,5)
