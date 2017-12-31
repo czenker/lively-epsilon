@@ -29,8 +29,6 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    homeStation = Station:enrich(homeStation)
-
     if ship:getBeamWeaponRange(0) == 0 then
         logWarning(ship:getCallSign() .. " did not have a laser needed for mining, so it is given a weak one")
         ship:setBeamWeapon(0, 30, 0, 2000, 5, 5)

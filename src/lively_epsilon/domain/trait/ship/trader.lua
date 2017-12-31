@@ -32,8 +32,6 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    homeStation = Station:enrich(homeStation)
-
     ship:setFactionId(homeStation:getFactionId())
 
     local cronId = "trader" .. ship:getCallSign()
@@ -43,8 +41,6 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
     local function isValidSeller(object)
         if isEeStation(object) and object:isValid() and not object:isEnemy(object) and object:getCallSign() ~= homeStation:getCallSign() and hasStorage(object) and hasMerchant(object) then
             -- it is a friendly station that has not yet exploded - hurray!
-            object = Station:enrich(object)
-
             local stationSelling = object:getMaxProductSelling(product)
             local minBuying = ship:getMaxProductStorage(product) / 10
 

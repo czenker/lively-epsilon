@@ -44,4 +44,6 @@ ShipTemplateBased.withComms = function (self, spaceObject)
         return comms
     end
 
+    spaceObject:setCommsScript("src/lively_epsilon/scripts/comms.lua")
+
 end

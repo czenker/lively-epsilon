@@ -1,3 +1,5 @@
+products = products or {}
+
 Product = {
     --- accepts string or product and returns the id
     -- @param product

@@ -44,7 +44,7 @@ The boilerplate code for activating the framework is pretty simple:
 
     function update(delta)
         Cron.tick(delta)
-end
+    end
 
 #### Storage
 
@@ -52,7 +52,9 @@ Products are maintained in ``resoures/products.lua``. You can extend and reconfi
 the products as needed – those are not used by the framework itself, but should help you
 creating the universe.
 
-    local station = Station:enrich(SpaceStation():setPosition(0, 0))
+    require("resources/products.lua")
+
+    local station = SpaceStation():setPosition(0, 0)
     Station:withStorageRooms(station, {
         [products.power] = 1000,
         [products.o2] = 500,
@@ -84,7 +86,9 @@ to take care of multiple error conditions.
 Having a storage is of course in itself not useful, but stations can have a merchant
 that buys or sells goods.
 
-    local station = Station:enrich(SpaceStation():setPosition(0, 0))
+    require("resources/products.lua")
+
+    local station = SpaceStation():setPosition(0, 0)
     Station:withStorageRooms(station, {
         [products.power] = 1000,
         [products.o2] = 500,
@@ -120,7 +124,9 @@ NOTE: There is no concept yet for money. So the prices actually do not matter...
 Stations with a storage can transform products into other products or even create products from nothing
 (think solar energy) or convert products into nothing (think energy again).
 
-    local station = Station:enrich(SpaceStation():setPosition(0, 0))
+    require("resources/products.lua")
+
+    local station = SpaceStation():setPosition(0, 0)
     Station:withStorageRooms(station, {
         [products.power] = 1000,
         [products.o2] = 500,
@@ -145,7 +151,9 @@ A trader is assigned to one station and buys one resource on behalf of the stati
 So what you need is a station that sells some product, a station that buys that product and a trader assigned to
 the second one.
 
-    local seller = Station:enrich(SpaceStation():setPosition(0, 0))
+    require("resources/products.lua")
+
+    local seller = SpaceStation():setPosition(0, 0)
     Station:withStorageRooms(seller, {
         [products.power] = 1000
     })
@@ -153,7 +161,7 @@ the second one.
         [products.power] = { sellingPrice = 1 },
     })
 
-    local buyer = Station:enrich(SpaceStation():setPosition(10000, 0))
+    local buyer = SpaceStation():setPosition(10000, 0)
     Station:withStorageRooms(buyer, {
         [products.power] = 1000
     })
@@ -175,7 +183,9 @@ it back to its home station.
 A miner is a different type of ship that will seek out Asteroids close to its home base, mine them and
 unload the products at its home base.
 
-    local factory = Station:enrich(SpaceStation():setPosition(0, 0))
+    require("resources/products.lua")
+    
+    local factory = SpaceStation():setPosition(0, 0)
     Station:withStorageRooms(factory, {
         [products.ore] = 1000
     })

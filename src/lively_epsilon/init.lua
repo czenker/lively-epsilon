@@ -38,9 +38,6 @@ local myPackages = {
     "src/lively_epsilon/missions/side_missions.lua",
     "src/lively_epsilon/missions/generator.lua",
     "src/lively_epsilon/missions/generator_transport.lua",
-
-    "resources/personNames.lua",
-    "resources/products.lua"
 }
 
 if package ~= nil and package.path ~= nil then
