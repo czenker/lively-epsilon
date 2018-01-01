@@ -1,5 +1,5 @@
 require "src/lively_epsilon/utility/lua.lua"
-require "src/lively_epsilon/utility/traits.lua"
+require "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua"
 
 local function printScreen(npcSays, howPlayerCanReact)
     setCommsMessage(npcSays)
@@ -19,7 +19,7 @@ end
 
 
 function mainMenu()
-    if (hasComms(comms_target)) then
+    if (ShipTemplateBased:hasComms(comms_target)) then
         printScreen(comms_target:getHailText(), comms_target:getComms())
     end
 end

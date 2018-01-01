@@ -5,7 +5,7 @@ local missionDetail
 local missionsMenu
 
 missionsMenu = function(comms_target, comms_source)
-    if not hasMissions(comms_target) then
+    if not Station:hasMissions(comms_target) then
         return nil
     end
     local missions = comms_target:getMissions()

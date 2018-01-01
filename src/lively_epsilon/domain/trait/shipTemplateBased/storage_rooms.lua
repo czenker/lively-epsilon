@@ -1,11 +1,12 @@
 ShipTemplateBased = ShipTemplateBased or {}
+
 -- a storage system where one room exists for each product stored
 ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     if not isEeShipTemplateBased(spaceObject) then
         error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2)
     end
 
-    if hasStorage(spaceObject) then
+    if ShipTemplateBased:hasStorage(spaceObject) then
         -- @TODO: ???
         error("can not reconfigure storage", 2)
     end
@@ -96,4 +97,13 @@ ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     end
 
     return self
+end
+
+--- checks if the given object does have a storage
+ShipTemplateBased.hasStorage = function(self, station)
+    return isFunction(station.getProductStorage) and
+        isFunction(station.getMaxProductStorage) and
+        isFunction(station.getEmptyProductStorage) and
+        isFunction(station.modifyProductStorage) and
+        isFunction(station.canStoreProduct)
 end

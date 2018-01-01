@@ -18,7 +18,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
     if not isEeShip(ship) or not ship:isValid() then
         error("Invalid ship given", 2)
     end
-    if not hasStorage(ship) then
+    if not Ship:hasStorage(ship) then
         error ("ship " .. ship:getCallSign() .. " needs to have a storage configured", 2)
     end
     if not ship:canStoreProduct(product) then
@@ -28,7 +28,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
     if not isEeStation(homeStation) or not homeStation:isValid() then
         error("Invalid station given", 2)
     end
-    if not hasStorage(homeStation) then
+    if not Station:hasStorage(homeStation) then
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 
@@ -39,7 +39,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
     local dockingTo
 
     local function isValidSeller(object)
-        if isEeStation(object) and object:isValid() and not object:isEnemy(object) and object:getCallSign() ~= homeStation:getCallSign() and hasStorage(object) and hasMerchant(object) then
+        if isEeStation(object) and object:isValid() and not object:isEnemy(object) and object:getCallSign() ~= homeStation:getCallSign() and Station:hasStorage(object) and Station:hasMerchant(object) then
             -- it is a friendly station that has not yet exploded - hurray!
             local stationSelling = object:getMaxProductSelling(product)
             local minBuying = ship:getMaxProductStorage(product) / 10

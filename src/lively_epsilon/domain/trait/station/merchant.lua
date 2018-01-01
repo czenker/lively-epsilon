@@ -4,11 +4,11 @@ Station.withMerchant = function (self, station, configuration)
     if not isEeStation(station) then
         error ("Expected a station but got " .. type(station), 2)
     end
-    if not hasStorage(station) then
+    if not Station:hasStorage(station) then
         error ("station " .. station:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    if hasMerchant(station) then
+    if Station:hasMerchant(station) then
         -- @TODO: ???
         error("can not reconfigure merchant", 2)
     end
@@ -157,4 +157,18 @@ Station.withMerchant = function (self, station, configuration)
         return products
     end
 
+end
+
+--- checks if the given object has a merchant that buys or sells stuff
+-- @param station
+-- @return boolean
+Station.hasMerchant = function(self, station)
+    return isFunction(station.getProductBuyingPrice) and
+            isFunction(station.getMaxProductBuying) and
+            isFunction(station.isBuyingProduct) and
+            isFunction(station.getProductsBought) and
+            isFunction(station.getProductSellingPrice) and
+            isFunction(station.getMaxProductSelling) and
+            isFunction(station.isSellingProduct) and
+            isFunction(station.getProductsSold)
 end

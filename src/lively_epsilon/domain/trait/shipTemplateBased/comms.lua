@@ -47,3 +47,8 @@ ShipTemplateBased.withComms = function (self, spaceObject)
     spaceObject:setCommsScript("src/lively_epsilon/scripts/comms.lua")
 
 end
+
+ShipTemplateBased.hasComms = function(self, station)
+    return isFunction(station.getHailText) and
+            isFunction(station.setHailText)
+end

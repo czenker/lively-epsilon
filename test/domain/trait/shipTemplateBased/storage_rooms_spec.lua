@@ -11,7 +11,7 @@ insulate("Station", function()
         })
 
         it("causes hasStorage() to be true", function()
-            assert.is_true(hasStorage(station))
+            assert.is_true(Ship:hasStorage(station))
         end)
 
         it("remembers which products where stored", function()

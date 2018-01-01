@@ -18,14 +18,14 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
     if not isEeShip(ship) or not ship:isValid() then
         error("Invalid ship given", 2)
     end
-    if not hasStorage(ship) then
+    if not Ship:hasStorage(ship) then
         error("ship " .. ship:getCallSign() .. " needs to have a storage configured", 2)
     end
 
     if not isEeStation(homeStation) or not homeStation:isValid() then
         error("Invalid station given", 2)
     end
-    if not hasStorage(homeStation) then
+    if not Ship:hasStorage(homeStation) then
         error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
     end
 

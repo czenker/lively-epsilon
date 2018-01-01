@@ -10,7 +10,6 @@ local myPackages = {
     "src/lively_epsilon/utility/ee.lua",
     "src/lively_epsilon/utility/log.lua",
     "src/lively_epsilon/utility/lua.lua",
-    "src/lively_epsilon/utility/traits.lua",
     "src/lively_epsilon/utility/comms.lua",
 
     "src/lively_epsilon/domain/product.lua",

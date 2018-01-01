@@ -15,7 +15,7 @@ insulate("Station", function()
             })
 
             it("causes hasMerchant() to be true", function()
-                assert.is_true(hasMerchant(station))
+                assert.is_true(Station:hasMerchant(station))
             end)
 
             it("causes isBuyingProduct() to be true", function()
@@ -105,7 +105,7 @@ insulate("Station", function()
             })
 
             it("causes hasMerchant() to be true", function()
-                assert.is_true(hasMerchant(station))
+                assert.is_true(Station:hasMerchant(station))
             end)
 
             it("causes isBuyingProduct() to be false", function()

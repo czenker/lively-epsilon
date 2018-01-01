@@ -17,11 +17,11 @@ Station.withProduction = function (self, station, configuration)
     if not isEeStation(station) then
         error ("Expected a station but got " .. type(station), 2)
     end
-    if not hasStorage(station) then
+    if not Station:hasStorage(station) then
         error ("station " .. station:getCallSign() .. " needs to have a storage configured", 2)
     end
 
-    if hasProduction(station) then
+    if Station:hasProduction(station) then
         -- @TODO: ???
         error("can not reconfigure production", 2)
     end
@@ -133,4 +133,12 @@ Station.withProduction = function (self, station, configuration)
     station.getConsumedProducts = function (self)
         return Util.deepCopy(consumes)
     end
+end
+
+--- checks if the given object has a production configured
+-- @param station
+-- @return boolean
+Station.hasProduction = function(self, station)
+    return isFunction(station.getProducedProducts) and
+            isFunction(station.getConsumedProducts)
 end

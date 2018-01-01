@@ -38,7 +38,7 @@ Ship.withCrew = function (self, ship, positions)
         end
     end
 
-    if not hasCrew(ship) then
+    if not Ship:hasCrew(ship) then
         ship.crew = {}
         ship.hasCrewAtPosition = hasCrewAtPosition
         ship.getCrewAtPosition = getCrewAtPosition
@@ -57,3 +57,7 @@ Ship.withRelayOfficer = function(self, ship, person) Ship.withCrew(self, ship, {
 Ship.withScienceOfficer = function(self, ship, person) Ship.withCrew(self, ship, {science = person}) end
 Ship.withWeaponsOfficer = function(self, ship, person) Ship.withCrew(self, ship, {weapons = person}) end
 Ship.withEngineeringOfficer = function(self, ship, person) Ship.withCrew(self, ship, {engineering = person}) end
+
+Ship.hasCrew = function(self, ship)
+    return isFunction(ship.hasCrewAtPosition) and isFunction(ship.getCrewAtPosition)
+end

@@ -8,7 +8,7 @@ insulate("Station", function()
 
             Ship:withCrew(ship)
 
-            assert.is_true(hasCrew(ship))
+            assert.is_true(Ship:hasCrew(ship))
         end)
 
         it("should create a crew with a certain position", function()

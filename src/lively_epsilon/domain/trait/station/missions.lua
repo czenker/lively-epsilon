@@ -5,7 +5,7 @@ Station.withMissions = function (self, station)
         error ("Expected a station but got " .. type(station), 2)
     end
 
-    if hasMissions(station) then
+    if Station:hasMissions(station) then
         -- @TODO: Would be better to check if "our" implementation is used and if not raise an error.
         return
     end
@@ -39,4 +39,15 @@ Station.withMissions = function (self, station)
     end
 
     return self
+end
+
+--- checks if the given object is able to offer missions
+-- @param station
+-- @return boolean
+Station.hasMissions = function(self, station)
+    return isFunction(station.addMission) and
+        isFunction(station.removeMission) and
+        isFunction(station.clearMissions) and
+        isFunction(station.getMissions) and
+        isFunction(station.hasMissions)
 end
