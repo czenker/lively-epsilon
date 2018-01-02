@@ -18,13 +18,16 @@ local myPackages = {
 
     "src/lively_epsilon/domain/trait/shipTemplateBased/storage_rooms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua",
+    "src/lively_epsilon/domain/trait/shipTemplateBased/mission_broker.lua",
 
     "src/lively_epsilon/domain/station.lua",
     "src/lively_epsilon/domain/trait/station/merchant.lua",
     "src/lively_epsilon/comms/merchant.lua",
-    "src/lively_epsilon/domain/trait/station/missions.lua",
     "src/lively_epsilon/comms/missions.lua",
     "src/lively_epsilon/domain/trait/station/production.lua",
+
+    "src/lively_epsilon/domain/mission.lua",
+    "src/lively_epsilon/domain/trait/mission/broker.lua",
 
     "src/lively_epsilon/domain/ship.lua",
     "src/lively_epsilon/domain/trait/ship/crew.lua",
@@ -32,9 +35,11 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/ship/patrol.lua",
     "src/lively_epsilon/domain/trait/ship/trader.lua",
 
+    "src/lively_epsilon/domain/trait/player/mission_tracker.lua",
+    "src/lively_epsilon/domain/trait/player/mission_display.lua",
+
     "src/lively_epsilon/chit_chat.lua",
 
-    "src/lively_epsilon/missions/side_missions.lua",
     "src/lively_epsilon/missions/generator.lua",
     "src/lively_epsilon/missions/generator_transport.lua",
 }

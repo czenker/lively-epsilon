@@ -2,6 +2,7 @@
 -- Description: Testing stuff
 -- Type: Mission
 
+require "example/transport_mission.lua"
 require "src/lively_epsilon/init.lua"
 
 products = {
@@ -35,21 +36,56 @@ end
 
 function init()
 
-    player = Player:enrich(
-        PlayerSpaceship():setFaction("Human Navy"):setTemplate("Atlantis"):setRotation(200):setImpulseMaxSpeed(250):setRotationMaxSpeed(50):setWarpDrive(true):setJumpDrive(true)
-    )
+    local player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Atlantis"):setRotation(200):setImpulseMaxSpeed(250):setRotationMaxSpeed(50):setWarpDrive(true):setJumpDrive(true)
 
     addGMFunction("Test Missions", function()
+        Player:withMissionTracker(player)
+        Player:withMissionDisplay(player)
+
         local station1 = MySpaceStation("Small Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
         local station2 = MySpaceStation("Medium Station"):setPosition(-8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360))
         local station3 = MySpaceStation("Large Station"):setPosition(8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
         local station4 = MySpaceStation("Huge Station"):setPosition(-8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
 
-        Station:withMissions(station1)
+        local herringMission = function(from, to)
+            local cronId = Util.randomUuid()
+            local itemLoaded = false
+
+            local mission = Mission:new({
+                onAccept = function() print("accepted") end,
+                onStart = function(self)
+                    Cron.regular(cronId, function()
+                        if not itemLoaded and self:getPlayer():isDocked(from) then
+                            print("We loaded the item")
+                            itemLoaded = true
+                        end
+
+                        if itemLoaded and self:getPlayer():isDocked(to) then
+                            print("We unloaded the item")
+                            self:success()
+                        end
+                    end, 1)
+                    print("started")
+                end,
+                onSuccess = function() print("successful") end,
+                onFailure = function() print("failed") end,
+                onEnd = function()
+                    print("ended")
+                    Cron.abort(cronId)
+                end,
+            })
+            Mission:withBroker(mission, "Fly red herring from " .. from:getCallSign() .. " to " .. to:getCallSign(), {
+                description = "It is very important that the Red Herrings are shipped without harming them. We can't offer payment at the moment, but the feeling of having done a good deed should be enough of a reward.",
+                acceptMessage = "Thanks for taking care of this transport mission. We brought the cargo to your ships storage already."
+            })
+            return mission
+        end
+
+        Station:withMissionBroker(station1)
         station1:addComms("Mission Board", Comms.defaultMissionBoard)
-        station1:addMission(MissionGenerator.transport(station1, station2))
-        station1:addMission(MissionGenerator.transport(station1, station3))
-        station1:addMission(MissionGenerator.transport(station1, station4))
+        station1:addMission(herringMission(station1, station2))
+        station1:addMission(herringMission(station1, station3))
+        station1:addMission(herringMission(station1, station4))
 
         removeGMFunction("Test Missions")
     end)

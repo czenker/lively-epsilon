@@ -104,5 +104,20 @@ Util = {
         end
 
         return string
+    end,
+
+    execCallback = function(object, property, argument)
+        if isTable(object) and isFunction(object[property]) then
+            local status, error = pcall(object[property], argument)
+            if not status then
+                if type(error) == "string" then
+                    print("Error in " .. property .. " callback: " .. error)
+                else
+                    print("Error in " .. property .. " callback")
+                end
+                return false
+            end
+        end
+        return true
     end
 }
