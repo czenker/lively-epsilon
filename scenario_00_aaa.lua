@@ -2,7 +2,6 @@
 -- Description: Testing stuff
 -- Type: Mission
 
-require "example/transport_mission.lua"
 require "src/lively_epsilon/init.lua"
 
 products = {
@@ -48,35 +47,16 @@ function init()
         local station4 = MySpaceStation("Huge Station"):setPosition(-8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
 
         local herringMission = function(from, to)
-            local cronId = Util.randomUuid()
-            local itemLoaded = false
-
-            local mission = Mission:new({
-                onAccept = function() print("accepted") end,
-                onStart = function(self)
-                    Cron.regular(cronId, function()
-                        if not itemLoaded and self:getPlayer():isDocked(from) then
-                            print("We loaded the item")
-                            itemLoaded = true
-                        end
-
-                        if itemLoaded and self:getPlayer():isDocked(to) then
-                            print("We unloaded the item")
-                            self:success()
-                        end
-                    end, 1)
-                    print("started")
-                end,
-                onSuccess = function() print("successful") end,
-                onFailure = function() print("failed") end,
-                onEnd = function()
-                    print("ended")
-                    Cron.abort(cronId)
+            local mission = Missions:transportToken(from, to, {
+                onLoad = function(self) self:getPlayer():addToShipLog("Red Herring loaded", "0,255,255") end,
+                onUnload = function(self)
+                    self:getPlayer():addToShipLog("Red Herring unloaded", "0,255,255")
+                    self:getPlayer():addReputationPoints(100)
                 end,
             })
             Mission:withBroker(mission, "Fly red herring from " .. from:getCallSign() .. " to " .. to:getCallSign(), {
                 description = "It is very important that the Red Herrings are shipped without harming them. We can't offer payment at the moment, but the feeling of having done a good deed should be enough of a reward.",
-                acceptMessage = "Thanks for taking care of this transport mission. We brought the cargo to your ships storage already."
+                acceptMessage = "Thanks for taking care of this transport mission. Please dock with our station and we will load the cargo."
             })
             return mission
         end

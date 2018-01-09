@@ -134,6 +134,11 @@ insulate("Mission", function()
             mission:accept()
             assert.is_true(callbackCalled)
         end)
+        it("fails if onAccept callback fails", function()
+            local mission = newMission({onAccept = function() error("boom") end})
+
+            assert.has_error(function() mission:accept() end)
+        end)
     end)
 
     describe("decline()", function()
@@ -148,6 +153,12 @@ insulate("Mission", function()
             mission:decline()
             assert.is_true(callbackCalled)
         end)
+
+        it("fails if onDecline callback fails", function()
+            local mission = newMission({onDecline = function() error("boom") end})
+
+            assert.has_error(function() mission:decline() end)
+        end)
     end)
 
     describe("start()", function()
@@ -161,6 +172,12 @@ insulate("Mission", function()
 
             mission:start()
             assert.is_true(callbackCalled)
+        end)
+
+        it("fails if onDecline callback fails", function()
+            local mission = acceptedMission({onStart = function() error("boom") end})
+
+            assert.has_error(function() mission:start() end)
         end)
     end)
 
@@ -186,6 +203,18 @@ insulate("Mission", function()
             assert.is_true(onFailCalled)
             assert.is_true(onEndCalled)
         end)
+
+        it("fails if onFail callback fails", function()
+            local mission = startedMission({onFail = function() error("boom") end})
+
+            assert.has_error(function() mission:fail() end)
+        end)
+
+        it("fails if onEnd callback fails", function()
+            local mission = startedMission({onEnd = function() error("boom") end})
+
+            assert.has_error(function() mission:fail() end)
+        end)
     end)
 
     describe("success()", function()
@@ -209,6 +238,18 @@ insulate("Mission", function()
             mission:success()
             assert.is_true(onSuccessCalled)
             assert.is_true(onEndCalled)
+        end)
+
+        it("fails if onSuccess callback fails", function()
+            local mission = startedMission({onSuccess = function() error("boom") end})
+
+            assert.has_error(function() mission:success() end)
+        end)
+
+        it("fails if onEnd callback fails", function()
+            local mission = startedMission({onEnd = function() error("boom") end})
+
+            assert.has_error(function() mission:success() end)
         end)
     end)
 

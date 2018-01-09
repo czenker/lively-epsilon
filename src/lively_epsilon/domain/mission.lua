@@ -48,45 +48,40 @@ Mission.new = function(self, config)
             if state ~= 0 then
                 error("Mission \"" .. self:getId() .. "\" can not be accepted, because it was already started.", 2)
             end
-            if Util.execCallback(config, "onAccept", self) then
-                state = 5
-            end
+            if isFunction(config.onAccept) then config.onAccept(self) end
+            state = 5
         end,
         decline = function(self)
             if state ~= 0 then
                 error("Mission \"" .. self:getId() .. "\" can not be declined, because it was already started.", 2)
             end
-            if Util.execCallback(config, "onDecline", self) then
-                state = 98
-            end
+            if isFunction(config.onDecline) then config.onDecline(self) end
+            state = 98
         end,
         start = function(self)
             if state ~= 5 then
                 error("Mission \"" .. self:getId() .. "\" can not be started, because it was not accepted.", 2)
             end
-            if Util.execCallback(config, "onStart", self) then
-                state = 10
-            end
+            if isFunction(config.onStart) then config.onStart(self) end
+            state = 10
         end,
         fail = function(self)
             if state ~= 10 then
                 error("Mission \"" .. self:getId() .. "\" can not fail, because it is not currently running.", 2)
             end
 
-            if Util.execCallback(config, "onFail", self) then
-                state = 99
-            end
-            Util.execCallback(config, "onEnd", self)
+            if isFunction(config.onFail) then config.onFail(self) end
+            if isFunction(config.onEnd) then config.onEnd(self) end
+            state = 99
         end,
         success = function(self)
             if state ~= 10 then
                 error("Mission \"" .. self:getId() .. "\" can not succeed, because it is not currently running.", 2)
             end
 
-            if Util.execCallback(config, "onSuccess", self) then
-                state = 100
-            end
-            Util.execCallback(config, "onEnd", self)
+            if isFunction(config.onSuccess) then config.onSuccess(self) end
+            if isFunction(config.onEnd) then config.onEnd(self) end
+            state = 100
         end,
     }
 
