@@ -33,20 +33,21 @@ for EE.
 #### Kickstart
 
 The boilerplate code for activating the framework is pretty simple:
+```lua
+-- Name: Hello Lively Epsilon
+-- Description: Testing Lively Epsilon
+-- Type: Mission
 
-    -- Name: Hello Lively Epsilon
-    -- Description: Testing Lively Epsilon
-    -- Type: Mission
+require "src/lively_epsilon/init.lua"
 
-    require "src/lively_epsilon/init.lua"
+function init()
+    -- add your code here
+end
 
-    function init()
-        // add your code here
-    end
-
-    function update(delta)
-        Cron.tick(delta)
-    end
+function update(delta)
+    Cron.tick(delta)
+end
+```
 
 #### Storage
 
@@ -54,30 +55,32 @@ Products are maintained in ``resoures/products.lua``. You can extend and reconfi
 the products as needed – those are not used by the framework itself, but should help you
 creating the universe.
 
-    require("resources/products.lua")
+```lua
+require("resources/products.lua")
 
-    local station = SpaceStation():setPosition(0, 0)
-    Station:withStorageRooms(station, {
-        [products.power] = 1000,
-        [products.o2] = 500,
-    })
+local station = SpaceStation():setPosition(0, 0)
+Station:withStorageRooms(station, {
+    [products.power] = 1000,
+    [products.o2] = 500,
+})
 
-    station:canStoreProduct(product.power) -- = true
-    station:canStoreProduct(product.ore) -- = false
+station:canStoreProduct(product.power) -- = true
+station:canStoreProduct(product.ore) -- = false
 
-    station:getProductStorage(product.power) -- = 0
-    station:getEmptyProductStorage(product.power) -- = 1000
-    station:getMaxProductStorage(product.power) -- = 1000
+station:getProductStorage(product.power) -- = 0
+station:getEmptyProductStorage(product.power) -- = 1000
+station:getMaxProductStorage(product.power) -- = 1000
 
-    station:modifyProductStorage(product.power, 700)
-    station:getProductStorage(product.power) -- = 700
-    station:getEmptyProductStorage(product.power) -- = 300
-    station:getMaxProductStorage(product.power) -- = 1000
+station:modifyProductStorage(product.power, 700)
+station:getProductStorage(product.power) -- = 700
+station:getEmptyProductStorage(product.power) -- = 300
+station:getMaxProductStorage(product.power) -- = 1000
 
-    station:modifyProductStorage(product.power, 9999)
-    station:getProductStorage(product.power) -- = 1000
-    station:modifyProductStorage(product.power, -1000)
-    station:getProductStorage(product.power) -- = 0
+station:modifyProductStorage(product.power, 9999)
+station:getProductStorage(product.power) -- = 1000
+station:modifyProductStorage(product.power, -1000)
+station:getProductStorage(product.power) -- = 0
+```
 
 Please note that modifying a product storage beyond its minimum or maximum capacity
 does not cause any kind of error. This is to ease scripting for you and not having
@@ -88,28 +91,30 @@ to take care of multiple error conditions.
 Having a storage is of course in itself not useful, but stations can have a merchant
 that buys or sells goods.
 
-    require("resources/products.lua")
+```lua
+require("resources/products.lua")
 
-    local station = SpaceStation():setPosition(0, 0)
-    Station:withStorageRooms(station, {
-        [products.power] = 1000,
-        [products.o2] = 500,
-    })
-    Station:withMerchant(station, {
-        [products.power] = { buyingPrice = 1, buyingLimit = 420 },
-        [products.o2] = { sellingPrice = 5, sellingLimit = 42 },
-    })
+local station = SpaceStation():setPosition(0, 0)
+Station:withStorageRooms(station, {
+    [products.power] = 1000,
+    [products.o2] = 500,
+})
+Station:withMerchant(station, {
+    [products.power] = { buyingPrice = 1, buyingLimit = 420 },
+    [products.o2] = { sellingPrice = 5, sellingLimit = 42 },
+})
 
-    station:modifyProductStorage(product.power, 100)
-    station:modifyProductStorage(product.o2, 100)
+station:modifyProductStorage(product.power, 100)
+station:modifyProductStorage(product.o2, 100)
 
-    station:isBuyingProduct(product.power)        -- = true
-    station:getProductBuyingPrice(products.power) -- = 1
-    station:getMaxProductBuying(product.power)    -- = 320
+station:isBuyingProduct(product.power)        -- = true
+station:getProductBuyingPrice(products.power) -- = 1
+station:getMaxProductBuying(product.power)    -- = 320
 
-    station:isSellingProduct(product.o2)        -- = true
-    station:getProductSellingPrice(products.o2) -- = 5
-    station:getMaxProductSelling(product.o2)    -- = 58
+station:isSellingProduct(product.o2)        -- = true
+station:getProductSellingPrice(products.o2) -- = 5
+station:getMaxProductSelling(product.o2)    -- = 58
+```
 
 Configuring ``buyingLimit`` and ``sellingLimit`` is optional. If left blank the station
 will sell and buy all of its stock. In any other case it will only sell if it got
@@ -126,24 +131,26 @@ NOTE: There is no concept yet for money. So the prices actually do not matter...
 Stations with a storage can transform products into other products or even create products from nothing
 (think solar energy) or convert products into nothing (think energy again).
 
-    require("resources/products.lua")
+```lua
+require("resources/products.lua")
 
-    local station = SpaceStation():setPosition(0, 0)
-    Station:withStorageRooms(station, {
-        [products.power] = 1000,
-        [products.o2] = 500,
-    })
-    Station:withProduction(station, {
-        {
-            productionTime = 30,
-            consumes = {
-                { product = products.power, amount = 10 }
-            },
-            produces = {
-                { product = products.o2, amount = 10 },
-            }
+local station = SpaceStation():setPosition(0, 0)
+Station:withStorageRooms(station, {
+    [products.power] = 1000,
+    [products.o2] = 500,
+})
+Station:withProduction(station, {
+    {
+        productionTime = 30,
+        consumes = {
+            { product = products.power, amount = 10 }
         },
-    })
+        produces = {
+            { product = products.o2, amount = 10 },
+        }
+    },
+})
+```
 
 Combining this with the Merchant can help you create a simple economy that the players can help running.
 
@@ -153,29 +160,31 @@ A trader is assigned to one station and buys one resource on behalf of the stati
 So what you need is a station that sells some product, a station that buys that product and a trader assigned to
 the second one.
 
-    require("resources/products.lua")
+```lua
+require("resources/products.lua")
 
-    local seller = SpaceStation():setPosition(0, 0)
-    Station:withStorageRooms(seller, {
-        [products.power] = 1000
-    })
-    Station:withMerchant(seller, {
-        [products.power] = { sellingPrice = 1 },
-    })
+local seller = SpaceStation():setPosition(0, 0)
+Station:withStorageRooms(seller, {
+    [products.power] = 1000
+})
+Station:withMerchant(seller, {
+    [products.power] = { sellingPrice = 1 },
+})
 
-    local buyer = SpaceStation():setPosition(10000, 0)
-    Station:withStorageRooms(buyer, {
-        [products.power] = 1000
-    })
-    Station:withMerchant(buyer, {
-        [products.power] = { buyingPrice = 1 },
-    })
+local buyer = SpaceStation():setPosition(10000, 0)
+Station:withStorageRooms(buyer, {
+    [products.power] = 1000
+})
+Station:withMerchant(buyer, {
+    [products.power] = { buyingPrice = 1 },
+})
 
-    local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
-    Ship:withStorageRooms(ship, {
-        [products.power] = 1000,
-    })
-    Ship:orderBuyer(ship, buyer, products.power)
+local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
+Ship:withStorageRooms(ship, {
+    [products.power] = 1000,
+})
+Ship:orderBuyer(ship, buyer, products.power)
+```
 
 This trader will try to find a station close to its home base ``buyer`` that sells power, buy it and bring
 it back to its home station.
@@ -185,22 +194,24 @@ it back to its home station.
 A miner is a different type of ship that will seek out Asteroids close to its home base, mine them and
 unload the products at its home base.
 
-    require("resources/products.lua")
-    
-    local factory = SpaceStation():setPosition(0, 0)
-    Station:withStorageRooms(factory, {
-        [products.ore] = 1000
-    })
+```lua
+require("resources/products.lua")
 
-    local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
-    Ship:withStorageRooms(ship, {
-        [products.ore] = 1000,
-    })
-    Ship:orderBuyer(ship, factory, function(asteroid, ship, station)
-        return {
-           [products.ore] = math.random(10, 50)
-        }
-    end)
+local factory = SpaceStation():setPosition(0, 0)
+Station:withStorageRooms(factory, {
+    [products.ore] = 1000
+})
+
+local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
+Ship:withStorageRooms(ship, {
+    [products.ore] = 1000,
+})
+Ship:orderBuyer(ship, factory, function(asteroid, ship, station)
+    return {
+       [products.ore] = math.random(10, 50)
+    }
+end)
+```
 
 Using the callback you can determine which resources the miner finds when it has mined an asteroid. Products
 the ship or its home base can not store will be silently discarded.
@@ -219,4 +230,6 @@ do what they should. Most of the code can not be tested outside an Empty Epsilon
 
 You can run the tests by installing [Busted](https://olivinelabs.com/busted/) and run
 
-    busted test/
+```bash
+busted test/
+```
