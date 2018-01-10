@@ -2,7 +2,7 @@ language: python
 sudo: false
 
 env:
-  - LUA="lua=5.3"
+  - LUA="lua=5.3" EE_BRANCH="master"
 
 before_install:
   - pip install hererocks
@@ -14,7 +14,8 @@ install:
   - luarocks install busted
 #  - luarocks install luacov
 #  - luarocks install luacov-coveralls
-  - wget https://raw.githubusercontent.com/daid/EmptyEpsilon/master/scripts/utils.lua -O utils.lua
+  - wget "https://raw.githubusercontent.com/daid/EmptyEpsilon/${EE_BRANCH}/scripts/utils.lua" -O utils.lua
+  - busted -v
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
