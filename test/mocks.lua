@@ -1,23 +1,26 @@
 local noop = function() end
 
-function eeStationMock()
+function eeShipTemplateBasedMock()
     local callSign = Util.randomUuid()
+    local isValid = true
 
     return {
-        typeName = "SpaceStation",
         getCallSign = function() return callSign end,
-        isValid = function() return true end,
+        isValid = function() return isValid end,
+        destroy = function() isValid = false end,
     }
 end
 
-function eeCpuShipMock()
-    local callSign = Util.randomUuid()
+function eeStationMock()
+    local mock = eeShipTemplateBasedMock()
+    mock.typeName = "SpaceStation"
+    return mock
+end
 
-    return {
-        typeName = "CpuShip",
-        getCallSign = function() return callSign end,
-        isValid = function() return true end,
-    }
+function eeCpuShipMock()
+    local mock = eeShipTemplateBasedMock()
+    mock.typeName = "CpuShip"
+    return mock
 end
 
 function eePlayerMock()

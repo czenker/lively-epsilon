@@ -36,7 +36,7 @@ insulate("Missions", function()
             assert.has_error(function() mission:start() end)
         end)
 
-        describe("successful mission", function()
+        it("successful mission", function()
             local onLoadCalled = false
             local onUnloadCalled = false
 

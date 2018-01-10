@@ -41,31 +41,58 @@ function init()
         Player:withMissionTracker(player)
         Player:withMissionDisplay(player)
 
-        local station1 = MySpaceStation("Small Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
+        local station1 = MySpaceStation("Large Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
         local station2 = MySpaceStation("Medium Station"):setPosition(-8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360))
-        local station3 = MySpaceStation("Large Station"):setPosition(8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
-        local station4 = MySpaceStation("Huge Station"):setPosition(-8000, -8000):setFaction("Human Navy"):setRotation(random(0, 360))
 
-        local herringMission = function(from, to)
-            local mission = Missions:transportToken(from, to, {
-                onLoad = function(self) self:getPlayer():addToShipLog("Red Herring loaded", "0,255,255") end,
-                onUnload = function(self)
-                    self:getPlayer():addToShipLog("Red Herring unloaded", "0,255,255")
-                    self:getPlayer():addReputationPoints(100)
-                end,
-            })
-            Mission:withBroker(mission, "Fly red herring from " .. from:getCallSign() .. " to " .. to:getCallSign(), {
-                description = "It is very important that the Red Herrings are shipped without harming them. We can't offer payment at the moment, but the feeling of having done a good deed should be enough of a reward.",
-                acceptMessage = "Thanks for taking care of this transport mission. Please dock with our station and we will load the cargo."
-            })
-            return mission
-        end
+        -- Herring mission
+        local herringMission = Missions:transportToken(station1, station2, {
+            onLoad = function(self) self:getPlayer():addToShipLog("Red Herring loaded", "0,255,255") end,
+            onUnload = function(self)
+                self:getPlayer():addToShipLog("Red Herring unloaded", "0,255,255")
+            end,
+            onSuccess = function(self)
+                self:getPlayer():addReputationPoints(100)
+            end,
+        })
+        Mission:withBroker(herringMission, "Fly red herring from " .. station1:getCallSign() .. " to " .. station2:getCallSign(), {
+            description = "It is very important that the Red Herrings are shipped without harming them. We can't offer payment at the moment, but the feeling of having done a good deed should be enough of a reward.",
+            acceptMessage = "Thanks for taking care of this transport mission. Please dock with our station and we will load the cargo."
+        })
+
+        local destructionMission = Missions:destroy(function()
+            local enemyStation = SpaceStation():setTemplate("Small Station"):setPosition(8000, -8000):setFaction("Kraylor"):setRotation(random(0, 360))
+            local ship1 = CpuShip():setTemplate("Stalker Q7"):setFaction("Kraylor"):orderDefendTarget(enemyStation)
+            local ship2 = CpuShip():setTemplate("Stalker Q7"):setFaction("Kraylor"):orderDefendTarget(enemyStation)
+            Util.spawnAtStation(enemyStation, ship1)
+            Util.spawnAtStation(enemyStation, ship2)
+
+            return {enemyStation, ship1, ship2}
+        end, {
+            onDestruction = function (self, enemy)
+                local log
+                if isEeStation(enemy) then
+                    log = "Yes!! Their station is down. "
+                    if self:countValidEnemies() > 0 then
+                        log = log .. "Now just destroy their fighters."
+                    end
+                elseif self:countValidEnemies() > 0 then
+                    log = "That is one of their fighters down."
+                end
+                if log ~= nil then self:getPlayer():addToShipLog(log, "0,255,255") end
+            end,
+            onSuccess = function(self)
+                self:getPlayer():addReputationPoints(100)
+            end,
+        })
+        Mission:withBroker(destructionMission, "Destroy enemy base", {
+            description = "It has come to our knownledge that enemy forces are building a base close to our location. We can't let that happen.\n\nFortunately they are rather weak at the moment, so now is the perfect time to strike. Can you help us?",
+            acceptMessage = "We are confident that you will crush our enemy."
+        })
 
         Station:withMissionBroker(station1)
         station1:addComms("Mission Board", Comms.defaultMissionBoard)
-        station1:addMission(herringMission(station1, station2))
-        station1:addMission(herringMission(station1, station3))
-        station1:addMission(herringMission(station1, station4))
+        station1:addMission(herringMission)
+        station1:addMission(destructionMission)
 
         removeGMFunction("Test Missions")
     end)
