@@ -14,6 +14,7 @@ install:
   - luarocks install busted
 #  - luarocks install luacov
 #  - luarocks install luacov-coveralls
+  - wget https://raw.githubusercontent.com/daid/EmptyEpsilon/master/scripts/utils.lua -O utils.lua
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
