@@ -13,6 +13,8 @@ having a chat through comms. There is a lot to explore in that galaxy.
 
 ### State
 
+[![Build Status](https://travis-ci.org/czenker/lively-epsilon.svg?branch=master)](https://travis-ci.org/czenker/lively-epsilon)
+
 The current state is best described as _Let's see where it goes_. Feel free to use it, steel everything
 you find useful or drop me a line if you like it.
 
