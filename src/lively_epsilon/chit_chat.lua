@@ -34,7 +34,7 @@ end
 
 local function sendFromEeObject(thing, message)
     local sender = thing:getCallSign()
-    if ShipTemplateBased:hasCrew(thing) and thing:getCrewAtPosition("captain") then
+    if Ship:hasCrew(thing) and thing:getCrewAtPosition("captain") then
         sender = thing:getCrewAtPosition("captain"):getNickName() .. " (" .. sender .. ")"
     end
 
