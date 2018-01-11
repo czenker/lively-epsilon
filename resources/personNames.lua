@@ -1,5 +1,6 @@
-local femaleNames = {
+local humanFirstNames = {
     -- taken from https://github.com/endless-sky/endless-sky/blob/master/data/names.txt under GPLv3
+    --female
     "Mary",
     "Anne",
     "Genevieve",
@@ -60,10 +61,7 @@ local femaleNames = {
     "Elena",
     "Athena",
     "Calypso",
-}
-
-local maleNames = {
-    -- taken from https://github.com/endless-sky/endless-sky/blob/master/data/names.txt under GPLv3
+    -- male
     "Henry",
     "Nelson",
     "Randall",
@@ -130,10 +128,99 @@ local maleNames = {
     "Bruno",
     "Martin",
     "Starbuck",
-    "Xu",
+    "Xu"
 }
 
-local lastNames = {
+local humanLastNames = {
+    -- @see https://en.wikipedia.org/wiki/Lists_of_most_common_surnames
+    "Sargsyan",
+    "Guliyev",
+    "Ibrahimov",
+    "Bishwas",
+    "Hasan",
+    "Chow",
+    "Chan",
+    "Wong",
+    "Singh",
+    "Kumar",
+    "Levy",
+    "Perez",
+    "Friedman",
+    "Sato",
+    "Suzuki",
+    "Kim",
+    "Lee",
+    "Shrestha",
+    "Tan",
+    "Yilmaz",
+    "Kaya",
+    "Nguyen",
+    "Gruber",
+    "Huber",
+    "Wagner",
+    "Ivanou",
+    "Peeters",
+    "Jansens",
+    "Hodzic",
+    "Popovic",
+    "Dimitrov",
+    "Petrov",
+    "Horvat",
+    "Novak",
+    "Svoboda",
+    "Nielsen",
+    "Jensen",
+    "Tamm",
+    "Ivanov",
+    "Joensen",
+    "Korhonen",
+    "Virtanen",
+    "Johansson",
+    "Bernard",
+    "Dubois",
+    "Beridze",
+    "Schmidt",
+    "Schneider",
+    "Nagy",
+    "Murphy",
+    "O' Kelly",
+    "O' Brien",
+    "Rossi",
+    "Ricci",
+    "Costa",
+    "Zogaj",
+    "Muller",
+    "Vella",
+    "Markov",
+    "Rusu",
+    "De Jong",
+    "De Vris",
+    "Van den Berg",
+    "Hansen",
+    "Olsen",
+    "Kowalski",
+    "Silva",
+    "Santos",
+    "Radu",
+    "Smirnov",
+    "Kuznetsov",
+    "Petrovic",
+    "Garcia",
+    "Lopez",
+    "Gonzalez",
+    "Andersson",
+    "Smith",
+    "Jones",
+    "Taylor",
+    "Wilson",
+    "Tremblay",
+    "Gonzales",
+    "Rodriguez",
+    "Moreno",
+    "Ruiz",
+}
+
+local humanLastNamesScientific = {
     -- taken from https://github.com/endless-sky/endless-sky/blob/master/data/names.txt under GPLv3
     "Aristotle",
     "Aristarchus",
@@ -211,22 +298,16 @@ local lastNames = {
     "Weber",
 }
 
-personNames = {
-    -- temporary interface. This is definitely not final
-    getName = function()
-        local gender
-        local firstName
-        local lastName
+Person = Person or {}
+Person.newHuman = function()
+    local firstName = Util.random(humanFirstNames)
+    local lastName = Util.random(humanLastNames)
 
-        if math.random(1, 2) == 1 then
-            gender = "m"
-            firstName = Util.random(maleNames)
-        else
-            gender = "f"
-            firstName = Util.random(femaleNames)
-        end
-        lastName = Util.random(lastNames)
+    return Person.byName(firstName .. " " .. lastName)
+end
+Person.newHumanScientist = function()
+    local firstName = Util.random(humanFirstNames)
+    local lastName = Util.random(humanLastNamesScientific)
 
-        return gender, firstName, lastName
-    end
-}
+    return Person.byName(firstName .. " " .. lastName)
+end

@@ -30,8 +30,7 @@ end
 
 function MyCpuShip(template)
     local ship = CpuShip():setTemplate(template)
-    local _, firstName, lastName = personNames.getName()
-    Ship:withCaptain(ship, Person.byName(firstName .. " " .. lastName))
+    Ship:withCaptain(ship, Person:newHuman())
 
     Ship:withComms(ship)
     ship:setHailText(function(self, player)
