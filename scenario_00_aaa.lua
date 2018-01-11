@@ -218,102 +218,15 @@ function init()
     end)
 
     addGMFunction("Test Patrol", function()
-        local northPole = MySpaceStation("Small Station"):setFaction("Human Navy")
         local station1 = MySpaceStation("Medium Station"):setFaction("Human Navy")
         local station2 = MySpaceStation("Medium Station"):setFaction("Human Navy")
         local station3 = MySpaceStation("Medium Station"):setFaction("Human Navy")
         local station4 = MySpaceStation("Medium Station"):setFaction("Human Navy")
 
-        setCirclePos(northPole, 0, -30000, 0, 20000)
-        setCirclePos(station1, 0, -30000, 72, 20000)
-        setCirclePos(station2, 0, -30000, 144, 20000)
-        setCirclePos(station3, 0, -30000, 216, 20000)
-        setCirclePos(station4, 0, -30000, 288, 20000)
-
-        northPole:setDescription("A mysterious place")
-
-        Cron.once(function()
-            local rudolph = MyCpuShip("MU52 Hornet"):setRotation(0):setFaction("Human Navy")
-            :setDescription("A ship with strange readings. It clearly does not satisfy any of the safety regulations put out by the Human Navy.")
-            :setCallSign("XMAS17"):setCommsFunction(function()
-                setCommsMessage("Ho! Ho! Ho!\n\nHave you been naughty or nice this year?")
-                addCommsReply("Naughty", function()
-                    setCommsMessage("I can't accept that. You have to be punished.")
-                    Cron.once(function()
-                        local x,y = player:getPosition()
-                        setCirclePos(MyCpuShip("Atlantis X23"):setFaction("Ghosts"), x, y, math.random(0, 360), 5000):orderAttack(player)
-                    end, 2)
-                end)
-                addCommsReply("Nice", function()
-                    setCommsMessage("That's great. Keep it that way.")
-                end)
-            end):setWarpDrive(true)
-            Ship:withCaptain(rudolph, Person.byName("Santa Claus"))
-
-            Util.spawnAtStation(northPole, rudolph)
-
-            Ship:patrol(rudolph, {
-                {
-                    target = station1,
-                    onHeading = function()
-                        ChitChat.say(rudolph, "Ho! Ho! Ho!")
-                    end,
-                    onArrival = function()
-                        ChitChat.converse({
-                            {rudolph, "Are you Timmy?"},
-                            {"Timmy", "Mommy, who is that weirdo with the beard?"},
-                            {"Mom", "It's Santa!"},
-                            {rudolph, "Ho! Ho! Ho!"},
-                            {"Timmy", "Why are you not coming through the chimney?"},
-                            {rudolph, "Because you live on a Space Station and it has a central heating unit."},
-                            {"Timmy", "But how does Rudolph breath in space?"},
-                            {rudolph, "You ask way to many questions, Timmy."},
-
-                        })
-                    end,
-                    delay = 30
-                },{
-                    target = station2,
-                    onArrival = function()
-                        ChitChat.converse({
-                            {rudolph, "Marty, I brought you that Flux Capacitator, that you always wanted."},
-                            {"Marty", "Yeah, you are like 60 years late, you dumbass."},
-                        })
-                    end,
-                    delay = 30
-                },{
-                    target = station3,
-                    onArrival = function()
-                        ChitChat.converse({
-                            {rudolph, "You have been very, very naughty."},
-                            {"Kenny", "**unintelligable mumbling**"},
-                            {station3, "*pew pew pew*"},
-                            {"Kyle", "Oh my God! He killed Kenny!"},
-                            {"Stan", "You bastard!"}
-                        })
-                    end,
-                    delay = 30
-                },{
-                    target = northPole,
-                    onHeading = function()
-                        ChitChat.converse({
-                            {rudolph, "That's all for this year."},
-                            {rudolph, "Now for some Home brewed Egg Nogg at home."},
-                        })
-                    end,
-                    onArrival = function()
-                        ChitChat.say(rudolph, "Finally home.")
-                        Cron.once(function() rudolph:destroy() end, 10)
-
-                        northPole:setCommsFunction(function()
-                            setCommsMessage("Have a Merry Christmas and a great year 2018, folks.")
-                        end)
-                        northPole:openCommsTo(player)
-                    end,
-                    delay = 999
-                },
-            })
-        end, 100)
+        setCirclePos(station1, 0, -30000, 30, 20000)
+        setCirclePos(station2, 0, -30000, 120, 20000)
+        setCirclePos(station3, 0, -30000, 210, 20000)
+        setCirclePos(station4, 0, -30000, 300, 20000)
 
         Cron.regular("universe_travel", function()
             local source = Util.random({station1, station2, station3, station4})
