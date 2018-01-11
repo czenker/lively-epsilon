@@ -10,7 +10,7 @@ local function printScreen(npcSays, howPlayerCanReact)
                 local screen = reaction.nextScreen(comms_target, player)
                 printScreen(screen.npcSays, screen.howPlayerCanReact)
             else
-                printScreen(comms_target:getHailText(), comms_target:getComms())
+                printScreen(comms_target:getHailText(player), comms_target:getComms(player))
             end
         end
         addCommsReply(playerSays, goToNextScreen)
@@ -20,7 +20,7 @@ end
 
 function mainMenu()
     if (ShipTemplateBased:hasComms(comms_target)) then
-        printScreen(comms_target:getHailText(), comms_target:getComms())
+        printScreen(comms_target:getHailText(player), comms_target:getComms(player))
     end
 end
 

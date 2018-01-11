@@ -8,6 +8,7 @@ function eeShipTemplateBasedMock()
         getCallSign = function() return callSign end,
         isValid = function() return isValid end,
         destroy = function() isValid = false end,
+        setCommsScript = noop,
     }
 end
 
@@ -83,4 +84,11 @@ function successfulMissionWithBrokerMock(broker, player)
     local mission = startedMissionWithBrokerMock(broker, player)
     mission:success()
     return mission
+end
+
+function commsScreenMock()
+    return Comms.screen("Hi there, stranger.")
+end
+function commsScreenReplyMock()
+    return Comms.reply("Click me", nil)
 end

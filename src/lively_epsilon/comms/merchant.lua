@@ -91,4 +91,4 @@ tradeBuyProduct = function(product)
     end
 end
 
-Comms.defaultMerchant = merchantMenu
+Comms.defaultMerchant = Comms.reply("Merchant", merchantMenu)

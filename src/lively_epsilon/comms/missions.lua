@@ -61,4 +61,4 @@ missionAccept = function(mission)
     end
 end
 
-Comms.defaultMissionBoard = missionsMenu
+Comms.defaultMissionBoard = Comms.reply("Mission Board", missionsMenu)

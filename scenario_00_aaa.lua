@@ -3,6 +3,7 @@
 -- Type: Mission
 
 require "src/lively_epsilon/init.lua"
+require "resources/personNames.lua"
 
 products = {
     o2 = { name = "Oxygen"},
@@ -29,6 +30,13 @@ end
 
 function MyCpuShip(template)
     local ship = CpuShip():setTemplate(template)
+    local _, firstName, lastName = personNames.getName()
+    Ship:withCaptain(ship, Person.byName(firstName .. " " .. lastName))
+
+    Ship:withComms(ship)
+    ship:setHailText(function(self, player)
+        return "Hello " .. player:getCallSign() .. ".\n\nThis is Captain " .. self:getCrewAtPosition("captain"):getFormalName() .. " of " .. self:getCallSign() .. ". How can I help you?"
+    end)
 
     return ship
 end
@@ -90,7 +98,7 @@ function init()
         })
 
         Station:withMissionBroker(station1)
-        station1:addComms("Mission Board", Comms.defaultMissionBoard)
+        station1:addComms(Comms.defaultMissionBoard)
         station1:addMission(herringMission)
         station1:addMission(destructionMission)
 
@@ -103,9 +111,9 @@ function init()
         local stationSolar = MySpaceStation("Medium Station"):setPosition(-5000, 10000):setFaction("Human Navy")
         local stationFabricate = MySpaceStation("Medium Station"):setPosition(0, 10000):setFaction("Human Navy")
         local stationConsume = MySpaceStation("Medium Station"):setPosition(5000, 10000):setFaction("Human Navy")
-        stationSolar:addComms("Merchant", Comms.defaultMerchant)
-        stationFabricate:addComms("Merchant", Comms.defaultMerchant)
-        stationConsume:addComms("Merchant", Comms.defaultMerchant)
+        stationSolar:addComms(Comms.defaultMerchant)
+        stationFabricate:addComms(Comms.defaultMerchant)
+        stationConsume:addComms(Comms.defaultMerchant)
 
         Station:withStorageRooms(stationSolar, {
             [products.power] = 1000
