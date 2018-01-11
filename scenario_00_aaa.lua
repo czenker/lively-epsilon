@@ -4,22 +4,7 @@
 
 require "src/lively_epsilon/init.lua"
 require "resources/personNames.lua"
-
-products = {
-    o2 = { name = "Oxygen"},
-    power = { name = "Power Cells"},
-    waste = { name = "Toxic Waste"},
-    ore = { name = "Ore"},
-    plutoniumOre = { name = "Plutonium Ore"},
-}
-
-for k, v in pairs(products) do
-    v.id = k
-    if not Product.isProduct(v) then
-        error ("Product with id " .. k .. " is not valid.", 2)
-    end
-end
-
+require "resources/products.lua"
 
 function MySpaceStation(template)
     local station = SpaceStation():setTemplate(template)
