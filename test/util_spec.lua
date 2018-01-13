@@ -80,6 +80,29 @@ insulate("Util", function()
             assert.is_true(thing1Seen)
             assert.is_true(thing2Seen)
         end)
+
+        it("allows to filter elements", function()
+            local thing1 = { foo = "bar" }
+            local thing2 = { baz = "bar" }
+            local thing3 = { blu = "bla" }
+
+            local testDummy = {thing1, thing2, thing3 }
+
+            local thing1Seen = false
+            local thing2Seen = false
+            local thing3Seen = false
+
+            for i=1,16,1 do
+                local result = Util.random(testDummy, function(k, v)
+                    return k ~= 3
+                end)
+                if result == thing1 then thing1Seen = true elseif result == thing2 then thing2Seen = true elseif result == thing3 then thing3Seen = true end
+            end
+
+            assert.is_true(thing1Seen)
+            assert.is_true(thing2Seen)
+            assert.is_false(thing3Seen)
+        end)
     end)
 
     describe("randomUuid()", function()

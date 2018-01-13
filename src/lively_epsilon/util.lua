@@ -12,11 +12,19 @@ Util = {
         return isTable(table) and #table == Util.size(table)
     end,
 
-    random = function(table)
+    random = function(table, filterFunc)
         if type(table) == "table" and Util.size(table) > 0 then
             local keys = {}
-            for key, _ in pairs(table) do
-                keys[#keys+1] = key --Store keys in another table
+            for key, value in pairs(table) do
+                local selectItem
+                if isFunction(filterFunc) then
+                    selectItem = filterFunc(key, value)
+                else
+                    selectItem = true
+                end
+                if selectItem == true then
+                    keys[#keys+1] = key --Store keys in another table
+                end
             end
             local index = keys[math.random(1, Util.size(keys))]
             return table[index]
