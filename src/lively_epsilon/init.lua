@@ -19,6 +19,7 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/shipTemplateBased/storage_rooms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/mission_broker.lua",
+    "src/lively_epsilon/domain/trait/shipTemplateBased/tags.lua",
 
     "src/lively_epsilon/domain/station.lua",
     "src/lively_epsilon/domain/trait/station/merchant.lua",
