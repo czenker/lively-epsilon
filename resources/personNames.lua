@@ -303,11 +303,11 @@ Person.newHuman = function()
     local firstName = Util.random(humanFirstNames)
     local lastName = Util.random(humanLastNames)
 
-    return Person.byName(firstName .. " " .. lastName)
+    return Person.byName(firstName .. " " .. lastName, firstName)
 end
 Person.newHumanScientist = function()
     local firstName = Util.random(humanFirstNames)
     local lastName = Util.random(humanLastNamesScientific)
 
-    return Person.byName(firstName .. " " .. lastName)
+    return Person.byName(firstName .. " " .. lastName, firstName)
 end

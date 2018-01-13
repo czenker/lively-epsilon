@@ -1,8 +1,8 @@
 Person = {
-    byName = function(name)
+    byName = function(name, nickName)
         return {
             getFormalName = function() return name end,
-            getNickName = function() return name end,
+            getNickName = function() return nickName or name end,
         }
     end,
 
