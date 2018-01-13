@@ -1,4 +1,4 @@
-insulate("Station", function()
+insulate("ShipTemplateBased", function()
     require "lively_epsilon"
     require "test.mocks"
 
