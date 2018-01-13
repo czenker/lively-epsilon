@@ -5,6 +5,7 @@ ShipTemplateBased.withTags = function (self, spaceObject, ...)
     if not isEeShipTemplateBased(spaceObject) then
         error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2)
     end
+    arg = arg or {}
 
     local tags = {}
 
