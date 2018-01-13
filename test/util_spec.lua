@@ -105,6 +105,46 @@ insulate("Util", function()
         end)
     end)
 
+    describe("randomSort()", function()
+        it("randomly sorts a numeric list", function()
+            local input = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+            local output = Util.randomSort(input)
+
+            assert.is_table(output)
+            assert.is_same(16, Util.size(output))
+            assert.contains_value(8, output)
+            assert.is_true(Util.isNumericTable(output))
+            assert.not_same(input, output)
+        end)
+        it("returns different results each time in a numeric list", function()
+            local input = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+            local output1 = Util.randomSort(input)
+            local output2 = Util.randomSort(input)
+
+            assert.not_same(output1, output2)
+        end)
+        it("randomly sorts a named list", function()
+            local input = {a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10, k=11, l=12, m=13, n=14, o=15, p=16}
+            local output = Util.randomSort(input)
+
+            assert.is_table(output)
+            assert.is_same(16, Util.size(output))
+            assert.contains_value(8, output)
+            assert.is_true(Util.isNumericTable(output))
+            assert.not_same(input, output)
+        end)
+        it("returns different results each time in a numeric list", function()
+            local input = {a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10, k=11, l=12, m=13, n=14, o=15, p=16}
+            local output1 = Util.randomSort(input)
+            local output2 = Util.randomSort(input)
+
+            assert.not_same(output1, output2)
+        end)
+        it("fails if no table is given", function()
+            assert.has_error(function() Util.randomSort() end)
+        end)
+    end)
+
     describe("randomUuid()", function()
         it("should return a 16 digit hex", function()
             local uuid = Util.randomUuid()

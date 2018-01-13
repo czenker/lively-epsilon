@@ -57,6 +57,22 @@ Util = {
         return string
     end,
 
+    randomSort = function(input)
+        if not isTable(input) then error("Expected a table, but got " .. type(input), 2) end
+        local copy = {}
+        local idx = 1
+        for _, v in pairs(input) do
+            copy[idx] = v
+            idx = idx + 1
+        end
+        local length = Util.size(copy)
+        for i = length, 2, -1 do
+            local j = math.random(1, i)
+            copy[i], copy[j] = copy[j], copy[i]
+        end
+        return copy
+    end,
+
     vectorFromAngle = function(angle, length)
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,

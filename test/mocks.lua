@@ -92,3 +92,9 @@ end
 function commsScreenReplyMock()
     return Comms.reply("Click me", nil)
 end
+
+function narrativeMock(name)
+    return {
+        name = name or Util.randomUuid()
+    }
+end

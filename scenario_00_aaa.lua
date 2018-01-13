@@ -5,6 +5,7 @@
 require "src/lively_epsilon/init.lua"
 require "resources/personNames.lua"
 require "resources/products.lua"
+require "resources/narratives.lua"
 
 function MySpaceStation(template)
     local station = SpaceStation():setTemplate(template)
@@ -220,13 +221,14 @@ function init()
         setCirclePos(station3, 0, -30000, 210, 20000)
         setCirclePos(station4, 0, -30000, 300, 20000)
 
-        Cron.regular("universe_travel", function()
-            local source = Util.random({station1, station2, station3, station4})
-            local destination = Util.random({station1, station2, station3, station4})
+        MyNarrative:addStation(station1)
+        MyNarrative:addStation(station2)
+        MyNarrative:addStation(station3)
+        MyNarrative:addStation(station4)
 
-            if source ~= destination then
-                narrative(source, destination)
-            end
+        Cron.regular("universe_travel", function()
+            local n = MyNarrative:findOne()
+            if not isNil(n) then Narrative:run(n) end
         end, 30)
 
         removeGMFunction("Test Patrol")
@@ -237,80 +239,56 @@ function update(delta)
     Cron.tick(delta)
 end
 
--- boiler plate code – this will be improved
-local narratives = {
+MyNarrative = Narrative:newRepository()
 
-    -- shipping cargo
-    function(fromStation, toStation)
-        local cargoList = {
-            "birthday supplies",
-            "wedding cake",
-            "expensive art pieces",
-            "fine meat",
-            "newspapers",
-            "latest fashion",
-            "medicine",
-            "robots",
-        }
-
-        local ship = MyCpuShip("Goods Freighter " .. math.random(1,5)):setWarpDrive(true):setFaction("Human Navy")
-        Util.spawnAtStation(fromStation, ship)
-        local cargo = Util.random(cargoList)
-
-        Ship:patrol(ship, {
-            {
-                target = toStation,
-                onHeading = function()
-                    ship:setDescription("This ship brings " .. cargo .. " to " .. toStation:getCallSign() .. ".")
-                end,
-                onArrival = function()
-                    ship:destroy()
-                end
-            }
-        })
-    end,
-    -- transporting people
-    function(fromStation, toStation)
-        local passengerList = {
-            {"party goers", "concert"},
-            {"party goers", "night club"},
-            {"students", "spring break celebration"},
-            {"rich kids", "casino"},
-            {"families", "vacation resort"},
-            {"families", "christmas celebration"},
-            {"laborers", "construction side"},
-            {"politicians", "debate"},
-        }
-
-        local i = math.random(1,5)
-        local ship = MyCpuShip("Personnel Freighter " .. i):setWarpDrive(true):setFaction("Human Navy")
-        Util.spawnAtStation(fromStation, ship)
-        local passengers = Util.random(passengerList)
-        local number = math.random(1, 5) * (i-1) + math.random(1,5)
-
-        Ship:patrol(ship, {
-            {
-                target = toStation,
-                onHeading = function()
-                    ship:setDescription(
-                        "There are " ..
-                                number ..
-                                " " ..
-                                passengers[1] ..
-                                " on board going to a " ..
-                                passengers[2] ..
-                                " on " ..
-                                toStation:getCallSign() ..
-                                ".")
-                end,
-                onArrival = function()
-                    ship:destroy()
-                end
-            }
-        })
-    end,
+local cargoList = {
+    "birthday supplies",
+    "wedding cake",
+    "expensive art pieces",
+    "fine meat",
+    "newspapers",
+    "latest fashion",
+    "medicine",
+    "robots",
 }
 
-function narrative(fromStation, toStation)
-    return Util.random(narratives)(fromStation, toStation)
-end
+local passengerList = {
+    { "party goers", "concert" },
+    { "party goers", "night club" },
+    { "students", "spring break celebration" },
+    { "rich kids", "casino" },
+    { "families", "vacation resort" },
+    { "families", "christmas celebration" },
+    { "laborers", "construction side" },
+    { "politicians", "debate" },
+}
+
+MyNarrative:addNarrative({
+    name = "Shipping cargo",
+    onCreation = function(ship, from, to)
+        local cargo = Util.random(cargoList)
+
+        ship:setTemplate("Goods Freighter " .. math.random(1, 5)):setWarpDrive(true)
+        ship:setDescription("This ship brings " .. cargo .. " to " .. to:getCallSign() .. ".")
+    end
+})
+
+MyNarrative:addNarrative({
+    name = "Transporting people",
+    onCreation = function(ship, from, to)
+        local i = math.random(1, 5)
+        local number = math.random(1, 5) * (i - 1) + math.random(1, 5)
+        local passengers = Util.random(passengerList)
+
+        ship:setTemplate("Goods Freighter " .. i):setWarpDrive(true)
+        ship:setDescription("There are " ..
+                number ..
+                " " ..
+                passengers[1] ..
+                " on board going to a " ..
+                passengers[2] ..
+                " on " ..
+                to:getCallSign() ..
+                ".")
+    end
+})
