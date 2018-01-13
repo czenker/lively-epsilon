@@ -236,4 +236,30 @@ insulate("Util", function()
             assert.equal(Util.mkString(table, ", "), "one, two, three")
         end)
     end)
+
+    describe("mergeTables()", function()
+        it("returns a new table where all items and from the second are present", function()
+            local a = {a = 1, b = 2}
+            local b = {c = 3, d = 4}
+
+            local merged = Util.mergeTables(a, b)
+            assert.is_same({a = 1, b = 2, c = 3, d = 4}, merged)
+            -- ensure the original tables are not overridden
+            assert.not_same(a, merged)
+            assert.not_same(b, merged)
+        end)
+        it("the second table overrides the first one", function()
+            local a = {a = 1, b = 2}
+            local b = {b = 3, c = 4}
+
+            local merged = Util.mergeTables(a, b)
+            assert.is_same({a = 1, b = 3, c = 4}, merged)
+        end)
+        it("fails if the first argument is not a table", function()
+            assert.has_error(function() Util.mergeTables(42, {a = 1}) end)
+        end)
+        it("fails if the second argument is not a table", function()
+            assert.has_error(function() Util.mergeTables({a = 1}, 42) end)
+        end)
+    end)
 end)

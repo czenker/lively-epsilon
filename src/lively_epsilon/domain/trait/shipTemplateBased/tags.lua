@@ -39,6 +39,7 @@ ShipTemplateBased.withTags = function (self, spaceObject, ...)
         end
     end
 
+
     for _,tag in ipairs(arg) do
         spaceObject:addTag(tag)
     end

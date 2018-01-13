@@ -73,6 +73,17 @@ Util = {
         return copy
     end,
 
+    mergeTables = function(a, b)
+        local ret = {}
+        for k,v in pairs(b) do
+            ret[k] = v
+        end
+        for k,v in pairs(a) do
+            if ret[k] == nil then ret[k] = v end
+        end
+        return ret
+    end,
+
     vectorFromAngle = function(angle, length)
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,

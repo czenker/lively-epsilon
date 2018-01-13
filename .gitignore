@@ -8,4 +8,4 @@
 !/src/**/*.lua
 !/example/**/*.lua
 !/test/**/*.lua
-!/resources/*.lua
+!/resources/**/*.lua
