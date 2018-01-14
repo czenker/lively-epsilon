@@ -73,13 +73,14 @@ Util = {
         return copy
     end,
 
-    mergeTables = function(a, b)
+    -- merges multiple tables together where later tables take precedence
+    mergeTables = function(...)
+        local args = {...}
         local ret = {}
-        for k,v in pairs(b) do
-            ret[k] = v
-        end
-        for k,v in pairs(a) do
-            if ret[k] == nil then ret[k] = v end
+        for i=1,#args do
+            for k,v in pairs(args[i]) do
+                ret[k] = v
+            end
         end
         return ret
     end,

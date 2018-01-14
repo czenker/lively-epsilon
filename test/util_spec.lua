@@ -255,6 +255,18 @@ insulate("Util", function()
             local merged = Util.mergeTables(a, b)
             assert.is_same({a = 1, b = 3, c = 4}, merged)
         end)
+        it("can merge three tables", function()
+            local a = {a = 1, b = 2}
+            local b = {b = 3, c = 4}
+            local c = {c = 5, d = 6}
+
+            local merged = Util.mergeTables(a, b, c)
+            assert.is_same({a = 1, b = 3, c = 5, d = 6}, merged)
+            -- ensure the original tables are not overridden
+            assert.not_same(a, merged)
+            assert.not_same(b, merged)
+            assert.not_same(c, merged)
+        end)
         it("fails if the first argument is not a table", function()
             assert.has_error(function() Util.mergeTables(42, {a = 1}) end)
         end)
