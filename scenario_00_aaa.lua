@@ -5,7 +5,6 @@
 require "src/lively_epsilon/init.lua"
 require "resources/personNames.lua"
 require "resources/products.lua"
-require "resources/narratives.lua"
 
 function MySpaceStation(station)
     station = station or SpaceStation()
