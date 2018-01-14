@@ -14,9 +14,7 @@ Player.withStorageDisplay = function(self, player)
 
     player:addCustomButton(crewPosition, buttonId, buttonLabel, function()
         local products = player:getStoredProducts()
-        local text = buttonLabel .. "\n\n"
-
-        text = text .. "Storage used: " .. player:getStorageSpace() .. "/" .. player:getMaxStorageSpace() .. "\n\n"
+        local text = "Storage used: " .. player:getStorageSpace() .. "/" .. player:getMaxStorageSpace() .. "\n\n"
 
         if Util.size(products) == 0 then
             text = text .. "Your storage is empty."

@@ -107,6 +107,75 @@ insulate("Player", function()
             assert.is_same(85, player:getMaxProductStorage(product3))
             assert.is_same(85, player:getEmptyProductStorage(product3))
         end)
+        it("works correctly with sized products", function()
+            local product1 = productMock()
+            local product2 = productMock()
+            local product3 = productMock()
+            product1.getSize = function() return 1 end
+            product2.getSize = function() return 2 end
+            product3.getSize = function() return 4 end
+
+            local player = eePlayerMock()
+            Player:withStorage(player, {maxStorage = 100})
+
+            assert.is_same(0, player:getProductStorage(product1))
+            assert.is_same(100, player:getMaxProductStorage(product1))
+            assert.is_same(100, player:getEmptyProductStorage(product1))
+            assert.is_same(0, player:getProductStorage(product2))
+            assert.is_same(50, player:getMaxProductStorage(product2))
+            assert.is_same(50, player:getEmptyProductStorage(product2))
+            assert.is_same(0, player:getProductStorage(product3))
+            assert.is_same(25, player:getMaxProductStorage(product3))
+            assert.is_same(25, player:getEmptyProductStorage(product3))
+
+            player:modifyProductStorage(product1, 10)
+
+            assert.is_same(10, player:getProductStorage(product1))
+            assert.is_same(100, player:getMaxProductStorage(product1))
+            assert.is_same(90, player:getEmptyProductStorage(product1))
+            assert.is_same(0, player:getProductStorage(product2))
+            assert.is_same(45, player:getMaxProductStorage(product2))
+            assert.is_same(45, player:getEmptyProductStorage(product2))
+            assert.is_same(0, player:getProductStorage(product3))
+            assert.is_same(22, player:getMaxProductStorage(product3))
+            assert.is_same(22, player:getEmptyProductStorage(product3))
+
+            player:modifyProductStorage(product2, 10)
+
+            assert.is_same(10, player:getProductStorage(product1))
+            assert.is_same(80, player:getMaxProductStorage(product1))
+            assert.is_same(70, player:getEmptyProductStorage(product1))
+            assert.is_same(10, player:getProductStorage(product2))
+            assert.is_same(45, player:getMaxProductStorage(product2))
+            assert.is_same(35, player:getEmptyProductStorage(product2))
+            assert.is_same(0, player:getProductStorage(product3))
+            assert.is_same(17, player:getMaxProductStorage(product3))
+            assert.is_same(17, player:getEmptyProductStorage(product3))
+
+            player:modifyProductStorage(product2, -5)
+
+            assert.is_same(10, player:getProductStorage(product1))
+            assert.is_same(90, player:getMaxProductStorage(product1))
+            assert.is_same(80, player:getEmptyProductStorage(product1))
+            assert.is_same(5, player:getProductStorage(product2))
+            assert.is_same(45, player:getMaxProductStorage(product2))
+            assert.is_same(40, player:getEmptyProductStorage(product2))
+            assert.is_same(0, player:getProductStorage(product3))
+            assert.is_same(20, player:getMaxProductStorage(product3))
+            assert.is_same(20, player:getEmptyProductStorage(product3))
+
+            player:modifyProductStorage(product3, 5)
+
+            assert.is_same(10, player:getProductStorage(product1))
+            assert.is_same(70, player:getMaxProductStorage(product1))
+            assert.is_same(60, player:getEmptyProductStorage(product1))
+            assert.is_same(5, player:getProductStorage(product2))
+            assert.is_same(35, player:getMaxProductStorage(product2))
+            assert.is_same(30, player:getEmptyProductStorage(product2))
+            assert.is_same(5, player:getProductStorage(product3))
+            assert.is_same(20, player:getMaxProductStorage(product3))
+            assert.is_same(15, player:getEmptyProductStorage(product3))
+        end)
         it("they fail when called without argument", function()
             local player = eePlayerMock()
             Player:withStorage(player)
@@ -143,6 +212,45 @@ insulate("Player", function()
             assert.is_same(15, player:getStorageSpace())
             assert.is_same(100, player:getMaxStorageSpace())
             assert.is_same(85, player:getEmptyStorageSpace())
+        end)
+        it("returns the correct values for sized products", function()
+            local product1 = productMock()
+            local product2 = productMock()
+            local product3 = productMock()
+            product1.getSize = function() return 1 end
+            product2.getSize = function() return 2 end
+            product3.getSize = function() return 4 end
+
+            local player = eePlayerMock()
+            Player:withStorage(player, {maxStorage = 100})
+
+            assert.is_same(0, player:getStorageSpace())
+            assert.is_same(100, player:getMaxStorageSpace())
+            assert.is_same(100, player:getEmptyStorageSpace())
+
+            player:modifyProductStorage(product1, 10)
+
+            assert.is_same(10, player:getStorageSpace())
+            assert.is_same(100, player:getMaxStorageSpace())
+            assert.is_same(90, player:getEmptyStorageSpace())
+
+            player:modifyProductStorage(product2, 10)
+
+            assert.is_same(30, player:getStorageSpace())
+            assert.is_same(100, player:getMaxStorageSpace())
+            assert.is_same(70, player:getEmptyStorageSpace())
+
+            player:modifyProductStorage(product2, -5)
+
+            assert.is_same(20, player:getStorageSpace())
+            assert.is_same(100, player:getMaxStorageSpace())
+            assert.is_same(80, player:getEmptyStorageSpace())
+
+            player:modifyProductStorage(product3, 5)
+
+            assert.is_same(40, player:getStorageSpace())
+            assert.is_same(100, player:getMaxStorageSpace())
+            assert.is_same(60, player:getEmptyStorageSpace())
         end)
     end)
 

@@ -34,13 +34,13 @@ Player.withStorage = function(self, player, config)
     player.getMaxProductStorage = function(self, product)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
 
-        return math.min(self:getEmptyStorageSpace() + self:getProductStorage(product), maxStorage)
+        return math.min(self:getEmptyProductStorage(product) + self:getProductStorage(product), maxStorage)
     end
 
     player.getEmptyProductStorage = function(self, product)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
 
-        return self:getEmptyStorageSpace()
+        return math.floor(self:getEmptyStorageSpace() / product:getSize())
     end
 
     player.modifyProductStorage = function(self, product, amount)
@@ -54,7 +54,7 @@ Player.withStorage = function(self, player, config)
     player.getEmptyStorageSpace = function(self)
         local free = maxStorage
         for product, amount in pairs(storage) do
-            free = free - amount
+            free = free - amount * product.getSize()
         end
         return math.max(free, 0)
     end
@@ -70,7 +70,7 @@ Player.withStorage = function(self, player, config)
     player.getStorageSpace = function(self)
         local sum = 0
         for product, amount in pairs(storage) do
-            sum = sum + amount
+            sum = sum + amount * product.getSize()
         end
         return sum
     end

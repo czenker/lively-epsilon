@@ -1,14 +1,37 @@
+local s = 1
+local m = 2
+local l = 4
+local xl = 8
+
 products = {
-    o2 = { name = "Oxygen"},
-    power = { name = "Power Cells"},
-    waste = { name = "Toxic Waste"},
-    ore = { name = "Ore"},
-    plutoniumOre = { name = "Plutonium Ore"},
+    o2 = {
+        name = "Oxygen",
+        size = s,
+    },
+    power = {
+        name = "Power Cells",
+        size = s,
+    },
+    waste = {
+        name = "Toxic Waste",
+        size = m,
+    },
+    ore = {
+        name = "Ore",
+        size = m,
+    },
+    plutoniumOre = {
+        name = "Plutonium Ore",
+        size = l,
+    },
 }
 
 -- add id to object
 for k, v in pairs(products) do
-    products[k] = Product:new(v.name, k)
+    products[k] = Product:new(v.name, {
+        id = k,
+        size = v.size,
+    })
 end
 
 -- validate

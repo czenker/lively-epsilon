@@ -3,7 +3,7 @@ insulate("ShipTemplateBased", function()
     require "test.mocks"
 
     describe("withStorageRooms()", function()
-        local product = Product:new("Power Cells", "power")
+        local product = Product:new("Power Cells", {id="power"})
         local station = eeStationMock()
 
         Station:withStorageRooms(station, {
@@ -39,7 +39,7 @@ insulate("ShipTemplateBased", function()
             end)
 
             it("should return false if the product was not configured", function()
-                assert.is_false(station:canStoreProduct(Product:new("Test Mock", "foo")))
+                assert.is_false(station:canStoreProduct(Product:new("Test Mock", {id="foo"})))
             end)
 
         end)

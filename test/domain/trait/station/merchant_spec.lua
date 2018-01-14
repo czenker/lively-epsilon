@@ -3,7 +3,7 @@ insulate("Station", function()
     require "test.mocks"
 
     describe("withMerchant()", function()
-        local product = Product:new("Power Cells", "power")
+        local product = Product:new("Power Cells", {id="power"})
 
         describe("when configuring a bought product", function()
             local station = eeStationMock()

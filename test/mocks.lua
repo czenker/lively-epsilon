@@ -101,5 +101,5 @@ end
 
 function productMock()
     local id = Util.randomUuid()
-    return Product:new(id, id)
+    return Product:new(id, {id = id})
 end
