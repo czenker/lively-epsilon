@@ -45,11 +45,9 @@ GlobalNarrative:addNarrative({
             "is carrying",
         }) .. " " .. amountLabel .. " to " .. Util.random({
             to:getCallSign(),
-            "station in sector " .. to:getSectorName()
+            "a station in sector " .. to:getSectorName()
         }) .. "."
 
-        ship:setDescription(description):setScanned(false)
-
-        ship:setHailText()
+        ship:setDescription(description)
     end
 })
