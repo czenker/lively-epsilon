@@ -107,6 +107,14 @@ insulate("Player", function()
             assert.is_same(85, player:getMaxProductStorage(product3))
             assert.is_same(85, player:getEmptyProductStorage(product3))
         end)
+        it("they fail when called without argument", function()
+            local player = eePlayerMock()
+            Player:withStorage(player)
+
+            assert.has_error(function() player:getProductStorage() end)
+            assert.has_error(function() player:getMaxProductStorage() end)
+            assert.has_error(function() player:getEmptyProductStorage() end)
+        end)
     end)
 
     describe("getStorageSpace(), getEmptyStorageSpace(), getMaxStorageSpace()", function()
@@ -191,6 +199,20 @@ insulate("Player", function()
             assert.is_same(0, player:getProductStorage(product2))
             assert.is_same(100, player:getMaxProductStorage(product2))
             assert.is_same(100, player:getEmptyProductStorage(product2))
+        end)
+
+        it("fails if no product is given", function()
+            local player = eePlayerMock()
+            Player:withStorage(player)
+
+            assert.has_error(function() player:modifyProductStorage(nil, 10) end)
+        end)
+
+        it("fails if no amount is given", function()
+            local player = eePlayerMock()
+            Player:withStorage(player)
+
+            assert.has_error(function() player:modifyProductStorage(product1, nil) end)
         end)
     end)
 

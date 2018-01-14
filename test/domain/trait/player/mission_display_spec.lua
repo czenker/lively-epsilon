@@ -15,7 +15,7 @@ insulate("Player", function()
             assert.has_error(function() Player:withMissionDisplay(42) end)
         end)
 
-        it("fails if the first argument is a player without MissionTracker is not a player", function()
+        it("fails if the first argument is a player without storage", function()
             assert.has_error(function() Player:withMissionDisplay(eePlayerMock()) end)
         end)
 

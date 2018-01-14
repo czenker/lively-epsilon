@@ -23,6 +23,7 @@ Player.withStorage = function(self, player, config)
     end
 
     player.getProductStorage = function(self, product)
+        if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
         if storage[product] == nil then
             return 0
         else
@@ -31,14 +32,21 @@ Player.withStorage = function(self, player, config)
     end
 
     player.getMaxProductStorage = function(self, product)
+        if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
+
         return math.min(self:getEmptyStorageSpace() + self:getProductStorage(product), maxStorage)
     end
 
     player.getEmptyProductStorage = function(self, product)
+        if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
+
         return self:getEmptyStorageSpace()
     end
 
     player.modifyProductStorage = function(self, product, amount)
+        if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
+        if not isNumber(amount) then error("Expected a number, but got " .. type(amount)) end
+
         storage[product] = (storage[product] or 0) + amount
         if storage[product] <= 0 then storage[product] = nil end
     end

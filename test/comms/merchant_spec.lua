@@ -8,8 +8,10 @@ insulate("Comms", function()
         mainScreen = function() end,
         buyScreen = function() end,
         buyProductScreen = function() end,
+        buyProductConfirmScreen = function() end,
         sellScreen = function() end,
         sellProductScreen = function() end,
+        sellProductConfirmScreen = function() end,
     }
 
     describe("merchantFactory()", function()

@@ -6,14 +6,18 @@ Comms.merchantFactory = function(self, config)
     if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. type(config.mainScreen), 2) end
     if not isFunction(config.buyScreen) then error("expected buyScreen to be a function, but got " .. type(config.buyScreen), 2) end
     if not isFunction(config.buyProductScreen) then error("expected buyProductScreen to be a function, but got " .. type(config.buyProductScreen), 2) end
+    if not isFunction(config.buyProductConfirmScreen) then error("expected buyProductConfirmScreen to be a function, but got " .. type(config.buyProductConfirmScreen), 2) end
     if not isFunction(config.sellScreen) then error("expected sellScreen to be a function, but got " .. type(config.sellScreen), 2) end
     if not isFunction(config.sellProductScreen) then error("expected sellProductScreen to be a function, but got " .. type(config.sellProductScreen), 2) end
+    if not isFunction(config.sellProductConfirmScreen) then error("expected sellProductConfirmScreen to be a function, but got " .. type(config.sellProductConfirmScreen), 2) end
 
     local mainMenu
     local buyMenu
     local buyProductMenu
+    local buyProductConfirmMenu
     local sellMenu
     local sellProductMenu
+    local sellProductConfirmMenu
 
     local defaultCallbackConfig
 
@@ -21,9 +25,16 @@ Comms.merchantFactory = function(self, config)
         return {
             product = product,
             price = station:getProductBuyingPrice(product),
-            maxAmount = station:getMaxProductBuying(product),
+            stationAmount = station:getMaxProductBuying(product),
+            playerAmount = player:getProductStorage(product),
+            maxTradableAmount = math.min(
+                station:getMaxProductBuying(product),
+                player:getProductStorage(product)
+            ),
+            isDocked = player:isDocked(station),
             link = buyProductMenu(product),
-            linkAmount = function(amount) buyProductMenu(product, amount) end,
+            linkAmount = function(amount) return buyProductMenu(product, amount) end,
+            linkConfirm = function(amount) return buyProductConfirmMenu(product, amount) end,
         }
     end
 
@@ -36,12 +47,22 @@ Comms.merchantFactory = function(self, config)
     end
 
     local formatSoldProduct = function(product, station, player)
+        local affordableAmount = math.floor(player:getReputationPoints() / station:getProductSellingPrice(product))
         return {
             product = product,
             price = station:getProductSellingPrice(product),
-            maxAmount = station:getMaxProductSelling(product),
+            stationAmount = station:getMaxProductSelling(product),
+            playerAmount = player:getEmptyProductStorage(product),
+            affordableAmount = affordableAmount,
+            maxTradableAmount = math.min(
+                station:getMaxProductSelling(product),
+                player:getEmptyProductStorage(product),
+                affordableAmount
+            ),
+            isDocked = player:isDocked(station),
             link = sellProductMenu(product),
-            linkAmount = function(amount) sellProductMenu(product, amount) end,
+            linkAmount = function(amount) return sellProductMenu(product, amount) end,
+            linkConfirm = function(amount) return sellProductConfirmMenu(product, amount) end,
         }
     end
 
@@ -74,11 +95,44 @@ Comms.merchantFactory = function(self, config)
         amount = amount or 0
         return function(comms_target, comms_source)
             local screen = Comms.screen()
+            local info = formatBoughtProduct(product, comms_target, comms_source)
             config.buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
-                formatBoughtProduct(product, comms_target, comms_source),
-                {amount = amount}
+                info,
+                {
+                    amount = amount,
+                    cost = amount * info.price,
+                }
             ))
+            return screen
+        end
+    end
+
+    buyProductConfirmMenu = function(product, amount)
+        return function(comms_target, comms_source)
+            local screen = Comms.screen()
+            local info = formatBoughtProduct(product, comms_target, comms_source)
+            amount = math.min(
+                amount or 9999,
+                info.stationAmount,
+                info.playerAmount
+            )
+            local success = config.buyProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+                defaultCallbackConfig,
+                info,
+                {
+                    amount = amount,
+                    cost = amount * info.price,
+                }
+            ))
+            if success == nil then
+                logWarning("buyProductConfirmScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
+            end
+            if success == true or success == nil then
+                comms_source:modifyProductStorage(product, -1 * amount)
+                comms_target:modifyProductStorage(product, 1 * amount)
+                comms_source:addReputationPoints(amount * info.price)
+            end
             return screen
         end
     end
@@ -95,11 +149,45 @@ Comms.merchantFactory = function(self, config)
         amount = amount or 0
         return function(comms_target, comms_source)
             local screen = Comms.screen()
+            local info = formatSoldProduct(product, comms_target, comms_source)
             config.sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
-                formatSoldProduct(product, comms_target, comms_source),
-                {amount = amount}
+                info,
+                {
+                    amount = amount,
+                    cost = amount * info.price,
+                }
             ))
+            return screen
+        end
+    end
+
+    sellProductConfirmMenu = function(product, amount)
+        return function(comms_target, comms_source)
+            local screen = Comms.screen()
+            local info = formatSoldProduct(product, comms_target, comms_source)
+            amount = math.min(
+                amount or 9999,
+                info.stationAmount,
+                info.playerAmount,
+                info.affordableAmount
+            )
+            local success = config.sellProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+                defaultCallbackConfig,
+                info,
+                {
+                    amount = amount,
+                    cost = amount * info.price,
+                }
+            ))
+            if success == nil then
+                logWarning("sellProductConfirmScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
+            end
+            if success == true or success == nil then
+                comms_source:modifyProductStorage(product, 1 * amount)
+                comms_target:modifyProductStorage(product, -1 * amount)
+                comms_source:takeReputationPoints(amount * info.price)
+            end
             return screen
         end
     end
@@ -113,7 +201,7 @@ Comms.merchantFactory = function(self, config)
     }
 
     return Comms.reply(config.label, mainMenu, function(comms_target, comms_source)
-        if not Station:hasMerchant(comms_target) then
+        if not Station:hasMerchant(comms_target) or not Player:hasStorage(comms_source) then
             logInfo("not displaying merchant in Comms, because target has no merchant.")
             return false
         end

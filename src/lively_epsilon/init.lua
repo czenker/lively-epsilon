@@ -42,6 +42,7 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/player/mission_tracker.lua",
     "src/lively_epsilon/domain/trait/player/mission_display.lua",
     "src/lively_epsilon/domain/trait/player/storage.lua",
+    "src/lively_epsilon/domain/trait/player/storage_display.lua",
 
     "src/lively_epsilon/chit_chat.lua",
 
