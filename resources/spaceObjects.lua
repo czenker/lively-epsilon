@@ -1,5 +1,6 @@
 require("resources/comms/human_command.lua")
 require("resources/comms/human_merchant.lua")
+require("resources/comms/human_mission_broker.lua")
 require("resources/comms/human_hail.lua")
 
 function MySpaceStation(station)
@@ -8,6 +9,7 @@ function MySpaceStation(station)
     Station:withComms(station)
     station:setHailText(humanStationHail)
     station:addComms(humanMerchantComms)
+    station:addComms(humanMissionBrokerComms)
 
     Station:withTags(station)
 

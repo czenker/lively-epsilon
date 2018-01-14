@@ -6,6 +6,7 @@ require "src/lively_epsilon/init.lua"
 require "resources/personNames.lua"
 require "resources/products.lua"
 require "resources/comms/human_merchant.lua"
+require "resources/comms/human_mission_broker.lua"
 
 function MySpaceStation(station)
     station = station or SpaceStation()
@@ -84,7 +85,7 @@ function init()
         })
 
         Station:withMissionBroker(station1)
-        station1:addComms(Comms.defaultMissionBoard)
+        station1:addComms(humanMissionBrokerComms)
         station1:addMission(herringMission)
         station1:addMission(destructionMission)
 
