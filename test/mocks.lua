@@ -98,3 +98,8 @@ function narrativeMock(name)
         name = name or Util.randomUuid()
     }
 end
+
+function productMock()
+    local id = Util.randomUuid()
+    return Product:new(id, id)
+end
