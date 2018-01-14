@@ -12,3 +12,7 @@ Person = {
                 isFunction(thing.getNickName)
     end,
 }
+
+setmetatable(Person,{
+    __index = Generic
+})

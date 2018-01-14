@@ -16,10 +16,12 @@ local myPackages = {
     "src/lively_epsilon/domain/person.lua",
     "src/lively_epsilon/domain/player.lua",
 
+    "src/lively_epsilon/domain/trait/generic/tags.lua",
+
+    "src/lively_epsilon/domain/ship_template_based.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/storage_rooms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/mission_broker.lua",
-    "src/lively_epsilon/domain/trait/shipTemplateBased/tags.lua",
 
     "src/lively_epsilon/domain/station.lua",
     "src/lively_epsilon/domain/trait/station/merchant.lua",

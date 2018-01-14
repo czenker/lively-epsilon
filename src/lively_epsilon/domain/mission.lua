@@ -99,3 +99,6 @@ Mission.isMission = function(mission)
             isFunction(mission.getState)
 end
 
+setmetatable(Mission,{
+    __index = Generic
+})

@@ -31,3 +31,7 @@ Product = {
                 isFunction(thing.getName)
     end
 }
+
+setmetatable(Product,{
+    __index = Generic
+})
