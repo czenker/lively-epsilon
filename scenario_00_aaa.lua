@@ -5,6 +5,7 @@
 require "src/lively_epsilon/init.lua"
 require "resources/personNames.lua"
 require "resources/products.lua"
+require "resources/comms/human_merchant.lua"
 
 function MySpaceStation(station)
     station = station or SpaceStation()
@@ -96,9 +97,9 @@ function init()
         local stationSolar = MySpaceStation():setTemplate("Medium Station"):setPosition(-5000, 10000):setFaction("Human Navy")
         local stationFabricate = MySpaceStation():setTemplate("Medium Station"):setPosition(0, 10000):setFaction("Human Navy")
         local stationConsume = MySpaceStation():setTemplate("Medium Station"):setPosition(5000, 10000):setFaction("Human Navy")
-        stationSolar:addComms(Comms.defaultMerchant)
-        stationFabricate:addComms(Comms.defaultMerchant)
-        stationConsume:addComms(Comms.defaultMerchant)
+        stationSolar:addComms(humanMerchantComms)
+        stationFabricate:addComms(humanMerchantComms)
+        stationConsume:addComms(humanMerchantComms)
 
         Station:withStorageRooms(stationSolar, {
             [products.power] = 1000
