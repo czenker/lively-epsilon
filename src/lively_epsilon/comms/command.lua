@@ -25,7 +25,7 @@ Comms.commandFactory = function(self, config)
     -- the main screen
     commandMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config.commandScreen(screen, comms_target, comms_source, defaultCallbackConfig)
+        config:commandScreen(screen, comms_target, comms_source, defaultCallbackConfig)
         return screen
     end
 
@@ -54,7 +54,7 @@ Comms.commandFactory = function(self, config)
             end
         end
 
-        config.defendScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:defendScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             targets = targets,
         }))
         return screen
@@ -63,7 +63,7 @@ Comms.commandFactory = function(self, config)
     defendConfirmMenu = function(target)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config.defendConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
+            local success = config:defendConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
 
             if success == nil then
                 logWarning("defendConfirmScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
@@ -93,7 +93,7 @@ Comms.commandFactory = function(self, config)
             end
         end
 
-        config.attackScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:attackScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             targets = targets,
         }))
         return screen
@@ -102,7 +102,7 @@ Comms.commandFactory = function(self, config)
     attackConfirmMenu = function(target)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config.attackConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
+            local success = config:attackConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
 
             if success == nil then
                 logWarning("attackConfirmScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
@@ -142,7 +142,7 @@ Comms.commandFactory = function(self, config)
             end
         end
 
-        config.navigationScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:navigationScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             targets = targets,
         }))
         return screen
@@ -152,7 +152,7 @@ Comms.commandFactory = function(self, config)
     navigationConfirmMenu = function(target)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config.navigationConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
+            local success = config:navigationConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, target))
 
             if success == nil then
                 logWarning("navigationScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")

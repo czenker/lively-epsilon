@@ -6,7 +6,7 @@ humanMerchantComms = Comms:merchantFactory({
     label = "Merchant",
 
     -- the initial screen that the player sees
-    mainScreen = function(screen, comms_target, comms_source, config)
+    mainScreen = function(self, screen, comms_target, comms_source, config)
         --
         -- We sell...
         --
@@ -37,7 +37,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- the screen the player sees when they say they want to buy something
-    buyScreen = function(screen, comms_target, comms_source, config)
+    buyScreen = function(self, screen, comms_target, comms_source, config)
         if Util.size(config.buying) > 0 then
             screen:addText("We buy:\n")
             for _, bought in pairs(config.buying) do
@@ -51,7 +51,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- the screen the player sees when they selected a product they want to buy
-    buyProductScreen = function(screen, comms_target, comms_source, config)
+    buyProductScreen = function(self, screen, comms_target, comms_source, config)
         local product = config.product
         if config.stationAmount == 0 then
             screen:addText(f("We are not in demand of %s at the moment.", product:getName()))
@@ -82,7 +82,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- here is the place to thank the player for their offer
-    buyProductConfirmScreen = function(screen, comms_target, comms_source, config)
+    buyProductConfirmScreen = function(self, screen, comms_target, comms_source, config)
         local product = config.product
         screen:addText(f("Glad to make business with you. We received the %s and send you the payment of %0.2fRP.", product:getName(), config.cost))
         screen:withReply(Comms.reply("See you", config.linkToMainScreen))
@@ -91,7 +91,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- the screen the player sees when they say they want to sell something
-    sellScreen = function(screen, comms_target, comms_source, config)
+    sellScreen = function(self, screen, comms_target, comms_source, config)
         if Util.size(config.selling) > 0 then
             screen:addText("We sell:\n")
             for _, sold in pairs(config.selling) do
@@ -105,7 +105,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- the screen the player sees when they selected a product they want to sell
-    sellProductScreen = function(screen, comms_target, comms_source, config)
+    sellProductScreen = function(self, screen, comms_target, comms_source, config)
         local product = config.product
         if config.stationAmount == 0 then
             screen:addText(f("We are short of supplies, so we can't sell %s at the moment.", product:getName()))
@@ -138,7 +138,7 @@ humanMerchantComms = Comms:merchantFactory({
     end,
 
     -- here is the place to thank the player for their purchase
-    sellProductConfirmScreen = function(screen, comms_target, comms_source, config)
+    sellProductConfirmScreen = function(self, screen, comms_target, comms_source, config)
         local product = config.product
         screen:addText(f("The %d units of %s have been loaded to your ship and the %0.2fRP are transfered.", config.amount, product:getName(), config.cost))
         screen:withReply(Comms.reply("Great making business with you", config.linkToMainScreen))

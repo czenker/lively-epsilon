@@ -7,7 +7,7 @@ humanCommandComms = Comms:commandFactory({
     --
     -- It is up to you how the captain reacts and which options are available.
     -- Give the player full command over the ship or laugh them in the face and close the channel.
-    commandScreen = function(screen, comms_target, comms_source, config)
+    commandScreen = function(self, screen, comms_target, comms_source, config)
         if Ship:hasCrew(comms_target) and comms_target:hasCrewAtPosition("captain") then
             local captain = comms_target:getCrewAtPosition("captain")
             screen:addText("You are speaking to captain " .. captain:getFormalName() .. " directly.\n\n")
@@ -23,7 +23,7 @@ humanCommandComms = Comms:commandFactory({
     -- The screen the player sees when they ask the captain to help them defend something
     --
     -- Still you can decide which objects you give as a selection
-    defendScreen = function(screen, comms_target, comms_source, config)
+    defendScreen = function(self, screen, comms_target, comms_source, config)
         if isTable(config.targets) and Util.size(config.targets) > 0 then
             screen:addText("Where shall we go?")
             for _, conf in pairs(config.targets) do
@@ -44,7 +44,7 @@ humanCommandComms = Comms:commandFactory({
     -- The screen the player sees after they ordered the captain to defend a sepcific location or target.
     --
     -- You have to decide if the captain conforms to the request and return true or false.
-    defendConfirmScreen = function(screen, comms_target, comms_source, config)
+    defendConfirmScreen = function(self, screen, comms_target, comms_source, config)
         local target = config.target
         if isEeStation(target) then
             screen:addText("Fine. We are going to assist " .. target:getCallSign())
@@ -58,7 +58,7 @@ humanCommandComms = Comms:commandFactory({
     -- The screen the player sees when they ask the captain to attack something
     --
     -- If you got a coward you will probably just reply "No" ;)
-    attackScreen = function(screen, comms_target, comms_source, config)
+    attackScreen = function(self, screen, comms_target, comms_source, config)
         if isTable(config.targets) and Util.size(config.targets) > 0 then
             screen:addText("What shall we attack?")
             for _, conf in pairs(config.targets) do
@@ -77,7 +77,7 @@ humanCommandComms = Comms:commandFactory({
     -- The screen the player sees after they ordered the captain to attack a sepcific location or target.
     --
     -- You have to decide if the captain conforms to the request and return true or false.
-    attackConfirmScreen = function(screen, comms_target, comms_source, config)
+    attackConfirmScreen = function(self, screen, comms_target, comms_source, config)
         local target = config.target
         local link = config.link
         if isEePlayer(target) then
@@ -90,7 +90,7 @@ humanCommandComms = Comms:commandFactory({
     end,
 
     -- The screen the player sees when they ask the captain to go somewhere
-    navigationScreen = function(screen, comms_target, comms_source, config)
+    navigationScreen = function(self, screen, comms_target, comms_source, config)
         if isTable(config.targets) and Util.size(config.targets) > 0 then
             screen:addText("Where shall we go?")
             for _, conf in pairs(config.targets) do
@@ -111,7 +111,7 @@ humanCommandComms = Comms:commandFactory({
     -- The screen the player sees after they ordered the captain to navigate to a sepcific location or dock at a target.
     --
     -- You have to decide if the captain conforms to the request and return true or false.
-    navigationConfirmScreen = function(screen, comms_target, comms_source, config)
+    navigationConfirmScreen = function(self, screen, comms_target, comms_source, config)
         local target = config.target
         if isEeStation(target) then
             screen:addText("Ok, we are going to dock at " .. target:getCallSign())

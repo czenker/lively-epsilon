@@ -76,7 +76,7 @@ Comms.merchantFactory = function(self, config)
 
     mainMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
             selling = formatSoldProducts(comms_target, comms_source),
         }))
@@ -85,7 +85,7 @@ Comms.merchantFactory = function(self, config)
 
     buyMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config.buyScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:buyScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
         }))
         return screen
@@ -96,7 +96,7 @@ Comms.merchantFactory = function(self, config)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
             local info = formatBoughtProduct(product, comms_target, comms_source)
-            config.buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
+            config:buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -117,7 +117,7 @@ Comms.merchantFactory = function(self, config)
                 info.stationAmount,
                 info.playerAmount
             )
-            local success = config.buyProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+            local success = config:buyProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -139,7 +139,7 @@ Comms.merchantFactory = function(self, config)
 
     sellMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config.sellScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:sellScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             selling = formatSoldProducts(comms_target, comms_source),
         }))
         return screen
@@ -150,7 +150,7 @@ Comms.merchantFactory = function(self, config)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
             local info = formatSoldProduct(product, comms_target, comms_source)
-            config.sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
+            config:sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -172,7 +172,7 @@ Comms.merchantFactory = function(self, config)
                 info.playerAmount,
                 info.affordableAmount
             )
-            local success = config.sellProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+            local success = config:sellProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {

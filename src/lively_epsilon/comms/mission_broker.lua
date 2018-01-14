@@ -31,7 +31,7 @@ Comms.missionBrokerFactory = function(self, config)
 
     mainMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config:mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             missions = formatMissions(comms_target, comms_source),
         }))
         return screen
@@ -40,7 +40,7 @@ Comms.missionBrokerFactory = function(self, config)
     detailMenu = function(mission)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            config.detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
+            config:detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
             return screen
         end
     end
@@ -48,7 +48,7 @@ Comms.missionBrokerFactory = function(self, config)
     acceptMenu = function(mission)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config.acceptScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
+            local success = config:acceptScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
             if success == nil then
                 logWarning("acceptScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
             end

@@ -2,7 +2,7 @@ humanMissionBrokerComms = Comms:missionBrokerFactory({
     -- the label that leads to these commands
     label = "Mission Board",
 
-    mainScreen = function(screen, comms_target, comms_source, config)
+    mainScreen = function(self, screen, comms_target, comms_source, config)
         if Util.size(config.missions) == 0 then
             screen:addText("Unfortunately we do not have any missions at the moment.")
         else
@@ -16,7 +16,7 @@ humanMissionBrokerComms = Comms:missionBrokerFactory({
         end
         screen:withReply(Comms.reply("back"))
     end,
-    detailScreen = function(screen, comms_target, comms_source, config)
+    detailScreen = function(self, screen, comms_target, comms_source, config)
         local mission = config.mission
         local description = mission:getDescription()
         if isString(description) and description ~= "" then
@@ -28,7 +28,7 @@ humanMissionBrokerComms = Comms:missionBrokerFactory({
 
         screen:withReply(Comms.reply("back", config.linkToMainScreen))
     end,
-    acceptScreen = function(screen, comms_target, comms_source, config)
+    acceptScreen = function(self, screen, comms_target, comms_source, config)
         local mission = config.mission
         screen:addText(mission.getAcceptMessage())
         screen:withReply(Comms.reply("back"))
