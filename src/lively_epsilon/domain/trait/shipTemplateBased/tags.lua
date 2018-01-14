@@ -5,7 +5,6 @@ ShipTemplateBased.withTags = function (self, spaceObject, ...)
     if not isEeShipTemplateBased(spaceObject) then
         error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2)
     end
-    arg = arg or {}
 
     local tags = {}
 
@@ -25,7 +24,7 @@ ShipTemplateBased.withTags = function (self, spaceObject, ...)
         tags[tag] = true
     end
     spaceObject.addTags = function(self, ...)
-        for _,tag in ipairs(arg) do
+        for _,tag in ipairs({...}) do
             self:addTag(tag)
         end
     end
@@ -34,13 +33,13 @@ ShipTemplateBased.withTags = function (self, spaceObject, ...)
         tags[tag] = nil
     end
     spaceObject.removeTags = function(self, ...)
-        for _,tag in ipairs(arg) do
+        for _,tag in ipairs({...}) do
             self:removeTag(tag)
         end
     end
 
 
-    for _,tag in ipairs(arg) do
+    for _,tag in ipairs({...}) do
         spaceObject:addTag(tag)
     end
 
