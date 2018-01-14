@@ -262,4 +262,31 @@ insulate("Util", function()
             assert.has_error(function() Util.mergeTables({a = 1}, 42) end)
         end)
     end)
+
+    describe("map()", function()
+        it("maps values and retains keys", function()
+            local input = {a=1, b=2, c=3}
+            local output = Util.map(input, function(value) return value+1 end)
+
+            assert.is_same({a=2, b=3, c=4}, output)
+            assert.not_same(input, output) -- it should not change in-place
+        end)
+        it("maps a numberic table", function()
+            local input = {1, 2, 3, 4}
+            local output = Util.map(input, function(value) return value+1 end)
+
+            assert.is_same({2, 3, 4, 5}, output)
+            assert.not_same(input, output) -- it should not change in-place
+        end)
+        it("fails when first argument is not a table", function()
+            assert.has_error(function()
+                Util.map(42, function() end)
+            end)
+        end)
+        it("fails when second argument is not a function", function()
+            assert.has_error(function()
+                Util.map({}, 42)
+            end)
+        end)
+    end)
 end)

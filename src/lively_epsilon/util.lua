@@ -111,6 +111,18 @@ Util = {
         return copy
     end,
 
+    map = function(table, mappingFunc)
+        if not isTable(table) then error("expected first argument to be a table, but got " .. type(table), 2) end
+        if not isFunction(mappingFunc) then error("expected second argument to be a function, but got " .. type(mappingFunc), 2) end
+
+        local ret = {}
+        for k,v in pairs(table) do
+            ret[k] = mappingFunc(v)
+        end
+
+        return ret
+    end,
+
     mkString = function(table, separator, lastSeparator)
         if not Util.isNumericTable(table) then
             error("The given table needs to have numerical indices.", 2)
