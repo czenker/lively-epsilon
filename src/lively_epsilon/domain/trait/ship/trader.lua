@@ -13,7 +13,7 @@ local function filterRandomObject(station, filterFunction, radius)
 end
 
 Ship.orderBuyer = function (self, ship, homeStation, product)
-    product = Product.toId(product)
+    product = Product:toId(product)
 
     if not isEeShip(ship) or not ship:isValid() then
         error("Invalid ship given", 2)

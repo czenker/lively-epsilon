@@ -8,7 +8,7 @@ products = {
 
 -- add id to object
 for k, v in pairs(products) do
-    v.id = k
+    products[k] = Product:new(v.name, k)
 end
 
 -- validate

@@ -20,7 +20,7 @@ Station.withMerchant = function (self, station, configuration)
     local merchant = {}
 
     for product, conf in pairs(configuration) do
-        local productId = Product.toId(product)
+        local productId = Product:toId(product)
 
         if not station:canStoreProduct(product) then
             error("there is no storage for " .. product .. " configured in " .. station:getCallSign(), 2)
@@ -46,7 +46,7 @@ Station.withMerchant = function (self, station, configuration)
     end
 
     local function getBuying(product)
-        product = Product.toId(product)
+        product = Product:toId(product)
         if merchant[product] == nil or type(merchant[product].buyingPrice) == "nil" then
             return nil
         else
@@ -55,7 +55,7 @@ Station.withMerchant = function (self, station, configuration)
     end
 
     local function getSelling(product)
-        product = Product.toId(product)
+        product = Product:toId(product)
         if merchant[product] == nil or type(merchant[product].sellingPrice) == "nil" then
             return nil
         else

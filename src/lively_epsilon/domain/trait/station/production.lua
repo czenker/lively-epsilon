@@ -53,9 +53,9 @@ Station.withProduction = function (self, station, configuration)
                 error("amount is required to configure production circle", 4)
             end
             if not station:canStoreProduct(consume.product) then
-                error("there is no storage for " .. consume.product.id .. " configured in " .. station:getCallSign(), 4)
+                error("there is no storage for " .. consume.product:getId() .. " configured in " .. station:getCallSign(), 4)
             end
-            consumes[Product.toId(consume.product.id)] = consume.product
+            consumes[Product:toId(consume.product)] = consume.product
         end
         if isTable(conf.produces) then
             for _, produce in pairs(conf.produces) do
@@ -66,9 +66,9 @@ Station.withProduction = function (self, station, configuration)
                     error("amount is required to configure production circle", 5)
                 end
                 if not station:canStoreProduct(produce.product) then
-                    error("there is no storage for " .. produce.product.id .. " configured in " .. station:getCallSign(), 4)
+                    error("there is no storage for " .. produce.product:getId() .. " configured in " .. station:getCallSign(), 4)
                 end
-                produces[Product.toId(produce.product.id)] = produce.product
+                produces[Product:toId(produce.product)] = produce.product
             end
         elseif not isFunction(conf.produces) then
             error("production needs to be a table or a function", 3)
@@ -82,7 +82,7 @@ Station.withProduction = function (self, station, configuration)
                 local availableAmount = station:getProductStorage(consume.product)
 
                 if availableAmount == nil then
-                    error("there is no storage for " .. product.id .. " configured in " .. station:getCallSign(), 5)
+                    error("there is no storage for " .. product:getId() .. " configured in " .. station:getCallSign(), 5)
                 elseif availableAmount < amount then return false end
             end
 
@@ -93,7 +93,7 @@ Station.withProduction = function (self, station, configuration)
                     local emptySpace = station:getEmptyProductStorage(produce.product)
 
                     if emptySpace == nil then
-                        error("there is no storage for " .. product.id .. " configured in " .. station:getCallSign(), 5)
+                        error("there is no storage for " .. product:getId() .. " configured in " .. station:getCallSign(), 5)
                     elseif emptySpace == 0 then return false end -- we would produce as long as even a part can be stored
                 end
             end
@@ -110,7 +110,7 @@ Station.withProduction = function (self, station, configuration)
                     for _, produce in pairs(conf.produces) do
                         station:modifyProductStorage(produce.product, produce.amount)
 
-                        print(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product.id)
+                        print(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product:getId())
                     end
                 elseif isFunction(conf.produces) then
                     local status, error = pcall(conf.produces)

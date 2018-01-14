@@ -133,7 +133,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
 
                     for product, amount in pairs(rewards) do
                         if amount > 0 then
-                            product = Product.toId(product)
+                            product = Product:toId(product)
                             if ship:canStoreProduct(product) and homeStation:canStoreProduct(product) then
                                 ship:modifyProductStorage(product, amount)
                                 gatheredProducts[product] = true

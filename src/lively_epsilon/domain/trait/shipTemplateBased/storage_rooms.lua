@@ -18,7 +18,7 @@ ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     local storage = {}
 
     for product, maxStorage in pairs(storages) do
-        product = Product.toId(product)
+        product = Product:toId(product)
 
         storage[product] = {
             storage = 0,
@@ -27,7 +27,7 @@ ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     end
 
     local function getStorage(product)
-        product = Product.toId(product)
+        product = Product:toId(product)
         return storage[product]
     end
 

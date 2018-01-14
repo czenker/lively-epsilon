@@ -17,7 +17,7 @@ merchantMenu = function(comms_target, comms_source)
     if Util.size(selling) > 0 then
         screen:addText("We sell:\n")
         for _, product in pairs(selling) do
-            screen:addText(" * " .. product.name .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n")
+            screen:addText(" * " .. product:getName() .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n")
         end
         screen:addText("\n")
         screen:withReply(Comms.reply("I want to buy something", tradeSell))
@@ -29,7 +29,7 @@ merchantMenu = function(comms_target, comms_source)
     if Util.size(buying) > 0 then
         screen:addText("We buy:\n")
         for _, product in pairs(buying) do
-            screen:addText(" * " .. product.name .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n")
+            screen:addText(" * " .. product:getName() .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n")
         end
         screen:addText("\n")
         screen:withReply(Comms.reply("I want to sell something", tradeBuy))
@@ -43,8 +43,8 @@ tradeSell = function(comms_target, comms_source)
     local screen = Comms.screen("We sell:\n")
 
     for _, product in pairs(comms_target:getProductsSold()) do
-        screen:addText(" * max. " .. comms_target:getMaxProductSelling(product) .. "x " .. product.name .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n")
-        screen:withReply(Comms.reply("buy " .. product.name, tradeSellProduct(product)))
+        screen:addText(" * max. " .. comms_target:getMaxProductSelling(product) .. "x " .. product:getName() .. " at " .. comms_target:getProductSellingPrice(product) .. "$ per unit\n")
+        screen:withReply(Comms.reply("buy " .. product:getName(), tradeSellProduct(product)))
     end
 
     screen:withReply(Comms.reply("back", merchantMenu))
@@ -55,9 +55,9 @@ tradeSellProduct = function(product)
     return function(comms_target, comms_source)
         local screen = Comms.screen()
         if comms_target:getMaxProductSelling(product) == 0 then
-            screen:addText("We are short of supplies, so we can't sell " .. product.name .. " at the moment.")
+            screen:addText("We are short of supplies, so we can't sell " .. product:getName() .. " at the moment.")
         else
-            screen:addText("We are willing to sell up to " .. comms_target:getMaxProductSelling(product) .. " units of " .. product.name .. " at a price of " .. comms_target:getProductSellingPrice(product) .. "$ per unit.")
+            screen:addText("We are willing to sell up to " .. comms_target:getMaxProductSelling(product) .. " units of " .. product:getName() .. " at a price of " .. comms_target:getProductSellingPrice(product) .. "$ per unit.")
         end
 
         screen:withReply(Comms.reply("back", tradeSell))
@@ -69,8 +69,8 @@ tradeBuy = function(comms_target, comms_source)
     local screen = Comms.screen("We buy:\n")
 
     for _, product in pairs(comms_target:getProductsBought()) do
-        screen:addText(" * max. " .. comms_target:getMaxProductBuying(product) .. "x " .. product.name .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n")
-        screen:withReply(Comms.reply("sell " .. product.name, tradeBuyProduct(product)))
+        screen:addText(" * max. " .. comms_target:getMaxProductBuying(product) .. "x " .. product:getName() .. " at " .. comms_target:getProductBuyingPrice(product) .. "$ per unit\n")
+        screen:withReply(Comms.reply("sell " .. product:getName(), tradeBuyProduct(product)))
     end
 
     screen:withReply(Comms.reply("back", merchantMenu))
@@ -81,9 +81,9 @@ tradeBuyProduct = function(product)
     return function(comms_target, comms_source)
         local screen = Comms.screen()
         if comms_target:getMaxProductBuying(product) == 0 then
-            screen:addText("We are not in demand of " .. product.name .. ". Maybe check back at a later point.")
+            screen:addText("We are not in demand of " .. product:getName() .. ". Maybe check back at a later point.")
         else
-            screen:addText("We would buy up to " .. comms_target:getMaxProductBuying(product) .. " units of " .. product.name .. " at a price of " .. comms_target:getProductBuyingPrice(product) .. "$ per unit.")
+            screen:addText("We would buy up to " .. comms_target:getMaxProductBuying(product) .. " units of " .. product:getName() .. " at a price of " .. comms_target:getProductBuyingPrice(product) .. "$ per unit.")
         end
 
         screen:withReply(Comms.reply("back", tradeBuy))

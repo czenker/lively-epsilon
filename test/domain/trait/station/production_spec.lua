@@ -3,10 +3,10 @@ insulate("Station", function()
     require "test.mocks"
 
     describe("withProduction()", function()
-        local power = { id = "power", name = "Power Cells" }
-        local ore = { id = "ore", name = "Iron Ore" }
-        local glue = { id = "glue", name = "Super Glue" }
-        local herring = { id = "herring", name = "Red Herring" }
+        local power = Product:new("Power Cells", "power")
+        local ore = Product:new("Iron Ore", "ore")
+        local glue = Product:new("Super Glue", "glue")
+        local herring = Product:new("Red Herring", "herring")
 
         it("produces products in a interval", function()
             local station = eeStationMock()

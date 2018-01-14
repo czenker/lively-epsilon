@@ -3,7 +3,7 @@ insulate("Station", function()
     require "test.mocks"
 
     describe("withMerchant()", function()
-        local product = { id = "power", name = "Power Cells" }
+        local product = Product:new("Power Cells", "power")
 
         describe("when configuring a bought product", function()
             local station = eeStationMock()
@@ -50,7 +50,7 @@ insulate("Station", function()
             end)
 
             it("returns a list of bought products", function()
-                assert.is_same({[product.id] = product}, station:getProductsBought(product))
+                assert.is_same({[product:getId()] = product}, station:getProductsBought(product))
             end)
 
             it("returns an empty list of sold products", function()
@@ -140,7 +140,7 @@ insulate("Station", function()
             end)
 
             it("returns a list of sold products", function()
-                assert.is_same({[product.id] = product}, station:getProductsSold(product))
+                assert.is_same({[product:getId()] = product}, station:getProductsSold(product))
             end)
 
             it("returns an empty list of bought products", function()
