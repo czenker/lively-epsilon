@@ -4,16 +4,19 @@ require "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua"
 local function printScreen(npcSays, howPlayerCanReact)
     setCommsMessage(npcSays)
     for _, reaction in pairs(howPlayerCanReact) do
-        local playerSays = reaction.playerSays(comms_target, player)
-        local goToNextScreen = function()
-            if isFunction(reaction.nextScreen) then
-                local screen = reaction.nextScreen(comms_target, player)
-                printScreen(screen.npcSays, screen.howPlayerCanReact)
-            else
-                printScreen(comms_target:getHailText(player), comms_target:getComms(player))
+        local visible = reaction.condition(comms_target, player)
+        if visible then
+            local playerSays = reaction.playerSays(comms_target, player)
+            local goToNextScreen = function()
+                if isFunction(reaction.nextScreen) then
+                    local screen = reaction.nextScreen(comms_target, player)
+                    printScreen(screen.npcSays, screen.howPlayerCanReact)
+                else
+                    printScreen(comms_target:getHailText(player), comms_target:getComms(player))
+                end
             end
+            addCommsReply(playerSays, goToNextScreen)
         end
-        addCommsReply(playerSays, goToNextScreen)
     end
 end
 

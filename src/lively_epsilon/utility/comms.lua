@@ -48,13 +48,17 @@ Comms.isScreen = function(thing)
     return true
 end
 
-Comms.reply = function(playerSays, nextScreen)
+Comms.reply = function(playerSays, nextScreen, condition)
 
     if not isFunction(playerSays) and not isString(playerSays) then
         error("First parameter of newReply has to be a string of function. " .. type(playerSays) .. " given.", 2)
     end
     if not isFunction(nextScreen) and not isNil(nextScreen) then
         error("Second parameter of newReply has to be a function. " .. type(nextScreen) .. " given.", 2)
+    end
+    condition = condition or function() return true end
+    if not isFunction(condition) then
+        error("Third parameter of newReply has to be a function. " .. type(condition) .. " given.", 2)
     end
 
     local pSays
@@ -64,7 +68,7 @@ Comms.reply = function(playerSays, nextScreen)
         pSays = playerSays
     end
 
-    return { playerSays = pSays, nextScreen = nextScreen }
+    return { playerSays = pSays, nextScreen = nextScreen, condition = condition }
 end
 
 Comms.isReply = function(thing)

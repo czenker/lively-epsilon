@@ -112,5 +112,11 @@ Comms.merchantFactory = function(self, config)
         linkToSellScreen = sellMenu,
     }
 
-    return Comms.reply(config.label, mainMenu)
+    return Comms.reply(config.label, mainMenu, function(comms_target, comms_source)
+        if not Station:hasMerchant(comms_target) then
+            logInfo("not displaying merchant in Comms, because target has no merchant.")
+            return false
+        end
+        return true
+    end)
 end
