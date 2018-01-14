@@ -19,8 +19,8 @@ Comms.screen = function(npcSays, howPlayerCanReact)
     npcSays = npcSays or ""
     howPlayerCanReact = howPlayerCanReact or {}
 
-    if not isFunction(npcSays) and not isString(npcSays) then
-        error("First parameter of newScreen has to be a string of function. " .. type(npcSays) .. " given.", 2)
+    if not isString(npcSays) then
+        error("First parameter of newScreen has to be a string. " .. type(npcSays) .. " given.", 2)
     end
     if not isTable(howPlayerCanReact) then
         error("Second parameter of newScreen has to be a table. " .. type(howPlayerCanReact) .. " given.", 2)
@@ -57,9 +57,16 @@ Comms.reply = function(playerSays, nextScreen)
         error("Second parameter of newReply has to be a function. " .. type(nextScreen) .. " given.", 2)
     end
 
-    return { playerSays = playerSays, nextScreen = nextScreen }
+    local pSays
+    if isString(playerSays) then
+        pSays = function(station, player) return playerSays end
+    else
+        pSays = playerSays
+    end
+
+    return { playerSays = pSays, nextScreen = nextScreen }
 end
 
 Comms.isReply = function(thing)
-    return isTable(thing) and (isFunction(thing.playerSays) or isString(thing.playerSays)) and (isFunction(thing.nextScreen) or isNil(thing.nextScreen))
+    return isTable(thing) and isFunction(thing.playerSays) and (isFunction(thing.nextScreen) or isNil(thing.nextScreen))
 end
