@@ -7,15 +7,16 @@ require "resources/personNames.lua"
 require "resources/products.lua"
 require "resources/narratives.lua"
 
-function MySpaceStation(template)
-    local station = SpaceStation():setTemplate(template)
+function MySpaceStation(station)
+    station = station or SpaceStation()
     Station:withComms(station)
     station:setHailText("Hello World")
     return station
 end
 
-function MyCpuShip(template)
-    local ship = CpuShip():setTemplate(template)
+function MyCpuShip(ship)
+    ship = ship or CpuShip()
+
     Ship:withCaptain(ship, Person:newHuman())
 
     Ship:withComms(ship)
@@ -34,8 +35,8 @@ function init()
         Player:withMissionTracker(player)
         Player:withMissionDisplay(player)
 
-        local station1 = MySpaceStation("Large Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
-        local station2 = MySpaceStation("Medium Station"):setPosition(-8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360))
+        local station1 = MySpaceStation():setTemplate("Large Station"):setPosition(8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360)):setDescription("A herring factory")
+        local station2 = MySpaceStation():setTemplate("Medium Station"):setPosition(-8000, 8000):setFaction("Human Navy"):setRotation(random(0, 360))
 
         -- Herring mission
         local herringMission = Missions:transportToken(station1, station2, {
@@ -93,9 +94,9 @@ function init()
 
     addGMFunction("Test Production", function()
 
-        local stationSolar = MySpaceStation("Medium Station"):setPosition(-5000, 10000):setFaction("Human Navy")
-        local stationFabricate = MySpaceStation("Medium Station"):setPosition(0, 10000):setFaction("Human Navy")
-        local stationConsume = MySpaceStation("Medium Station"):setPosition(5000, 10000):setFaction("Human Navy")
+        local stationSolar = MySpaceStation():setTemplate("Medium Station"):setPosition(-5000, 10000):setFaction("Human Navy")
+        local stationFabricate = MySpaceStation():setTemplate("Medium Station"):setPosition(0, 10000):setFaction("Human Navy")
+        local stationConsume = MySpaceStation():setTemplate("Medium Station"):setPosition(5000, 10000):setFaction("Human Navy")
         stationSolar:addComms(Comms.defaultMerchant)
         stationFabricate:addComms(Comms.defaultMerchant)
         stationConsume:addComms(Comms.defaultMerchant)
@@ -159,7 +160,7 @@ function init()
             },
         })
 
-        local ship = MyCpuShip("Goods Freighter 1"):setPosition(11000, 0):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(250):setRotationMaxSpeed(50)
+        local ship = MyCpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(250):setRotationMaxSpeed(50)
         Ship:withStorageRooms(ship, {
             [products.power] = 1000,
         })
@@ -169,7 +170,7 @@ function init()
     end)
 
     addGMFunction("Test Mining", function()
-        local stationMine = MySpaceStation("Medium Station"):setPosition(50000, 0):setFaction("Human Navy")
+        local stationMine = MySpaceStation():setTemplate("Medium Station"):setPosition(50000, 0):setFaction("Human Navy")
 
         setCirclePos(Asteroid(), 70000, 0, 0, 3000)
         setCirclePos(Asteroid(), 70000, 0, 60, 3000)
@@ -189,7 +190,7 @@ function init()
             [products.plutoniumOre] = 100,
         })
 
-        local minerShip = MyCpuShip("Goods Freighter 1"):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(100):setRotationMaxSpeed(20)
+        local minerShip = MyCpuShip():setTemplate("Goods Freighter 1"):setRotation(0):setFaction("Human Navy"):setImpulseMaxSpeed(100):setRotationMaxSpeed(20)
         Util.spawnAtStation(stationMine, minerShip)
 
         Ship:withStorageRooms(minerShip, {
@@ -211,10 +212,10 @@ function init()
     end)
 
     addGMFunction("Test Patrol", function()
-        local station1 = MySpaceStation("Medium Station"):setFaction("Human Navy")
-        local station2 = MySpaceStation("Medium Station"):setFaction("Human Navy")
-        local station3 = MySpaceStation("Medium Station"):setFaction("Human Navy")
-        local station4 = MySpaceStation("Medium Station"):setFaction("Human Navy")
+        local station1 = MySpaceStation():setTemplate("Medium Station"):setFaction("Human Navy")
+        local station2 = MySpaceStation():setTemplate("Medium Station"):setFaction("Human Navy")
+        local station3 = MySpaceStation():setTemplate("Medium Station"):setFaction("Human Navy")
+        local station4 = MySpaceStation():setTemplate("Medium Station"):setFaction("Human Navy")
 
         setCirclePos(station1, 0, -30000, 30, 20000)
         setCirclePos(station2, 0, -30000, 120, 20000)
@@ -268,7 +269,9 @@ MyNarrative:addNarrative({
     onCreation = function(ship, from, to)
         local cargo = Util.random(cargoList)
 
+        MyCpuShip(ship)
         ship:setTemplate("Goods Freighter " .. math.random(1, 5)):setWarpDrive(true)
+        ship:setFaction(from:getFaction())
         ship:setDescription("This ship brings " .. cargo .. " to " .. to:getCallSign() .. ".")
     end
 })
@@ -280,7 +283,9 @@ MyNarrative:addNarrative({
         local number = math.random(1, 5) * (i - 1) + math.random(1, 5)
         local passengers = Util.random(passengerList)
 
+        MyCpuShip(ship)
         ship:setTemplate("Goods Freighter " .. i):setWarpDrive(true)
+        ship:setFaction(from:getFaction())
         ship:setDescription("There are " ..
                 number ..
                 " " ..
