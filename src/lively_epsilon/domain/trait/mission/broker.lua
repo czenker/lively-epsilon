@@ -66,6 +66,9 @@ Mission.withBroker = function(self, mission, title, config)
     mission.getPlayer = function(self)
         return player
     end
+
+    if config.player ~= nil then mission:setPlayer(config.player) end
+    if config.missionBroker ~= nil then mission:setMissionBroker(config.missionBroker) end
 end
 
 Mission.isBrokerMission = function(thing)
