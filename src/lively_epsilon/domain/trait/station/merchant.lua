@@ -31,52 +31,68 @@ Station.withMerchant = function (self, station, configuration)
         elseif conf.buyingPrice ~= nil and conf.sellingPrice ~= nil then
             error("configuration for " .. product .. " can only have a buyingPrice or a sellingPrice - not both", 3)
         elseif conf.buyingPrice ~= nil then
+            local buyingPriceFunc
+            if isNumber(conf.buyingPrice) or isNil(conf.buyingPrice) then
+                buyingPriceFunc = function() return conf.buyingPrice end
+            elseif isFunction(conf.buyingPrice) then
+                buyingPriceFunc = conf.buyingPrice
+            else error("buyingPrice needs to be a number or a function", 4)
+            end
             merchant[productId] = {
                 product = product,
-                buyingPrice = conf.buyingPrice,
+                buyingPrice = buyingPriceFunc,
                 buyingLimit = conf.buyingLimit or nil
             }
         elseif conf.sellingPrice ~= nil then
+            local sellingPriceFunc
+            if isNumber(conf.sellingPrice) or isNil(conf.sellingPrice) then
+                sellingPriceFunc = function() return conf.sellingPrice end
+            elseif isFunction(conf.sellingPrice) then
+                sellingPriceFunc = conf.sellingPrice
+            else error("sellingPrice needs to be a number or a function", 4)
+            end
             merchant[productId] = {
                 product = product,
-                sellingPrice = conf.sellingPrice,
+                sellingPrice = sellingPriceFunc,
                 sellingLimit = conf.sellingLimit or nil
             }
         end
     end
 
-    local function getBuying(product)
+    local function getBuying(product, seller)
         product = Product:toId(product)
-        if merchant[product] == nil or type(merchant[product].buyingPrice) == "nil" then
+        local conf = merchant[product]
+        if conf == nil or isNil(conf.buyingPrice) or isNil(conf.buyingPrice(station, seller)) then
             return nil
         else
-            return merchant[product]
+            return conf
         end
     end
 
-    local function getSelling(product)
+    local function getSelling(product, buyer)
         product = Product:toId(product)
-        if merchant[product] == nil or type(merchant[product].sellingPrice) == "nil" then
+        local conf = merchant[product]
+        if conf == nil or isNil(conf.sellingPrice) or isNil(conf.sellingPrice(station, buyer)) then
             return nil
         else
-            return merchant[product]
+            return conf
         end
     end
 
-    station.getProductBuyingPrice = function (self, product)
-        local buying = getBuying(product)
+    station.getProductBuyingPrice = function (self, product, seller)
+        local buying = getBuying(product, seller)
 
         if buying == nil then
             return nil
         elseif type(buying.buyingPrice) == "function" then
-            return buying.buyingPrice(station)
+            return buying.buyingPrice(station, seller)
         else
             return buying.buyingPrice
         end
     end
 
-    station.getMaxProductBuying = function (self, product)
-        local buying = getBuying(product)
+    station.getMaxProductBuying = function (self, product, seller)
+        local buying = getBuying(product, seller)
 
         if buying == nil then
             return nil
@@ -94,15 +110,15 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
-    station.isBuyingProduct = function (self, product)
-        return self:getProductBuyingPrice(product) ~= nil
+    station.isBuyingProduct = function (self, product, seller)
+        return self:getProductBuyingPrice(product, seller) ~= nil
     end
 
-    station.getProductsBought = function (self)
+    station.getProductsBought = function (self, seller)
         local products = {}
 
         for productId, merchant in pairs(merchant) do
-            if self:isBuyingProduct(productId) then
+            if self:isBuyingProduct(productId, seller) then
                 products[productId] = merchant.product
             end
         end
@@ -110,20 +126,20 @@ Station.withMerchant = function (self, station, configuration)
         return products
     end
 
-    station.getProductSellingPrice = function (self, product)
-        local selling = getSelling(product)
+    station.getProductSellingPrice = function (self, product, buyer)
+        local selling = getSelling(product, buyer)
 
         if selling == nil then
             return nil
         elseif type(selling.sellingPrice) == "function" then
-            return selling.sellingPrice(station)
+            return selling.sellingPrice(station, buyer)
         else
             return selling.sellingPrice
         end
     end
 
-    station.getMaxProductSelling = function (self, product)
-        local selling = getSelling(product)
+    station.getMaxProductSelling = function (self, product, buyer)
+        local selling = getSelling(product, buyer)
 
         if selling == nil then
             return nil
@@ -141,15 +157,15 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
-    station.isSellingProduct = function (self, product)
-        return self:getProductSellingPrice(product) ~= nil
+    station.isSellingProduct = function (self, product, buyer)
+        return self:getProductSellingPrice(product, buyer) ~= nil
     end
 
-    station.getProductsSold = function (self)
+    station.getProductsSold = function (self, buyer)
         local products = {}
 
         for productId, merchant in pairs(merchant) do
-            if self:isSellingProduct(productId) then
+            if self:isSellingProduct(productId, buyer) then
                 products[productId] = merchant.product
             end
         end

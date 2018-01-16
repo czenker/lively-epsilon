@@ -24,11 +24,11 @@ Comms.merchantFactory = function(self, config)
     local formatBoughtProduct = function(product, station, player)
         return {
             product = product,
-            price = station:getProductBuyingPrice(product),
-            stationAmount = station:getMaxProductBuying(product),
+            price = station:getProductBuyingPrice(product, player),
+            stationAmount = station:getMaxProductBuying(product, player),
             playerAmount = player:getProductStorage(product),
             maxTradableAmount = math.min(
-                station:getMaxProductBuying(product),
+                station:getMaxProductBuying(product, player),
                 player:getProductStorage(product)
             ),
             isDocked = player:isDocked(station),
@@ -40,22 +40,22 @@ Comms.merchantFactory = function(self, config)
 
     local formatBoughtProducts = function(station, player)
         local ret = {}
-        for _, product in pairs(station:getProductsBought()) do
+        for _, product in pairs(station:getProductsBought(player)) do
             ret[product:getId()] = formatBoughtProduct(product, station, player)
         end
         return ret
     end
 
     local formatSoldProduct = function(product, station, player)
-        local affordableAmount = math.floor(player:getReputationPoints() / station:getProductSellingPrice(product))
+        local affordableAmount = math.floor(player:getReputationPoints() / station:getProductSellingPrice(product, player))
         return {
             product = product,
-            price = station:getProductSellingPrice(product),
-            stationAmount = station:getMaxProductSelling(product),
+            price = station:getProductSellingPrice(product, player),
+            stationAmount = station:getMaxProductSelling(product, player),
             playerAmount = player:getEmptyProductStorage(product),
             affordableAmount = affordableAmount,
             maxTradableAmount = math.min(
-                station:getMaxProductSelling(product),
+                station:getMaxProductSelling(product, player),
                 player:getEmptyProductStorage(product),
                 affordableAmount
             ),
@@ -68,7 +68,7 @@ Comms.merchantFactory = function(self, config)
 
     local formatSoldProducts = function(station, player)
         local ret = {}
-        for _, product in pairs(station:getProductsSold()) do
+        for _, product in pairs(station:getProductsSold(player)) do
             ret[product:getId()] = formatSoldProduct(product, station, player)
         end
         return ret

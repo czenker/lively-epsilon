@@ -182,4 +182,71 @@ insulate("Station", function()
             assert.is_same(42, station:getProductSellingPrice(product))
         end)
     end)
+    describe("player-dependent offers", function()
+        local productForFriends = Product:new("Friendly Item")
+
+        local stationSelling = eeStationMock()
+        local stationBuying = eeStationMock()
+        local friendlyPlayer = eePlayerMock()
+        local neutralPlayer = eePlayerMock()
+
+        Station:withStorageRooms(stationSelling, {
+            [productForFriends] = 1000,
+        })
+        stationSelling:modifyProductStorage(productForFriends, 1000)
+        Station:withMerchant(stationSelling, {
+            [productForFriends] = { sellingPrice = function(self, buyer)
+                if buyer == friendlyPlayer then return 42 else return nil end
+            end }
+        })
+
+        Station:withStorageRooms(stationBuying, {
+            [productForFriends] = 1000,
+        })
+        Station:withMerchant(stationBuying, {
+            [productForFriends] = { buyingPrice = function(self, seller)
+                if seller == friendlyPlayer then return 42 else return nil end
+            end }
+        })
+
+        it("getProductsSold() filters products", function()
+            assert.contains_value(productForFriends, stationSelling:getProductsSold(friendlyPlayer))
+            assert.not_contains_value(productForFriends, stationSelling:getProductsSold(neutralPlayer))
+        end)
+
+        it("isSellingProduct() filters products", function()
+            assert.is_true(stationSelling:isSellingProduct(productForFriends, friendlyPlayer))
+            assert.is_false(stationSelling:isSellingProduct(productForFriends, neutralPlayer))
+        end)
+
+        it("getMaxProductSelling() filters products", function()
+            assert.not_nil(stationSelling:getMaxProductSelling(productForFriends, friendlyPlayer))
+            assert.is_nil(stationSelling:getMaxProductSelling(productForFriends, neutralPlayer))
+        end)
+
+        it("getProductSellingPrice() filters products", function()
+            assert.is_same(42, stationSelling:getProductSellingPrice(productForFriends, friendlyPlayer))
+            assert.is_nil(stationSelling:getProductSellingPrice(productForFriends, neutralPlayer))
+        end)
+
+        it("getProductsBought() filters products", function()
+            assert.contains_value(productForFriends, stationBuying:getProductsBought(friendlyPlayer))
+            assert.not_contains_value(productForFriends, stationBuying:getProductsBought(neutralPlayer))
+        end)
+
+        it("isBuyingProduct() filters products", function()
+            assert.is_true(stationBuying:isBuyingProduct(productForFriends, friendlyPlayer))
+            assert.is_false(stationBuying:isBuyingProduct(productForFriends, neutralPlayer))
+        end)
+
+        it("getMaxProductBuying() filters products", function()
+            assert.not_nil(stationBuying:getMaxProductBuying(productForFriends, friendlyPlayer))
+            assert.is_nil(stationBuying:getMaxProductBuying(productForFriends, neutralPlayer))
+        end)
+
+        it("getProductBuyingPrice() filters products", function()
+            assert.is_same(42, stationBuying:getProductBuyingPrice(productForFriends, friendlyPlayer))
+            assert.is_nil(stationBuying:getProductBuyingPrice(productForFriends, neutralPlayer))
+        end)
+    end)
 end)

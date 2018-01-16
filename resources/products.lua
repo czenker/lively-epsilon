@@ -7,22 +7,27 @@ products = {
     o2 = {
         name = "Oxygen",
         size = s,
+        basePrice = 1,
     },
     power = {
         name = "Power Cells",
         size = s,
+        basePrice = 1,
     },
     waste = {
         name = "Toxic Waste",
         size = m,
+        basePrice = 1,
     },
     ore = {
         name = "Ore",
         size = m,
+        basePrice = 1,
     },
     plutoniumOre = {
         name = "Plutonium Ore",
         size = l,
+        basePrice = 10,
     },
 }
 
@@ -32,6 +37,7 @@ for k, v in pairs(products) do
         id = k,
         size = v.size,
     })
+    products[k].basePrice = v.basePrice
 end
 
 -- validate
