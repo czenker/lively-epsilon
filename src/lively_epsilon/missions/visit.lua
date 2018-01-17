@@ -1,4 +1,4 @@
-Missions = Mission or {}
+Missions = Missions or {}
 
 -- Your mission is to find a station and dock there
 
