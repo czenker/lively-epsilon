@@ -15,27 +15,14 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
 
     local comms = {}
     local theHailText
+    local overriddenComms
+    local overriddenCommsOnce
 
     spaceObject.setHailText = function(self, hailText)
         if not isString(hailText) and not isNil(hailText) and not isFunction(hailText) then
             error("hailText needs to be a string or a function", 2)
         end
         theHailText = hailText
-    end
-
-    spaceObject.getHailText = function(self, player)
-        if not isEePlayer(player) then error("Expected to be called with a Player, but got " .. type(player), 2) end
-        if isString(theHailText) then
-            return theHailText
-        elseif isFunction(theHailText) then
-            local reply = theHailText(self, player)
-            if isString(reply) then
-                return reply
-            elseif not isNil(reply) then
-                logWarning("Expected hail text function to return a string or nil, but got " .. type(reply), 2)
-            end
-        end
-        return nil
     end
 
     spaceObject.addComms = function(self, reply, id)
@@ -50,13 +37,42 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
 
     spaceObject.getComms = function(self, player)
         if not isEePlayer(player) then error("Expected a Player, but got " .. type(player), 2) end
-        local ret = {}
+        if overriddenComms ~= nil then
+            if overriddenCommsOnce == true then
+                local tmp = overriddenComms
+                overriddenComms = nil
+                return tmp
+            else
+                return overriddenComms
+            end
+        else
+            local howPlayerCanReact = {}
 
-        for k,v in pairs(comms) do
-            ret[k] = v
+            for k,v in pairs(comms) do
+                howPlayerCanReact[k] = v
+            end
+
+            local hailText
+            if isNil(theHailText) or isString(theHailText) then
+                hailText = theHailText
+            elseif isFunction(theHailText) then
+                hailText = theHailText(self, player)
+                if not isString(hailText) and not isNil(hailText) then
+                    logWarning("Expected hail text function to return a string or nil, but got " .. type(hailText), 2)
+                    hailText = nil
+                end
+            end
+            return Comms.screen(hailText, howPlayerCanReact)
         end
+    end
 
-        return ret
+    spaceObject.overrideComms = function(self, screen, once)
+        if not Comms.isScreen(screen) and not isNil(screen) then error("Expected a screen, but got " .. type(screen), 2) end
+        once = once or false
+        if not isBoolean(once) then error("Expected a boolean, but got " .. type(once), 2) end
+
+        overriddenComms = screen
+        overriddenCommsOnce = once
     end
 
     spaceObject:setCommsScript("src/lively_epsilon/scripts/comms.lua")
@@ -76,8 +92,8 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
 end
 
 ShipTemplateBased.hasComms = function(self, thing)
-    return isFunction(thing.getHailText) and
-            isFunction(thing.setHailText) and
+    return isFunction(thing.setHailText) and
             isFunction(thing.addComms) and
-            isFunction(thing.getComms)
+            isFunction(thing.getComms) and
+            isFunction(thing.overrideComms)
 end
