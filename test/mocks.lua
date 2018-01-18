@@ -33,6 +33,7 @@ function eePlayerMock()
         isValid = function() return true end,
         addCustomButton = noop,
         addCustomMessage = noop,
+        commandMainScreenOverlay = noop,
     }
 end
 

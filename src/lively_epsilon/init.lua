@@ -52,6 +52,8 @@ local myPackages = {
 
     "src/lively_epsilon/narrative/repository.lua",
     "src/lively_epsilon/narrative/runner.lua",
+
+    "src/lively_epsilon/tools/story_comms.lua",
 }
 
 if package ~= nil and package.path ~= nil then
