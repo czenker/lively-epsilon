@@ -1,4 +1,4 @@
-Missions = Mission or {}
+Missions = Missions or {}
 
 local function validateAndInitEnemies(things)
     if isEeShipTemplateBased(things) then things = {} end

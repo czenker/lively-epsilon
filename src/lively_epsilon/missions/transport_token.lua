@@ -1,4 +1,4 @@
-Missions = Mission or {}
+Missions = Missions or {}
 
 -- Bring something or someone from one station to another
 -- This does not fill any storage on the ship.
@@ -38,7 +38,7 @@ Missions.transportToken = function(self, from, to, config)
         end,
         onSuccess = config.onSuccess,
         onFailure = config.onFailure,
-        onEnd = function()
+        onEnd = function(self)
             Cron.abort(cronId)
 
             if isFunction(config.onEnd) then config.onEnd(self) end
