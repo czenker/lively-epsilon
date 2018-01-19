@@ -14,6 +14,11 @@ products = {
         size = s,
         basePrice = 1,
     },
+    water = {
+        name = "Water",
+        size = s,
+        basePrice = 1,
+    },
     waste = {
         name = "Toxic Waste",
         size = m,
@@ -28,6 +33,11 @@ products = {
         name = "Plutonium Ore",
         size = l,
         basePrice = 10,
+    },
+    miningMachinery = {
+        name = "Mining Machinery",
+        size = xl,
+        basePrice = 15,
     },
 }
 
