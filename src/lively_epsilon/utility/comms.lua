@@ -2,7 +2,7 @@
 Comms = Comms or {}
 
 local addText = function(screen, text)
-    screen.npcSays = screen.npcSays .. text
+    screen.npcSays = screen.npcSays .. (text or "")
     return screen
 end
 
