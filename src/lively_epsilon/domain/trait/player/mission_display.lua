@@ -25,6 +25,9 @@ Player.withMissionDisplay = function(self, player)
         else
             for _, mission in pairs(missions) do
                 text = text .. " * ".. mission:getTitle() .. "\n"
+                if mission:getHint() then
+                    text = text .. "        " .. mission:getHint() .. "\n"
+                end
             end
         end
 

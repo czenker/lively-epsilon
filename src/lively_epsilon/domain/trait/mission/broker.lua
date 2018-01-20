@@ -19,6 +19,7 @@ Mission.withBroker = function(self, mission, title, config)
     -- the player who has accepted the mission
     local player
     local parentAccept = mission.accept
+    local hint
 
     mission.getTitle = function(self)
         if isFunction(title) then
@@ -50,6 +51,23 @@ Mission.withBroker = function(self, mission, title, config)
         parentAccept(self)
     end
 
+    mission.setHint = function(self, thing)
+        if not isNil(thing) and not isString(thing) and not isFunction(thing) then error("Expected nil, a function or string, but got " .. type(thing), 2) end
+        hint = thing
+    end
+
+    mission.getHint = function(self)
+        if isFunction(hint) then
+            local ret = hint(self)
+            if not isNil(ret) and not isString(ret) then
+                logError("Expected hint callback to return a string or nil, but got " .. type(ret))
+                return nil
+            else return ret end
+        else
+            return hint
+        end
+    end
+
     mission.setMissionBroker = function(self, thing)
         missionBroker = thing
     end
@@ -69,6 +87,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     if config.player ~= nil then mission:setPlayer(config.player) end
     if config.missionBroker ~= nil then mission:setMissionBroker(config.missionBroker) end
+    if config.hint ~= nil then mission:setHint(config.hint) end
 end
 
 Mission.isBrokerMission = function(thing)
@@ -76,6 +95,8 @@ Mission.isBrokerMission = function(thing)
             isFunction(thing.getTitle) and
             isFunction(thing.getDescription) and
             isFunction(thing.getAcceptMessage) and
+            isFunction(thing.setHint) and
+            isFunction(thing.getHint) and
             isFunction(thing.getMissionBroker) and
             isFunction(thing.setMissionBroker) and
             isFunction(thing.getPlayer) and
