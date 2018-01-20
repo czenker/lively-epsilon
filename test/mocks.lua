@@ -48,10 +48,9 @@ function missionMock()
     return Mission:new()
 end
 
-function missionWithBrokerMock(broker, player)
+function missionWithBrokerMock(broker)
     local mission = missionMock()
     Mission:withBroker(mission, "Hello World")
-    mission:setPlayer(player or eePlayerMock())
     mission:setMissionBroker(broker or eeStationMock())
 
     return mission

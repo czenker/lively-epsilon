@@ -16,8 +16,6 @@ Mission.withBroker = function(self, mission, title, config)
 
     -- the entity (station, ship, person, etc) who has given the mission to the player
     local missionBroker
-    -- the player who has accepted the mission
-    local player
     local parentAccept = mission.accept
     local hint
 
@@ -47,8 +45,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     mission.accept = function(self)
         if missionBroker == nil then error("The missionBroker needs to be set before calling accept", 2) end
-        if player == nil then error("The player has to be set before calling accept") end
-        parentAccept(self)
+        return parentAccept(self)
     end
 
     mission.setHint = function(self, thing)
@@ -76,16 +73,6 @@ Mission.withBroker = function(self, mission, title, config)
         return missionBroker
     end
 
-    mission.setPlayer = function(self, thing)
-        if not isEePlayer(thing) then error("Expected player to be a Player, but " .. type(thing) .. " given.", 2) end
-        player = thing
-    end
-
-    mission.getPlayer = function(self)
-        return player
-    end
-
-    if config.player ~= nil then mission:setPlayer(config.player) end
     if config.missionBroker ~= nil then mission:setMissionBroker(config.missionBroker) end
     if config.hint ~= nil then mission:setHint(config.hint) end
 end
@@ -98,7 +85,5 @@ Mission.isBrokerMission = function(thing)
             isFunction(thing.setHint) and
             isFunction(thing.getHint) and
             isFunction(thing.getMissionBroker) and
-            isFunction(thing.setMissionBroker) and
-            isFunction(thing.getPlayer) and
-            isFunction(thing.setPlayer)
+            isFunction(thing.setMissionBroker)
 end

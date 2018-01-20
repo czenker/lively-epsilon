@@ -13,11 +13,10 @@ Missions.visit = function(self, station, config)
 
     local mission
     mission = Mission:new({
+        acceptCondition = config.acceptCondition,
         onAccept = config.onAccept,
         onDecline = config.onDecline,
         onStart = function(self)
-            if not Mission.isBrokerMission(mission) then error("Mission can not be started, because it is supposed to have been transformed into a broker Mission", 2) end
-
             if isFunction(config.onStart) then config.onStart(self) end
 
             Cron.regular(cronId, function()
@@ -36,5 +35,7 @@ Missions.visit = function(self, station, config)
             if isFunction(config.onEnd) then config.onEnd(self) end
         end,
     })
+    Mission:forPlayer(mission)
+
     return mission
 end

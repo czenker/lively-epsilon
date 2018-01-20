@@ -53,6 +53,10 @@ insulate("Mission", function()
             assert.has_error(function() Mission:new("thisBreaks") end)
         end)
 
+        it("fails if acceptCondition is not a function", function()
+            assert.has_error(function() Mission:new({acceptCondition = 42}) end)
+        end)
+
         it("fails if onAccept is not a function", function()
             assert.has_error(function() Mission:new({onAccept = 42}) end)
         end)
@@ -122,7 +126,20 @@ insulate("Mission", function()
         end)
     end)
 
+    describe("canBeAccepted()", function()
+        it("is true when no config is set", function()
+            local mission = newMission()
+            assert.is_true(mission:canBeAccepted())
+        end)
+    end)
+
     describe("accept()", function()
+        it ("switches to \"accepted\" if no callback is set", function()
+            local mission = newMission()
+
+            mission:accept()
+            assert.is_same("accepted", mission:getState())
+        end)
         it ("calls the onAccept callback", function()
             local callbackCalled = false
             local mission
@@ -133,6 +150,16 @@ insulate("Mission", function()
 
             mission:accept()
             assert.is_true(callbackCalled)
+        end)
+        it("fails when acceptCondition callback returns false", function()
+            local mission = newMission({acceptCondition = function() return false end})
+
+            assert.has_error(function() mission:accept() end)
+        end)
+        it("fails when acceptCondition callback returns a string", function()
+            local mission = newMission({acceptCondition = function() return "Just... No" end})
+
+            assert.has_error(function() mission:accept() end)
         end)
         it("fails if onAccept callback fails", function()
             local mission = newMission({onAccept = function() error("boom") end})
@@ -288,8 +315,8 @@ insulate("Mission", function()
         }
 
         for _, test in pairs(testData) do
-            local success = pcall(test[1][test[2]])
-            assert.is_same(test[3], success)
+            local success, error = pcall(test[1][test[2]], test[1])
+            assert.is_same(test[3], success, test[1]:getState() .. " -> " .. test[2])
         end
 
     end)

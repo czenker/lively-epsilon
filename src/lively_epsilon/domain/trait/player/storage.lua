@@ -77,7 +77,8 @@ Player.withStorage = function(self, player, config)
 end
 
 Player.hasStorage = function(self, player)
-    return isFunction(player.getStoredProducts) and
+    return isTable(player) and
+            isFunction(player.getStoredProducts) and
             isFunction(player.getProductStorage) and
             isFunction(player.getMaxProductStorage) and
             isFunction(player.getEmptyProductStorage) and

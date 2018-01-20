@@ -14,8 +14,17 @@ Comms.missionBrokerFactory = function(self, config)
     local defaultCallbackConfig
 
     local formatMission = function(mission, station, player)
+        if Mission.isPlayerMission(mission) then
+            mission:setPlayer(player)
+        end
+        if Mission.isBrokerMission(mission) then
+            mission:setMissionBroker(station)
+        end
+        local canBeAccepted, canBeAcceptedMessage = mission:canBeAccepted()
         return {
             mission = mission,
+            canBeAccepted = canBeAccepted,
+            canBeAcceptedMessage = canBeAcceptedMessage,
             link = detailMenu(mission),
             linkAccept = acceptMenu(mission),
         }
@@ -47,23 +56,32 @@ Comms.missionBrokerFactory = function(self, config)
 
     acceptMenu = function(mission)
         return function(comms_target, comms_source)
+            local missionInfo = formatMission(mission, comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config:acceptScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
-            if success == nil then
+            local success = config:acceptScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, missionInfo))
+            if not missionInfo.canBeAccepted then
+                if success == true then
+                    logWarning("The mission " .. mission:getId() .. " can not be accepted. This seems to be a problem with your comms screen.")
+                end
+                success = false
+            elseif success == nil then
                 logWarning("acceptScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
             end
             if success == true or success == nil then
-            end
-                mission:setPlayer(comms_source)
-                mission:setMissionBroker(comms_target)
+                if Mission.isPlayerMission(mission) then
+                    mission:setPlayer(comms_source)
+                end
+                if Mission.isBrokerMission(mission) then
+                    mission:setMissionBroker(comms_target)
+                end
                 comms_target:removeMission(mission)
-
                 if Player:hasMissionTracker(comms_source) then
                     comms_source:addMission(mission)
                 end
 
                 mission:accept()
                 mission:start()
+            end
             return screen
         end
     end

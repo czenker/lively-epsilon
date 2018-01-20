@@ -18,13 +18,18 @@ humanMissionBrokerComms = Comms:missionBrokerFactory({
     end,
     detailScreen = function(self, screen, comms_target, comms_source, config)
         local mission = config.mission
+        screen:addText(mission:getTitle())
         local description = mission:getDescription()
         if isString(description) and description ~= "" then
             screen:addText("\n\n" .. description)
         end
-        screen:withReply(
-            Comms.reply("Accept", config.linkAccept)
-        )
+        if mission:canBeAccepted() then
+            screen:withReply(
+                Comms.reply("Accept", config.linkAccept)
+            )
+        elseif isString(config.canBeAcceptedMessage) then
+            screen:addText("\n\n" .. config.canBeAcceptedMessage)
+        end
 
         screen:withReply(Comms.reply("back", config.linkToMainScreen))
     end,

@@ -25,10 +25,61 @@ insulate("Missions", function()
             assert.has_error(function() Missions:transportProduct(from, to, product, 3) end)
         end)
 
-        it("fails to start if mission is not a broker mission", function()
+        it("fails to accept if mission is not a broker mission", function()
             local mission = Missions:transportProduct(from, to, product)
-            mission:accept()
-            assert.has_error(function() mission:start() end)
+            assert.has_error(function() mission:accept() end)
+        end)
+
+        it("fails to accept if the player ship has no storage at all", function()
+            local acceptConditionCalled = false
+            local player = eePlayerMock()
+            local mission
+            mission = Missions:transportProduct(from, to, product, {
+                acceptCondition = function(theMission, theError)
+                    assert.is_same(mission, theMission)
+                    assert.is_same("no_storage", theError)
+                    acceptConditionCalled = true
+                    return "You have no storage"
+                end
+            })
+            Mission:withBroker(mission, "Dummy")
+
+            mission:setPlayer(player)
+            mission:setMissionBroker(from)
+
+            local success, message = mission:canBeAccepted()
+            assert.is_true(acceptConditionCalled)
+            assert.is_false(success)
+            assert.is_same("You have no storage", message)
+
+            assert.has_error(function() mission:accept() end)
+        end)
+
+        it("fails to accept if the player ship has too little storage even if they removed everything", function()
+            local acceptConditionCalled = false
+            local player = eePlayerMock()
+            local mission
+            mission = Missions:transportProduct(from, to, product, {
+                amount = 42,
+                acceptCondition = function(theMission, theError)
+                    assert.is_same(mission, theMission)
+                    assert.is_same("small_storage", theError)
+                    acceptConditionCalled = true
+                    return "You have too little storage"
+                end,
+            })
+            Mission:withBroker(mission, "Dummy")
+
+            mission:setPlayer(player)
+            Player:withStorage(player, {maxStorage=40})
+            mission:setMissionBroker(from)
+
+            local success, message = mission:canBeAccepted()
+            assert.is_true(acceptConditionCalled)
+            assert.is_false(success)
+            assert.is_same("You have too little storage", message)
+
+            assert.has_error(function() mission:accept() end)
         end)
 
         it("successful mission", function()
@@ -158,12 +209,15 @@ insulate("Missions", function()
 
             local mission
             mission = Missions:transportProduct(from, to, product, {
+                amount = 42,
                 onInsufficientStorage = function(theMission)
                     assert.is_same(mission, theMission)
                     onInsufficientStorageCalled = onInsufficientStorageCalled + 1
                 end,
             })
             Mission:withBroker(mission, "Dummy")
+            Player:withStorage(player, {maxStorage=100})
+            player:modifyProductStorage(product, 60)
 
             mission:setPlayer(player)
             mission:setMissionBroker(from)
@@ -179,62 +233,6 @@ insulate("Missions", function()
             Cron.tick(1)
             Cron.tick(1)
             assert.is_same(1, onInsufficientStorageCalled)
-        end)
-        it("calls onInsufficientStorage if the player has not enough storage as soon as the player docks", function()
-            local onInsufficientStorageCalled = 0
-            local player = eePlayerMock()
-
-            local mission
-            mission = Missions:transportProduct(from, to, product, {
-                onInsufficientStorage = function(theMission)
-                    assert.is_same(mission, theMission)
-                    onInsufficientStorageCalled = onInsufficientStorageCalled + 1
-                end,
-            })
-            Mission:withBroker(mission, "Dummy")
-
-            mission:setPlayer(player)
-            mission:setMissionBroker(from)
-            mission:accept()
-            mission:start()
-
-            player.isDocked = function()
-                return false
-            end
-
-            Cron.tick(1)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(0, onInsufficientStorageCalled)
-
-            player.isDocked = function(self, thing)
-                return thing == from
-            end
-
-            Cron.tick(1)
-            assert.is_same(1, onInsufficientStorageCalled)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(1, onInsufficientStorageCalled)
-
-            player.isDocked = function()
-                return false
-            end
-
-            Cron.tick(1)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(1, onInsufficientStorageCalled)
-
-            player.isDocked = function(self, thing)
-                return thing == from
-            end
-
-            Cron.tick(1)
-            assert.is_same(2, onInsufficientStorageCalled)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(2, onInsufficientStorageCalled)
         end)
     end)
 end)

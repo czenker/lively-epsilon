@@ -23,8 +23,7 @@ insulate("Missions", function()
             local station = eeStationMock()
             local mission = Missions:visit(station)
 
-            mission:accept()
-            assert.has_error(function() mission:start() end)
+            assert.has_error(function() mission:accept() end)
         end)
 
         it("successful mission", function()

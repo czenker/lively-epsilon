@@ -1,7 +1,7 @@
 Missions = Missions or {}
 
 -- Bring something to a station
--- This does not fill any storage on the ship.
+-- This fills the storage on the ship
 
 -- config:
 --   * onLoad
@@ -23,18 +23,31 @@ Missions.transportProduct = function(self, from, to, product, config)
 
     local mission
     mission = Mission:new({
+        acceptCondition = function(self)
+            local error
+            if not Player:hasStorage(mission:getPlayer()) then
+                error = "no_storage"
+            elseif mission:getPlayer():getMaxProductStorage(product) < config.amount then
+                error = "small_storage"
+            end
+
+            if isFunction(config.acceptCondition) then
+                return config.acceptCondition(self, error)
+            elseif error ~= nil then
+                return error
+            else
+                return true
+            end
+        end,
         onAccept = config.onAccept,
         onDecline = config.onDecline,
         onStart = function(self)
-            if not Mission.isBrokerMission(mission) then error("Mission can not be started, because it is supposed to have been transformed into a broker Mission", 2) end
-
             if isFunction(config.onStart) then config.onStart(self) end
 
             Cron.regular(cronId, function()
                 if isLoaded == false then
                     if mission:getPlayer():isDocked(from) then
                         if Player:hasStorage(mission:getPlayer()) and mission:getPlayer():getEmptyProductStorage(product) >= config.amount then
-
                             if isFunction(config.onLoad) then config.onLoad(mission) end
                             mission:getPlayer():modifyProductStorage(product, config.amount)
                             isLoaded = true
@@ -67,6 +80,8 @@ Missions.transportProduct = function(self, from, to, product, config)
             if isFunction(config.onEnd) then config.onEnd(self) end
         end,
     })
+
+    Mission:forPlayer(mission)
     mission.isLoaded = function(self) return isLoaded end
     mission.getProduct = function(self) return product end
     mission.getAmount = function(self) return config.amount end

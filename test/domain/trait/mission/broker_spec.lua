@@ -108,13 +108,11 @@ insulate("Mission", function()
     end)
 
     describe("accept()", function()
-        it("can be called if MissionBroker and Player are set", function()
+        it("can be called if MissionBroker is set", function()
             local mission = missionWithBrokerMock()
             local station = eeStationMock()
-            local player = eePlayerMock()
 
             mission:setMissionBroker(station)
-            mission:setPlayer(player)
 
             mission:accept()
         end)
@@ -126,7 +124,6 @@ insulate("Mission", function()
             mission.accept = function() originalCalled = true end
             Mission:withBroker(mission, "Hello World")
             mission:setMissionBroker(eeStationMock())
-            mission:setPlayer(eePlayerMock())
 
             mission:accept()
             assert.is_true(originalCalled)
@@ -134,22 +131,9 @@ insulate("Mission", function()
 
         it("can not be called if no MissionBroker is set", function()
             local mission = missionWithBrokerMock()
-            local player = eePlayerMock()
-
-            mission:setPlayer(player)
 
             assert.has_error(function() mission:accept() end)
         end)
-
-        it("can not be called if Player is not set", function()
-            local mission = missionWithBrokerMock()
-            local station = eeStationMock()
-
-            mission:setMissionBroker(station)
-
-            assert.has_error(function() mission:accept() end)
-        end)
-
     end)
 
     describe("getMissionBroker()", function()
@@ -160,23 +144,6 @@ insulate("Mission", function()
             mission:setMissionBroker(station)
 
             assert.is_same(station, mission:getMissionBroker())
-        end)
-    end)
-    describe("setPlayer()", function()
-        it("fails if argument is not a player", function()
-            local mission = missionWithBrokerMock()
-
-            assert.has_error(function()mission:setPlayer(42) end)
-        end)
-    end)
-    describe("getPlayer()", function()
-        it("returns the set MissionPlayer", function()
-            local mission = missionWithBrokerMock()
-            local player = eePlayerMock()
-
-            mission:setPlayer(player)
-
-            assert.is_same(player, mission:getPlayer())
         end)
     end)
     describe("getHint(), setHint()", function()
