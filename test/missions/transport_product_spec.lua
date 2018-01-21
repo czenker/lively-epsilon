@@ -217,12 +217,13 @@ insulate("Missions", function()
             })
             Mission:withBroker(mission, "Dummy")
             Player:withStorage(player, {maxStorage=100})
-            player:modifyProductStorage(product, 60)
 
             mission:setPlayer(player)
             mission:setMissionBroker(from)
             mission:accept()
             mission:start()
+
+            player:modifyProductStorage(product, 60)
 
             player.isDocked = function(self, thing)
                 return thing == from
