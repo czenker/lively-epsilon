@@ -41,3 +41,16 @@ function MyCpuShip(ship)
 
     return ship
 end
+
+function KraylorSpaceStation(station)
+    local station = station or SpaceStation()
+    station:setFaction("Kraylor")
+
+    return station
+end
+function KraylorCpuShip(ship)
+    local ship = ship or CpuShip()
+    ship:setFaction("Kraylor")
+
+    return ship
+end
