@@ -101,7 +101,8 @@ end
 
 --- checks if the given object does have a storage
 ShipTemplateBased.hasStorage = function(self, station)
-    return isFunction(station.getProductStorage) and
+    return isTable(station) and
+        isFunction(station.getProductStorage) and
         isFunction(station.getMaxProductStorage) and
         isFunction(station.getEmptyProductStorage) and
         isFunction(station.modifyProductStorage) and

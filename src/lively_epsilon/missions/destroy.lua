@@ -21,6 +21,7 @@ local function validateAndInitEnemies(things)
 end
 
 -- Destroy stuff - pretty simple, huh?
+-- onDestruction
 Missions.destroy = function(self, things, config)
     if isEeShipTemplateBased(things) then things = {things} end
 
@@ -37,6 +38,7 @@ Missions.destroy = function(self, things, config)
 
     local mission
     mission = Mission:new({
+        acceptCondition = config.acceptCondition,
         onAccept = config.onAccept,
         onDecline = config.onDecline,
         onStart = function(self)
@@ -68,6 +70,8 @@ Missions.destroy = function(self, things, config)
             if isFunction(config.onEnd) then config.onEnd(self) end
         end,
     })
+
+    Mission:forPlayer(mission)
 
     mission.getEnemies = function(self)
         if isNil(enemies) then return nil end

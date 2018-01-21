@@ -27,7 +27,7 @@ Missions.transportProduct = function(self, from, to, product, config)
             local error
             if not Player:hasStorage(mission:getPlayer()) then
                 error = "no_storage"
-            elseif mission:getPlayer():getMaxProductStorage(product) < config.amount then
+            elseif mission:getPlayer():getEmptyStorageSpace(product) < config.amount then
                 error = "small_storage"
             end
 
