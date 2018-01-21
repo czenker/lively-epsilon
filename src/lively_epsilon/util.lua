@@ -153,4 +153,18 @@ Util = {
 
         return string
     end,
+
+    totalLaserDps = function(ship)
+        if not isEeShip(ship) and not isEePlayer(ship) then error("Expected ship to be a Ship or player, but got " .. type(ship), 2) end
+        local total = 0
+        for i=1,16 do
+            local cycleTime = ship:getBeamWeaponCycleTime(i)
+            local damage = ship:getBeamWeaponDamage(i)
+            if cycleTime > 0 then
+                total = total + damage / cycleTime
+            end
+        end
+
+        return total
+    end,
 }
