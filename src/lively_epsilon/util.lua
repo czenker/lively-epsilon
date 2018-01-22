@@ -168,6 +168,16 @@ Util = {
         return total
     end,
 
+    totalShieldLevel = function(ship)
+        if not isEeShipTemplateBased(ship) then error("Expected ship to be a ShipTemplateBased, but got " .. type(ship), 2) end
+        local total = 0
+        for i=1,ship:getShieldCount() do
+            total = total + ship:getShieldLevel(i)
+        end
+
+        return total
+    end,
+
     sectorName = function(x, y)
         local a = Artifact():setPosition(x, y)
         local sectorName = a:getSectorName()

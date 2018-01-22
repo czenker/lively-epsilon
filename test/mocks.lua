@@ -1,15 +1,30 @@
 local noop = function() end
 
-function eeShipTemplateBasedMock()
-    local callSign = Util.randomUuid()
+function SpaceObject()
     local isValid = true
+    local positionX, positionY = 0, 0
 
     return {
-        getCallSign = function() return callSign end,
         isValid = function() return isValid end,
-        destroy = function() isValid = false end,
-        setCommsScript = noop,
+        destroy = function(self) isValid = false; return self end,
+        getPosition = function() return positionX, positionY end,
+        setPosition = function(self, x, y) positionX, positionY = x, y; return self end,
+        getObjectsInRange = function(self) return {} end,
     }
+end
+function eeShipTemplateBasedMock()
+    local callSign = Util.randomUuid()
+
+    return Util.mergeTables(SpaceObject(), {
+        getCallSign = function() return callSign end,
+        setSystemHealth = noop,
+        getSystemHealth = function() return 1 end,
+        getShieldCount = function() return 1 end,
+        setShields = noop,
+        setShieldsMax = noop,
+        getShieldMax = function() return 0 end,
+        setCommsScript = noop,
+    })
 end
 
 function eeStationMock()
@@ -35,6 +50,12 @@ function eePlayerMock()
         addCustomMessage = noop,
         commandMainScreenOverlay = noop,
     }
+end
+
+function ElectricExplosionEffect()
+    return Util.mergeTables(SpaceObject(), {
+        setSize = noop,
+    })
 end
 
 function personMock()
