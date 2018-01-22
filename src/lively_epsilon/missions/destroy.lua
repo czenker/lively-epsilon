@@ -1,7 +1,7 @@
 Missions = Missions or {}
 
 local function validateAndInitEnemies(things)
-    if isEeShipTemplateBased(things) then things = {} end
+    if isEeShipTemplateBased(things) then things = {things} end
     if not isTable(things) then error("things needs to be a table of space objects, but " .. type(things) .. " given", 2) end
 
     local enemies = {}
