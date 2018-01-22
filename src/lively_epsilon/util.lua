@@ -167,4 +167,11 @@ Util = {
 
         return total
     end,
+
+    sectorName = function(x, y)
+        local a = Artifact():setPosition(x, y)
+        local sectorName = a:getSectorName()
+        a:destroy()
+        return sectorName
+    end,
 }
