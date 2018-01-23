@@ -52,6 +52,14 @@ function eePlayerMock()
     })
 end
 
+function Artifact()
+    return Util.mergeTables(SpaceShip(), {
+        typeName = "Artifact",
+        setModel = function(self) return self end,
+        allowPickup = function(self) return self end,
+    })
+end
+
 function ElectricExplosionEffect()
     return Util.mergeTables(SpaceObject(), {
         setSize = noop,
