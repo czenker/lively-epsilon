@@ -21,6 +21,8 @@ local function validateAndInitEnemies(things)
 end
 
 -- Destroy stuff - pretty simple, huh?
+-- approachDistance
+-- onApproach
 -- onDestruction
 Missions.destroy = function(self, things, config)
     if isEeShipTemplateBased(things) then things = {things} end
@@ -35,6 +37,10 @@ Missions.destroy = function(self, things, config)
 
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+
+    local approachDistance = config.approachDistance or 10000
+    local onApproachTriggered = false
+    if not isFunction(config.onApproach) then onApproachTriggered = true end
 
     local mission
     mission = Mission:new({
@@ -55,6 +61,11 @@ Missions.destroy = function(self, things, config)
                             config.onDestruction(mission, enemy)
                         end
                         knownValidEnemies[enemy] = nil
+                    elseif onApproachTriggered == false then
+                        if distance(enemy, self:getPlayer()) < approachDistance then
+                            config.onApproach(self, enemy)
+                            onApproachTriggered = true
+                        end
                     end
                 end
                 if mission:countValidEnemies() == 0 then

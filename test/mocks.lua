@@ -27,29 +27,29 @@ function eeShipTemplateBasedMock()
     })
 end
 
+function SpaceShip()
+    return Util.mergeTables(eeShipTemplateBasedMock(), {})
+end
+
 function eeStationMock()
-    local mock = eeShipTemplateBasedMock()
-    mock.typeName = "SpaceStation"
-    return mock
+    return Util.mergeTables(eeShipTemplateBasedMock(), {
+        typeName = "SpaceStation",
+    })
 end
 
 function eeCpuShipMock()
-    local mock = eeShipTemplateBasedMock()
-    mock.typeName = "CpuShip"
-    return mock
+    return Util.mergeTables(SpaceShip(), {
+        typeName = "CpuShip",
+    })
 end
 
 function eePlayerMock()
-    local callSign = Util.randomUuid()
-
-    return {
+    return Util.mergeTables(SpaceShip(), {
         typeName = "PlayerSpaceship",
-        getCallSign = function() return callSign end,
-        isValid = function() return true end,
         addCustomButton = noop,
         addCustomMessage = noop,
         commandMainScreenOverlay = noop,
-    }
+    })
 end
 
 function ElectricExplosionEffect()

@@ -32,6 +32,8 @@ Missions.destroyRagingMiner = function(self, things, config)
         acceptCondition = config.acceptCondition,
         onAccept = config.onAccept,
         onDecline = config.onDecline,
+        approachDistance = config.approachDistance,
+        onApproach = config.onApproach,
         onStart = function(self)
             if isFunction(config.onStart) then config.onStart(self) end
 

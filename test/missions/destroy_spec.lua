@@ -206,6 +206,83 @@ insulate("Missions", function()
         end)
     end)
 
+    describe("onApproach()", function()
+        it("is called when the player first enters 10u around the enemy", function()
+            local onApproachCalled = 0
+            local enemy = eeStationMock()
+            local mission
+            mission = Missions:destroy(enemy, {onApproach = function(callMission, callEnemy)
+                assert.is_same(mission, callMission)
+                assert.is_same(enemy, callEnemy)
+                onApproachCalled = onApproachCalled + 1
+            end})
+
+            player:setPosition(20000, 0)
+            enemy:setPosition(0, 0)
+
+            mission:setPlayer(player)
+            mission:accept()
+            mission:start()
+
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_same(0, onApproachCalled)
+
+            player:setPosition(10001, 0)
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_same(0, onApproachCalled)
+
+            player:setPosition(9999, 0)
+            Cron.tick(1)
+            assert.is_same(1, onApproachCalled)
+
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_same(1, onApproachCalled)
+
+            player:setPosition(10001, 0)
+            Cron.tick(1)
+            Cron.tick(1)
+            player:setPosition(9999, 0)
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_same(1, onApproachCalled)
+        end)
+        it("is called when the player first gets closer than 10u to any enemy", function()
+            local onApproachCalled = 0
+            local enemy1 = eeStationMock()
+            local enemy2 = eeStationMock()
+            local mission
+            mission = Missions:destroy({enemy1, enemy2}, {onApproach = function(callMission, callEnemy)
+                assert.is_same(mission, callMission)
+                assert.is_same(enemy2, callEnemy)
+                onApproachCalled = onApproachCalled + 1
+            end})
+
+            enemy1:setPosition(0, 0)
+            enemy2:setPosition(1000, 0)
+
+            mission:setPlayer(player)
+            mission:accept()
+            mission:start()
+
+            player:setPosition(11001, 0)
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_same(0, onApproachCalled)
+
+            player:setPosition(10999, 0)
+            Cron.tick(1)
+            assert.is_same(1, onApproachCalled)
+
+            player:setPosition(9999, 0)
+            Cron.tick(1)
+            assert.is_same(1, onApproachCalled)
+        end)
+    end)
+
     it("successful mission", function()
         local enemy1 = eeStationMock()
         local enemy2 = eeCpuShipMock()
