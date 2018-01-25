@@ -2,13 +2,16 @@ Missions = Missions or {}
 
 -- Destroy something in order to pick up something that you have to drop at some station.
 --
--- Think: "Retrieve stolen plans for a super weapon", "Free prisoners", "Capture Mr. Superbaddy", etc.
+-- Think: "Retrieve plans for a super weapon", "Free prisoners", "Capture Mr. Superbaddy", etc.
 --
 -- approachDistance
 -- onApproach
 -- onBearerDestruction
 -- onItemDestruction
 -- onPickup
+-- dropOffTarget
+-- onDropOff
+-- onDropOffTargetDestroyed
 Missions.capture = function(self, bearer, config)
     if not isEeShipTemplateBased(bearer) and not isFunction(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. type(bearer), 2) end
 
@@ -21,10 +24,11 @@ Missions.capture = function(self, bearer, config)
     local onApproachTriggered = false
     if not isFunction(config.onApproach) then onApproachTriggered = true end
 
-    local wasItemSpawned = false
-    local lastLocationX, lastLocationY = 0, 0
+    local lastLocationX, lastLocationY
 
     local itemObject
+    local dropOffTarget = config.dropOffTarget
+    if not isNil(dropOffTarget) and not isEeStation(dropOffTarget) then error("Expected dropOffTarget to be a station, but got " .. type(dropOffTarget), 2) end
 
     local mission
     mission = Mission:new({
@@ -39,50 +43,67 @@ Missions.capture = function(self, bearer, config)
 
             if isFunction(config.onStart) then config.onStart(self) end
 
-            Cron.regular(cronId, function()
-                if wasItemSpawned == false then
-                    if bearer:isValid() then
-                        lastLocationX, lastLocationY = bearer:getPosition()
-                        if onApproachTriggered == false and distance(bearer, self:getPlayer()) < approachDistance then
-                            config.onApproach(self, bearer)
-                            onApproachTriggered = true
-                        end
-                    else
-                        if lastLocationX == 0 and lastLocationY == 0 then
-                            logError("The bearer object was never valid, so we could not get the position. We will assume 0, 0.")
-                        end
-                        if isFunction(config.onBearerDestruction) then
-                            itemObject = config.onBearerDestruction(self, lastLocationX, lastLocationY)
-                            if not isNil(itemObject) and not isEeObject(itemObject) then
-                                logWarning("The onBearerDestruction callback did not return a valid space object, so the return value will be discarded")
-                                itemObject = nil
-                            end
-                        end
-                        if itemObject == nil then
-                            itemObject = Artifact():setModel("ammo_box"):allowPickup(true):setPosition(lastLocationX, lastLocationY)
-                        end
-                        wasItemSpawned = true
-                        bearer = nil
+            local step1DestroyBearer
+            local step2CollectItem
+            local step3DropOff
 
-                        if isFunction(config.onBearerDestruction) then config.onBearerDestruction(self, itemObject) end
+            step1DestroyBearer = function()
+                if bearer:isValid() then
+                    lastLocationX, lastLocationY = bearer:getPosition()
+                    if onApproachTriggered == false and distance(bearer, self:getPlayer()) < approachDistance then
+                        config.onApproach(self, bearer)
+                        onApproachTriggered = true
                     end
                 else
-                    if itemObject:isValid() then
-                        lastLocationX, lastLocationY = itemObject:getPosition()
-                    else
-                        if distance(self:getPlayer(), lastLocationX, lastLocationY) < 500 then
-                            logInfo("The player was close enough to the destroyed item, so assume it was destroyed by collision and picked up")
-
-                            if isFunction(config.onPickup) then config.onPickup(self) end
-                            self:success()
-                        else
-                            logInfo("The player was too far away from the destroyed item, so assume it was accidentially destroyed")
-                            if isFunction(config.onItemDestruction) then config.onItemDestruction(self, lastLocationX, lastLocationY) end
-                            self:fail()
+                    if lastLocationX == nil and lastLocationY == nil then
+                        logError("The bearer object was never valid, so we could not get the position. We will assume 0, 0.")
+                        lastLocationX, lastLocationY = 0, 0
+                    end
+                    if isFunction(config.onBearerDestruction) then
+                        itemObject = config.onBearerDestruction(self, lastLocationX, lastLocationY)
+                        if not isNil(itemObject) and not isEeObject(itemObject) then
+                            logWarning("The onBearerDestruction callback did not return a valid space object, so the return value will be discarded")
+                            itemObject = nil
                         end
                     end
+                    if itemObject == nil then
+                        itemObject = Artifact():setModel("ammo_box"):allowPickup(true):setPosition(lastLocationX, lastLocationY)
+                    end
+                    Cron.regular(cronId, step2CollectItem, 0.2)
+                    bearer = nil
                 end
-            end, 0.2)
+            end
+
+            step2CollectItem = function()
+                if itemObject:isValid() then
+                    lastLocationX, lastLocationY = itemObject:getPosition()
+                else
+                    if distance(self:getPlayer(), lastLocationX, lastLocationY) < 500 then
+                        logInfo("The player was close enough to the destroyed item, so assume it was destroyed by collision and picked up")
+
+                        if isFunction(config.onPickup) then config.onPickup(self) end
+
+                        Cron.regular(cronId, step3DropOff, 1)
+                        if not isEeStation(dropOffTarget) then self:success() end
+                    else
+                        logInfo("The player was too far away from the destroyed item, so assume it was accidentially destroyed")
+                        if isFunction(config.onItemDestruction) then config.onItemDestruction(self, lastLocationX, lastLocationY) end
+                        self:fail()
+                    end
+                end
+            end
+
+            step3DropOff = function()
+                if not dropOffTarget:isValid() then
+                    if isFunction(config.onDropOffTargetDestroyed) then config.onDropOffTargetDestroyed(self) end
+                    self:fail()
+                elseif self:getPlayer():isDocked(dropOffTarget) then
+                    if isFunction(config.onDropOff) then config.onDropOff(self) end
+                    self:success()
+                end
+            end
+
+            Cron.regular(cronId, step1DestroyBearer, 0.2)
         end,
         onSuccess = config.onSuccess,
         onFailure = config.onFailure,
@@ -103,6 +124,11 @@ Missions.capture = function(self, bearer, config)
     -- @return nil|SpaceObject
     mission.getItemObject = function(self)
         if isEeObject(itemObject) then return itemObject else return nil end
+    end
+
+    -- @return nil|SpaceStation
+    mission.getDropOffTarget = function(self)
+        if isEeStation(dropOffTarget) then return dropOffTarget else return nil end
     end
 
     return mission

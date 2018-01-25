@@ -71,9 +71,9 @@ insulate("Missions", function()
             mission = Missions:capture(bearer, {
                 approachDistance = 10000,
                 onApproach = function(callMission, callEnemy)
+                    onApproachCalled = onApproachCalled + 1
                     assert.is_same(mission, callMission)
                     assert.is_same(bearer, callEnemy)
-                    onApproachCalled = onApproachCalled + 1
                 end,
             })
 
@@ -119,10 +119,10 @@ insulate("Missions", function()
             local mission
             mission = Missions:capture(bearer, {
                 onBearerDestruction = function(callMission, lastX, lastY)
+                    onBearerDestructionCalled = onBearerDestructionCalled + 1
                     assert.is_same(mission, callMission)
                     assert.is_same(4200, lastX)
                     assert.is_same(-4200, lastY)
-                    onBearerDestructionCalled = onBearerDestructionCalled + 1
                 end,
             })
 
@@ -182,10 +182,10 @@ insulate("Missions", function()
             local mission
             mission = Missions:capture(eeStationMock(), {
                 onItemDestruction = function(callMission, lastX, lastY)
+                    onItemDestructionCalled = onItemDestructionCalled + 1
                     assert.is_same(mission, callMission)
                     assert.is_same(4200, lastX)
                     assert.is_same(-4200, lastY)
-                    onItemDestructionCalled = onItemDestructionCalled + 1
                 end,
             })
 
@@ -219,8 +219,8 @@ insulate("Missions", function()
             local mission
             mission = Missions:capture(eeStationMock(), {
                 onPickup = function(callMission)
-                    assert.is_same(mission, callMission)
                     onPickupCalled = onPickupCalled + 1
+                    assert.is_same(mission, callMission)
                 end,
             })
 
@@ -248,7 +248,89 @@ insulate("Missions", function()
         end)
     end)
 
-    it("successful mission", function()
+    describe("onDropOff()", function()
+        it("is called when the player returns the collected item", function()
+            local onDropOffCalled = 0
+            local mission
+            mission = Missions:capture(eeStationMock(), {
+                dropOffTarget = eeStationMock(),
+                onDropOff = function(callMission)
+                    onDropOffCalled = onDropOffCalled + 1
+                    assert.is_same(mission, callMission)
+                end,
+            })
+
+            local dockedToTarget = function(self, thing) return thing == mission:getDropOffTarget() end
+            local dockedToNil = function() return false end
+
+            mission:getBearer():setPosition(0,0)
+            player:setPosition(0,0)
+            player.isDocked = dockedToNil
+            mission:setPlayer(player)
+            mission:accept()
+            mission:start()
+
+            Cron.tick(1)
+            assert.is_same(0, onDropOffCalled)
+
+            mission:getBearer():destroy()
+            Cron.tick(1)
+            assert.is_same(0, onDropOffCalled)
+            player.isDocked = dockedToTarget
+            Cron.tick(1)
+            assert.is_same(0, onDropOffCalled)
+
+            player.isDocked = dockedToNil
+            mission:getItemObject():destroy()
+            Cron.tick(1)
+            assert.is_same(0, onDropOffCalled)
+            player.isDocked = dockedToTarget
+            Cron.tick(1)
+            assert.is_same(1, onDropOffCalled)
+
+            assert.is_same("successful", mission:getState())
+        end)
+    end)
+
+    describe("onDropOffTargetDestroyed()", function()
+        it("is called", function()
+            local onDropOffTargetDestroyedCalled = 0
+            local mission
+            mission = Missions:capture(eeStationMock(), {
+                dropOffTarget = eeStationMock(),
+                onDropOffTargetDestroyed = function(callMission)
+                    onDropOffTargetDestroyedCalled = onDropOffTargetDestroyedCalled + 1
+                    assert.is_same(mission, callMission)
+                end,
+            })
+
+            mission:getBearer():setPosition(0,0)
+            player:setPosition(0,0)
+            mission:setPlayer(player)
+            mission:accept()
+            mission:start()
+
+            Cron.tick(1)
+            assert.is_same(0, onDropOffTargetDestroyedCalled)
+
+            mission:getBearer():destroy()
+            Cron.tick(1)
+            assert.is_same(0, onDropOffTargetDestroyedCalled)
+
+            mission:getItemObject():destroy()
+            Cron.tick(1)
+            assert.is_same(0, onDropOffTargetDestroyedCalled)
+
+            mission:getDropOffTarget():destroy()
+            Cron.tick(1)
+            assert.is_same(1, onDropOffTargetDestroyedCalled)
+
+            assert.is_same("failed", mission:getState())
+        end)
+    end)
+
+
+    it("successful mission without drop off point", function()
         local mission = Missions:capture(eeStationMock())
 
         mission:getBearer():setPosition(0,0)
@@ -261,6 +343,32 @@ insulate("Missions", function()
         mission:getBearer():destroy()
         Cron.tick(1)
         mission:getItemObject():destroy()
+        Cron.tick(1)
+
+        assert.is_same("successful", mission:getState())
+    end)
+
+    it("successful mission with drop off point", function()
+        local mission = Missions:capture(eeStationMock(), {
+            dropOffTarget = eeStationMock()
+        })
+
+        mission:getBearer():setPosition(0,0)
+        player:setPosition(0,0)
+        player.isDocked = function(thing) return false end
+        mission:setPlayer(player)
+        mission:accept()
+        mission:start()
+
+        Cron.tick(1)
+        mission:getBearer():destroy()
+        Cron.tick(1)
+        mission:getItemObject():destroy()
+        Cron.tick(1)
+
+        assert.is_same("started", mission:getState())
+
+        player.isDocked = function(self, thing) return thing == mission:getDropOffTarget() end
         Cron.tick(1)
 
         assert.is_same("successful", mission:getState())
