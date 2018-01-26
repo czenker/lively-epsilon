@@ -65,5 +65,22 @@ Cron = {
     end,
     abort = function(name)
         events[name] = nil
-    end
+    end,
+    getDelay = function(name)
+        if events[name] == nil then
+            return nil
+        else
+            return events[name].next - now
+        end
+    end,
+    setDelay = function(name, delay)
+        if events[name] ~= nil then
+            events[name].next = now + delay
+        end
+    end,
+    addDelay = function(name, delay)
+        if events[name] ~= nil then
+            events[name].next = events[name].next + delay
+        end
+    end,
 }
