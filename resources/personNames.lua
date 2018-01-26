@@ -1,6 +1,5 @@
-local humanFirstNames = {
+local humanFemaleFirstNames = {
     -- taken from https://github.com/endless-sky/endless-sky/blob/master/data/names.txt under GPLv3
-    --female
     "Mary",
     "Anne",
     "Genevieve",
@@ -61,7 +60,9 @@ local humanFirstNames = {
     "Elena",
     "Athena",
     "Calypso",
-    -- male
+}
+local humanMaleFirstNames = {
+    -- taken from https://github.com/endless-sky/endless-sky/blob/master/data/names.txt under GPLv3
     "Henry",
     "Nelson",
     "Randall",
@@ -300,14 +301,32 @@ local humanLastNamesScientific = {
 
 Person = Person or {}
 Person.newHuman = function()
-    local firstName = Util.random(humanFirstNames)
+    local gender = Util.random({"male", "female"})
+    local firstName
+    if gender == "male" then
+        firstName = Util.random(humanMaleFirstNames)
+    else
+        firstName = Util.random(humanFemaleFirstNames)
+    end
     local lastName = Util.random(humanLastNames)
 
-    return Person.byName(firstName .. " " .. lastName, firstName)
+    local person = Person.byName(firstName .. " " .. lastName, firstName)
+    Person:withTags(person, gender)
+
+    return person
 end
 Person.newHumanScientist = function()
-    local firstName = Util.random(humanFirstNames)
+    local gender = Util.random({"male", "female"})
+    local firstName
+    if gender == "male" then
+        firstName = Util.random(humanMaleFirstNames)
+    else
+        firstName = Util.random(humanFemaleFirstNames)
+    end
     local lastName = Util.random(humanLastNamesScientific)
 
-    return Person.byName(firstName .. " " .. lastName, firstName)
+    local person = Person.byName(firstName .. " " .. lastName, firstName)
+    Person:withTags(person, gender)
+
+    return person
 end
