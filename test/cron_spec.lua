@@ -63,6 +63,25 @@ insulate("Cron", function()
             Cron.tick(1)
             assert.is_false(called)
         end)
+
+        it("allows to replace a once with regular on call", function()
+            local called = 0
+            Cron.once("foobar", function()
+                called = called + 1
+                Cron.regular("foobar", function()
+                    called = called + 1
+                end, 1)
+            end, 1)
+
+            assert.is_same(0, called)
+            Cron.tick(1)
+            assert.is_same(1, called)
+            Cron.tick(1)
+            assert.is_same(2, called)
+            Cron.tick(1)
+            assert.is_same(3, called)
+        end)
+
     end)
 
     describe("regular()", function()

@@ -16,6 +16,7 @@ Cron = {
 
         for key, value in pairs(events) do
             if value.next <= now then
+                if value.cron == nil then events[key] = nil end
                 local cronOverride
                 local status, error = pcall(value.func)
                 if not status then
@@ -28,11 +29,8 @@ Cron = {
                     cronOverride = error
                 end
 
-                -- if an error occurs we log it, but continue
                 if value.cron ~= nil then
                     value.next = value.next + (cronOverride or value.cron)
-                else
-                    events[key] = nil
                 end
             end
         end
