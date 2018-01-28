@@ -44,11 +44,56 @@ function eeCpuShipMock()
 end
 
 function eePlayerMock()
+    local repairCrewCount = 0
+    local playerButtons = {}
+    local getButton = function(pos, label)
+        for _, button in pairs(playerButtons) do
+            if button.pos == pos and button.label == label then return button end
+        end
+    end
+    local infoByPos = {}
+
     return Util.mergeTables(SpaceShip(), {
         typeName = "PlayerSpaceship",
-        addCustomButton = noop,
         addCustomMessage = noop,
         commandMainScreenOverlay = noop,
+        addCustomButton = function(self, pos, id, label, callback)
+            playerButtons[id] = {
+                pos = pos,
+                id = id,
+                label = label,
+                callback = callback or nil
+            }
+            return self
+        end,
+        addCustomInfo = function(self, pos, id, label)
+            infoByPos[pos] = label
+            return self
+        end,
+        getCustomInfo = function(self, pos)
+            return infoByPos[pos]
+        end,
+        closeCustomInfo = function(self, pos)
+            infoByPos[pos] = nil
+            return self
+        end,
+        removeCustom = function(self, id) playerButtons[id] = nil; return self end,
+        hasButton = function(self, pos, label)
+            return getButton(pos, label) ~= nil
+        end,
+        clickButton = function(self, pos, label)
+            local button = getButton(pos, label)
+            if button == nil then error("Button with label \"" .. label .. "\" for position " .. pos .. " does not exist.", 2) end
+            if button.callback == nil then error("Button with label \"" .. label .. "\" for position " .. pos .. " does not have a callback.", 2) end
+            return button.callback()
+        end,
+        getButtonLabel = function(self, pos, id)
+            local button = getButton(pos, label)
+            if button == nil then error("Button with label \"" .. label .. "\" for position " .. pos .. " does not exist.", 2) end
+            return button.label
+        end,
+        setRepairCrewCount = function(self, count) repairCrewCount = count; return self end,
+        getRepairCrewCount = function() return repairCrewCount end,
     })
 end
 
