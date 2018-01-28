@@ -96,6 +96,25 @@ Util = {
         return obj:setPosition(x + dx, y + dy):setRotation(angle)
     end,
 
+    onVector = function(x1, y1, x2, y2, ratio)
+        if isEeShipTemplateBased(x1) then
+            if isEeShipTemplateBased(y1) then
+                ratio = x2
+                x2, y2 = y1:getPosition()
+                x1, y1 = x1:getPosition()
+            else
+                ratio = y2
+                y2 = x2
+                x2 = y1
+                x1, y1 = x1:getPosition()
+            end
+        elseif isEeShipTemplateBased(x2) then
+            ratio = y2
+            x2, y2 = x2:getPosition()
+        end
+        return x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio
+    end,
+
     --- copies a thing (table) recursive
     -- @ see http://lua-users.org/wiki/CopyTable
     deepCopy = function (orig)
