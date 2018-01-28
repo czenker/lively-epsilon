@@ -35,6 +35,11 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
         return id
     end
 
+    spaceObject.removeComms = function(self, id)
+        if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+        comms[id] = nil
+    end
+
     spaceObject.getComms = function(self, player)
         if not isEePlayer(player) then error("Expected a Player, but got " .. type(player), 2) end
         if overriddenComms ~= nil then
@@ -94,6 +99,7 @@ end
 ShipTemplateBased.hasComms = function(self, thing)
     return isFunction(thing.setHailText) and
             isFunction(thing.addComms) and
+            isFunction(thing.removeComms) and
             isFunction(thing.getComms) and
             isFunction(thing.overrideComms)
 end
