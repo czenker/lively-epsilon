@@ -2,7 +2,6 @@ Ship = Ship or {}
 
 local function filterRandomObject(station, filterFunction, radius)
     local x, y = station:getPosition()
-    radius = radius or getLongRangeRadarRange()
 
     local objects = {}
     for k, object in pairs(getObjectsInRadius(x, y, radius)) do
@@ -12,7 +11,7 @@ local function filterRandomObject(station, filterFunction, radius)
     return Util.random(objects)
 end
 
-Ship.orderBuyer = function (self, ship, homeStation, product)
+Ship.orderBuyer = function (self, ship, homeStation, product, config)
     product = Product:toId(product)
 
     if not isEeShip(ship) or not ship:isValid() then
@@ -33,6 +32,10 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
     end
 
     ship:setFactionId(homeStation:getFactionId())
+
+    config = config or {}
+    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
 
     local cronId = "trader" .. ship:getCallSign()
     local target
@@ -74,7 +77,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product)
                 end
             end
         elseif target == nil then
-            local seller = filterRandomObject(homeStation, isValidSeller)
+            local seller = filterRandomObject(homeStation, isValidSeller, config.maxDistanceFromHome)
 
             if seller == nil then
                 if dockingTo ~= homeStation then

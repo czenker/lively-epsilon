@@ -2,7 +2,6 @@ Ship = Ship or {}
 
 local function filterRandomObject(station, filterFunction, radius)
     local x, y = station:getPosition()
-    radius = radius or getLongRangeRadarRange()
 
     local objects = {}
     for k, object in pairs(getObjectsInRadius(x, y, radius)) do
@@ -14,7 +13,7 @@ end
 
 local tick = 2
 
-Ship.orderMiner = function (self, ship, homeStation, whenMined)
+Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
     if not isEeShip(ship) or not ship:isValid() then
         error("Invalid ship given", 2)
     end
@@ -36,6 +35,15 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
 
     ship:setFactionId(homeStation:getFactionId())
 
+    config = config or {}
+    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    config.timeToUnload = config.timeToUnload or 15
+    config.timeToMine = config.timeToMine or 15
+    config.timeToGoHome = config.timeToGoHome or 900
+    config.mineDistance = config.mineDistance or ship:getBeamWeaponRange(0)
+    config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
+    config.maxDistanceToNext = config.maxDistanceToNext or (getLongRangeRadarRange() / 2)
+
     local cronId = "miner_" .. ship:getCallSign()
     local target
     local timeToGoHome -- when counter falls lower than 0 the ship will stop gethering  and fly home
@@ -52,7 +60,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
             end
             if Util.size(minedAsteroids) >= 1 then
                 -- only mine an other asteroid if it is close
-                return distance(ship, object) < (getLongRangeRadarRange() / 2)
+                return distance(ship, object) < config.maxDistanceToNext
             else
                 return true
             end
@@ -77,7 +85,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
                 logInfo(ship:getCallSign() .. " is flying back to home base")
                 ship:orderDock(target)
             else
-                target = filterRandomObject(homeStation, isValidAsteroid)
+                target = filterRandomObject(homeStation, isValidAsteroid, config.maxDistanceFromHome)
                 if target == nil then
                     if Util.size(gatheredProducts) > 0 then
                         -- if ship has already gathered stuff
@@ -94,7 +102,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
         elseif target == homeStation then
             if ship:isDocked(homeStation) then
                 if timeToUnload == nil then
-                    timeToUnload = 15
+                    timeToUnload = config.timeToUnload
                 else
                     timeToUnload = timeToUnload - tick
                 end
@@ -114,22 +122,24 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined)
             end
         elseif isEeAsteroid(target) then
             if timeToGoHome == nil then
-                timeToGoHome = 900
+                timeToGoHome = config.timeToGoHome
             else
                 timeToGoHome = timeToGoHome - tick
             end
 
             if not isValidAsteroid(target) then
                 target = nil
-            elseif distance(ship, target) < 2000 then
+            elseif distance(ship, target) <= config.mineDistance then
                 if timeToMine == nil then
-                    timeToMine = 15
+                    timeToMine = config.timeToMine
                 else
                     timeToMine = timeToMine - tick
                 end
 
                 if timeToMine <= 0 then
                     local rewards = whenMined(target, ship, homeStation)
+                    local x, y = target:getPosition()
+                    ExplosionEffect():setPosition(x, y):setSize(150)
 
                     for product, amount in pairs(rewards) do
                         if amount > 0 then
