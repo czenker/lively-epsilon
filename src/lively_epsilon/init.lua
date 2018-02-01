@@ -16,18 +16,19 @@ local myPackages = {
 
     "src/lively_epsilon/domain/product.lua",
     "src/lively_epsilon/domain/person.lua",
-    "src/lively_epsilon/domain/player.lua",
 
     "src/lively_epsilon/domain/ship_template_based.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/storage_rooms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/mission_broker.lua",
+    "src/lively_epsilon/domain/trait/shipTemplateBased/upgrade_broker.lua",
 
     "src/lively_epsilon/domain/station.lua",
     "src/lively_epsilon/domain/trait/station/merchant.lua",
     "src/lively_epsilon/comms/command.lua",
     "src/lively_epsilon/comms/merchant.lua",
     "src/lively_epsilon/comms/mission_broker.lua",
+    "src/lively_epsilon/comms/upgrade_broker.lua",
     "src/lively_epsilon/domain/trait/station/production.lua",
 
     "src/lively_epsilon/domain/mission.lua",
@@ -40,10 +41,15 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/ship/patrol.lua",
     "src/lively_epsilon/domain/trait/ship/trader.lua",
 
+    "src/lively_epsilon/domain/player.lua",
     "src/lively_epsilon/domain/trait/player/mission_tracker.lua",
     "src/lively_epsilon/domain/trait/player/mission_display.lua",
     "src/lively_epsilon/domain/trait/player/storage.lua",
     "src/lively_epsilon/domain/trait/player/storage_display.lua",
+    "src/lively_epsilon/domain/trait/player/upgrade_tracker.lua",
+    "src/lively_epsilon/domain/trait/player/upgrade_display.lua",
+
+    "src/lively_epsilon/domain/broker_upgrade.lua",
 
     "src/lively_epsilon/chit_chat.lua",
 

@@ -3,6 +3,7 @@ local noop = function() end
 function SpaceObject()
     local isValid = true
     local positionX, positionY = 0, 0
+    local reputationPoints = 0
 
     return {
         isValid = function() return isValid end,
@@ -10,6 +11,10 @@ function SpaceObject()
         getPosition = function() return positionX, positionY end,
         setPosition = function(self, x, y) positionX, positionY = x, y; return self end,
         getObjectsInRange = function(self) return {} end,
+        setReputationPoints = function(self, amount) reputationPoints = amount; return self end,
+        getReputationPoints = function(self) return reputationPoints end,
+        takeReputationPoints = function(self, amount) reputationPoints = math.max(0, reputationPoints - amount); return self end,
+        addReputationPoints = function(self, amount) reputationPoints = reputationPoints + amount; return self end,
     }
 end
 function eeShipTemplateBasedMock()
@@ -176,4 +181,11 @@ end
 function productMock()
     local id = Util.randomUuid()
     return Product:new(id, {id = id})
+end
+
+function upgradeMock()
+    return BrokerUpgrade:new({
+        name = "Foobar",
+        onInstall = function() end,
+    })
 end
