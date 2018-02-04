@@ -140,6 +140,28 @@ insulate("Cron", function()
             assert.is_same(3, called)
         end)
 
+        it("the function gets its id as first parameter", function()
+            local theFirstParameter
+            Cron.regular("foobar", function(cronId)
+                theFirstParameter = cronId
+            end, 1)
+
+            Cron.tick(1)
+            assert.is_same("foobar", theFirstParameter)
+        end)
+
+        it("the function gets its generated id as first parameter", function()
+            local theFirstParameter
+            Cron.regular(function(cronId)
+                theFirstParameter = cronId
+            end, 1)
+
+            Cron.tick(1)
+            assert.not_nil(theFirstParameter)
+            assert.is_string(theFirstParameter)
+            assert.not_same("", theFirstParameter)
+        end)
+
         it("allows the callback function to return the interval for the next try", function()
             local called = 0
 

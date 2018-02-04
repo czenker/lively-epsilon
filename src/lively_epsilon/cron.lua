@@ -18,7 +18,7 @@ Cron = {
             if value.next <= now then
                 if value.cron == nil then events[key] = nil end
                 local cronOverride
-                local status, error = pcall(value.func)
+                local status, error = pcall(value.func, key)
                 if not status then
                     if type(error) == "string" then
                         print("An error occured in Cron with " .. key .. ": " .. error)
@@ -55,6 +55,12 @@ Cron = {
     end,
 
     regular = function(name, func, interval, delay)
+        if isFunction(name) then
+            delay = interval
+            interval = func
+            func = name
+            name = Util.randomUuid()
+        end
         events[name] = {
             next = now + (delay or 0),
             func = func,
