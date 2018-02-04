@@ -33,7 +33,40 @@ function eeShipTemplateBasedMock()
 end
 
 function SpaceShip()
-    return Util.mergeTables(eeShipTemplateBasedMock(), {})
+    local weaponStorageMax = {
+        hvli = 0,
+        homing = 0,
+        mine = 0,
+        nuke = 0,
+        emp = 0,
+    }
+    local weaponStorage = {
+        hvli = 0,
+        homing = 0,
+        mine = 0,
+        nuke = 0,
+        emp = 0,
+    }
+    return Util.mergeTables(eeShipTemplateBasedMock(), {
+        getWeaponStorageMax = function(self, weapon)
+            if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
+            return weaponStorageMax[weapon]
+        end,
+        setWeaponStorageMax = function(self, weapon, amount)
+            if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
+            weaponStorageMax[weapon] = math.max(0, amount)
+            if weaponStorage[weapon] > weaponStorageMax[weapon] then weaponStorage[weapon] = weaponStorageMax[weapon] end
+            return self
+        end,
+        getWeaponStorage = function(self, weapon)
+            if weaponStorage[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
+            return weaponStorage[weapon]
+        end,
+        setWeaponStorage = function(self, weapon, amount)
+            if weaponStorage[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
+            weaponStorage[weapon] = math.max(0, math.min(amount, weaponStorageMax[weapon]))
+        end,
+    })
 end
 
 function eeStationMock()

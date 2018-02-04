@@ -1,5 +1,9 @@
 Player = Player or {}
 
+local function isWeapon(product)
+    return product:getId() == "hvli" or product:getId() == "homing" or product:getId() == "mine" or product:getId() == "emp" or product:getId() == "nuke"
+end
+
 Player.withStorage = function(self, player, config)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
     if Player:hasStorage(player) then error("Player already has a storage" .. type(player), 2) end
@@ -24,7 +28,9 @@ Player.withStorage = function(self, player, config)
 
     player.getProductStorage = function(self, product)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
-        if storage[product] == nil then
+        if isWeapon(product) then
+            return player:getWeaponStorage(product:getId())
+        elseif storage[product] == nil then
             return 0
         else
             return storage[product]
@@ -34,21 +40,33 @@ Player.withStorage = function(self, player, config)
     player.getMaxProductStorage = function(self, product)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
 
-        return math.min(self:getEmptyProductStorage(product) + self:getProductStorage(product), maxStorage)
+        if isWeapon(product) then
+            return player:getWeaponStorageMax(product:getId())
+        else
+            return math.min(self:getEmptyProductStorage(product) + self:getProductStorage(product), maxStorage)
+        end
     end
 
     player.getEmptyProductStorage = function(self, product)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
 
-        return math.floor(self:getEmptyStorageSpace() / product:getSize())
+        if isWeapon(product) then
+            return player:getWeaponStorageMax(product:getId()) - player:getWeaponStorage(product:getId())
+        else
+            return math.floor(self:getEmptyStorageSpace() / product:getSize())
+        end
     end
 
     player.modifyProductStorage = function(self, product, amount)
         if not Product.isProduct(product) then error("Expected a product, but got " .. type(product)) end
         if not isNumber(amount) then error("Expected a number, but got " .. type(amount)) end
 
-        storage[product] = (storage[product] or 0) + amount
-        if storage[product] <= 0 then storage[product] = nil end
+        if isWeapon(product) then
+            player:setWeaponStorage(product:getId(), player:getWeaponStorage(product:getId()) + amount)
+        else
+            storage[product] = (storage[product] or 0) + amount
+            if storage[product] <= 0 then storage[product] = nil end
+        end
     end
 
     player.getEmptyStorageSpace = function(self)

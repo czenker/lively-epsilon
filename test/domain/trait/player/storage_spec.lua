@@ -54,6 +54,24 @@ insulate("Player", function()
             assert.contains_value(product1, player:getStoredProducts())
             assert.not_contains_value(product2, player:getStoredProducts())
         end)
+
+        it("does not return rockets, because we might not know the correct object to return", function()
+            local player = eePlayerMock()
+            Player:withStorage(player)
+
+            player:setWeaponStorageMax("hvli", 5)
+            player:setWeaponStorage("hvli", 5)
+            player:setWeaponStorageMax("homing", 4)
+            player:setWeaponStorage("homing", 4)
+            player:setWeaponStorageMax("mine", 3)
+            player:setWeaponStorage("mine", 3)
+            player:setWeaponStorageMax("emp", 2)
+            player:setWeaponStorage("emp", 2)
+            player:setWeaponStorageMax("nuke", 1)
+            player:setWeaponStorage("nuke", 1)
+
+            assert.is_same({}, player:getStoredProducts())
+        end)
     end)
 
     describe("getProductStorage(), getEmptyProductStorage(), getMaxProductStorage()", function()
@@ -183,6 +201,27 @@ insulate("Player", function()
             assert.has_error(function() player:getProductStorage() end)
             assert.has_error(function() player:getMaxProductStorage() end)
             assert.has_error(function() player:getEmptyProductStorage() end)
+        end)
+        it("works with rockets", function()
+            local hvli = Product:new("HVLI", {id = "hvli"})
+            local player = eePlayerMock()
+            Player:withStorage(player)
+            player:setWeaponStorageMax("hvli", 8)
+            player:setWeaponStorage("hvli", 6)
+
+            assert.is_same(6, player:getProductStorage(hvli))
+            assert.is_same(8, player:getMaxProductStorage(hvli))
+            assert.is_same(2, player:getEmptyProductStorage(hvli))
+
+            for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
+                local rocket = Product:new(weapon, {id = weapon})
+                player:setWeaponStorageMax(weapon, 0)
+                player:setWeaponStorage(weapon, 0)
+
+                assert.is_same(0, player:getProductStorage(rocket))
+                assert.is_same(0, player:getMaxProductStorage(rocket))
+                assert.is_same(0, player:getEmptyProductStorage(rocket))
+            end
         end)
     end)
 
@@ -321,6 +360,19 @@ insulate("Player", function()
             Player:withStorage(player)
 
             assert.has_error(function() player:modifyProductStorage(product1, nil) end)
+        end)
+
+        it("allows to handle rockets", function()
+            local player = eePlayerMock()
+            Player:withStorage(player)
+            for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
+                local rocket = Product:new(weapon, {id = weapon})
+                player:setWeaponStorageMax(weapon, 4)
+                player:setWeaponStorage(weapon, 0)
+
+                player:modifyProductStorage(rocket, 2)
+                assert.is_same(2, player:getWeaponStorage(weapon))
+            end
         end)
     end)
 
