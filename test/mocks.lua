@@ -76,7 +76,55 @@ function eeStationMock()
 end
 
 function eeCpuShipMock()
+    local order, orderTarget, orderX, orderY = "Idle", nil, nil, nil
+
     return Util.mergeTables(SpaceShip(), {
+        orderIdle = function(self)
+            order, orderTarget, orderX, orderY = "Idle", nil, nil, nil
+            return self
+        end,
+        orderRoaming = function(self)
+            order, orderTarget, orderX, orderY = "Roaming", nil, nil, nil
+            return self
+        end,
+        orderStandGround = function(self)
+            order, orderTarget, orderX, orderY = "Stand Ground", nil, nil, nil
+            return self
+        end,
+        orderDefendLocation = function(self, x, y)
+            order, orderTarget, orderX, orderY = "Defend Location", nil, x, y
+            return self
+        end,
+        orderDefendTarget = function(self, target)
+            order, orderTarget, orderX, orderY = "Defend Target", target, nil, nil
+            return self
+        end,
+        orderFlyFormation = function(self, target, x, y)
+            order, orderTarget, orderX, orderY = "Fly in formation", target, x, y
+            return self
+        end,
+        orderFlyTowards = function(self, x, y)
+            order, orderTarget, orderX, orderY = "Fly towards", nil, x, y
+            return self
+        end,
+        orderFlyTowardsBlind = function(self, x, y)
+            order, orderTarget, orderX, orderY = "Fly towards (ignore all)", nil, x, y
+            return self
+        end,
+        orderAttack = function(self, target)
+            order, orderTarget, orderX, orderY = "Attack", target, nil, nil
+            return self
+        end,
+        orderDock = function(self, target)
+            order, orderTarget, orderX, orderY = "Dock", target, nil, nil
+            return self
+        end,
+        getOrder = function(self) return order end,
+        getOrderTargetLocation = function(self) return orderX, orderY end,
+        getOrderTargetLocationX = function(self) return orderX end,
+        getOrderTargetLocationY = function(self) return orderY end,
+        getOrderTarget = function(self) return orderTarget end,
+
         typeName = "CpuShip",
     })
 end
@@ -221,4 +269,8 @@ function upgradeMock()
         name = "Foobar",
         onInstall = function() end,
     })
+end
+
+function fleetMock(ships)
+    return Fleet:new(ships)
 end
