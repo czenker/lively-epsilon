@@ -64,6 +64,23 @@ insulate("Cron", function()
             assert.is_false(called)
         end)
 
+        it("is possible to remove a function with a generated name", function()
+            local called = false
+            local cronId = Cron.once(function() called = true end, 5)
+
+            assert.is_false(called)
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            assert.is_false(called)
+
+            Cron.abort(cronId)
+
+            Cron.tick(1)
+            assert.is_false(called)
+        end)
+
         it("allows to replace a once with regular on call", function()
             local called = 0
             Cron.once("foobar", function()
@@ -138,6 +155,20 @@ insulate("Cron", function()
             assert.is_same(3, called)
             Cron.tick(1)
             assert.is_same(3, called)
+        end)
+
+        it("a function can be stopped from outside", function()
+            local called = 0
+            local cronId = Cron.regular(function() called = called + 1 end, 1)
+
+            assert.is_same(0, called)
+            Cron.tick(1)
+            assert.is_same(1, called)
+            Cron.abort(cronId)
+            Cron.tick(1)
+            assert.is_same(1, called)
+            Cron.tick(1)
+            assert.is_same(1, called)
         end)
 
         it("the function gets its id as first parameter", function()

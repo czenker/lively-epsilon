@@ -52,6 +52,8 @@ Cron = {
             func = func,
             cron = nil
         }
+
+        return name
     end,
 
     regular = function(name, func, interval, delay)
@@ -66,6 +68,8 @@ Cron = {
             func = func,
             cron = interval or 60
         }
+
+        return name
     end,
     abort = function(name)
         events[name] = nil
