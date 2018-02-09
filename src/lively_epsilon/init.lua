@@ -61,6 +61,7 @@ local myPackages = {
     "src/lively_epsilon/missions/crew_for_rent.lua",
     "src/lively_epsilon/missions/destroy.lua",
     "src/lively_epsilon/missions/destroy_raging_miner.lua",
+    "src/lively_epsilon/missions/scan.lua",
     "src/lively_epsilon/missions/transport_token.lua",
     "src/lively_epsilon/missions/transport_product.lua",
     "src/lively_epsilon/missions/visit.lua",

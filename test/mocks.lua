@@ -33,6 +33,7 @@ function eeShipTemplateBasedMock()
 end
 
 function SpaceShip()
+    local scannedState = "not" -- simplified version that does not take factions into account
     local weaponStorageMax = {
         hvli = 0,
         homing = 0,
@@ -66,6 +67,17 @@ function SpaceShip()
             if weaponStorage[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
             weaponStorage[weapon] = math.max(0, math.min(amount, weaponStorageMax[weapon]))
         end,
+        isFriendOrFoeIdentifiedBy = function(self, player)
+            if not isEePlayer(player) then error("Mock only works for player", 2) end
+            return scannedState ~= "not"
+        end,
+        isFullyScannedBy = function(self, player)
+            if not isEePlayer(player) then error("Mock only works for player", 2) end
+            return scannedState == "full"
+        end,
+        notScannedByPlayer = function(self) scannedState = "not"; return self end,
+        friendOrFoeIdentifiedByPlayer = function(self) scannedState = "friendorfoeidentified"; return self end,
+        fullScannedByPlayer = function(self) scannedState = "full"; return self end,
     })
 end
 
