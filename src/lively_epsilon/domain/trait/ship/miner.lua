@@ -90,10 +90,10 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
                     if Util.size(gatheredProducts) > 0 then
                         -- if ship has already gathered stuff
                         logDebug(ship:getCallSign() .. " did not find any more asteroids and will return home")
-                        timeToGoHome = 0
                     else
                         logWarning(ship:getCallSign() .. " did not find a valid asteroid in range to mine")
                     end
+                    timeToGoHome = 0
                 else
                     timeToMine = nil
                     ship:orderAttack(target)

@@ -195,6 +195,20 @@ insulate("Missions", function()
 
             target2:fullScannedByPlayer()
             Cron.tick(1)
+
+            assert.is_same(3, mission:countTargets())
+            assert.is_same(1, mission:countUnscannedTargets())
+            assert.is_same(1, mission:countScannedTargets())
+            assert.contains_value(target1, mission:getTargets())
+            assert.contains_value(target2, mission:getTargets())
+            assert.contains_value(target3, mission:getTargets())
+            assert.not_contains_value(target1, mission:getUnscannedTargets())
+            assert.not_contains_value(target2, mission:getUnscannedTargets())
+            assert.contains_value(target3, mission:getUnscannedTargets())
+            assert.not_contains_value(target1, mission:getScannedTargets())
+            assert.contains_value(target2, mission:getScannedTargets())
+            assert.not_contains_value(target3, mission:getScannedTargets())
+
             target2:destroy()
             Cron.tick(1)
 

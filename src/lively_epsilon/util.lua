@@ -89,6 +89,10 @@ Util = {
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,
 
+    angleFromVector = function(dx, dy)
+        return math.deg(math.atan(dy, dx)), math.sqrt(dx * dx + dy * dy)
+    end,
+
     spawnAtStation = function(station, obj)
         local x, y = station:getPosition()
         local angle = math.random(0, 360)

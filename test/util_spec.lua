@@ -307,6 +307,48 @@ insulate("Util", function()
         end)
     end)
 
+    describe("vectorFromAngle()", function()
+        it ("has the x axis for 0 degree", function()
+            local x, y = Util.vectorFromAngle(0, 1000)
+
+            assert.is_same(1000, math.floor(x))
+            assert.is_same(0, math.floor(y))
+        end)
+        it ("it works with degrees", function()
+            local x, y = Util.vectorFromAngle(180, 1000)
+
+            assert.is_same(-1000, math.floor(x))
+            assert.is_same(0, math.floor(y))
+        end)
+        it ("it works counter clockwise", function()
+            local x, y = Util.vectorFromAngle(90, 1000)
+
+            assert.is_same(0, math.floor(x))
+            assert.is_same(1000, math.floor(y))
+        end)
+    end)
+
+    describe("angleFromVector()", function()
+        it ("has the x axis for 0 degree", function()
+            local angle, distance = Util.angleFromVector(1000, 0)
+
+            assert.is_same(0, math.floor(angle))
+            assert.is_same(1000, math.floor(distance))
+        end)
+        it ("it works with degrees", function()
+            local angle, distance = Util.angleFromVector(-1000, 0)
+
+            assert.is_same(180, math.floor(angle))
+            assert.is_same(1000, math.floor(distance))
+        end)
+        it ("it works counter clockwise", function()
+            local angle, distance = Util.angleFromVector(0, 1000)
+
+            assert.is_same(90, math.floor(angle))
+            assert.is_same(1000, math.floor(distance))
+        end)
+    end)
+
     describe("map()", function()
         it("maps values and retains keys", function()
             local input = {a=1, b=2, c=3}
