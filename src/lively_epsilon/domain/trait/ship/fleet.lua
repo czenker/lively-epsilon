@@ -7,7 +7,7 @@ Ship.withFleet = function(self, ship, fleet)
 
     ship.getFleet = function(self) return fleet end
     ship.getFleetLeader = function(self) return fleet:getLeader() end
-    ship.isFleetLeader = function(self) return fleet:getLeader() == self end
+    ship.isFleetLeader = function(self) return fleet:getLeader():isValid() and fleet:getLeader():getCallSign() == self:getCallSign() end
 
 end
 
