@@ -272,4 +272,71 @@ insulate("Fleet", function()
             assert.is_same(0, ship5:getOrderTargetLocationX())
         end)
     end)
+
+    describe("GM interaction", function()
+        it("GM can issue an order to a wingman that is not changed if the leader is killed", function()
+            local ship1 = eeCpuShipMock()
+            local ship2 = eeCpuShipMock()
+            local ship3 = eeCpuShipMock()
+            local ship4 = eeCpuShipMock()
+            local ship5 = eeCpuShipMock()
+
+            Fleet:new({ship1, ship2, ship3, ship4, ship5})
+
+            ship5:orderDefendLocation(42, 4200)
+
+            Cron.tick(1)
+
+            assert.is_same("Defend Location", ship5:getOrder())
+            ship1:destroy()
+
+            assert.is_same("Defend Location", ship5:getOrder())
+        end)
+        it("GM can reintegrate a wingman by setting order to Idle or Roaming", function()
+            local ship1 = eeCpuShipMock()
+            local ship2 = eeCpuShipMock()
+            local ship3 = eeCpuShipMock()
+            local ship4 = eeCpuShipMock()
+            local ship5 = eeCpuShipMock()
+
+            Fleet:new({ship1, ship2, ship3, ship4, ship5})
+
+            ship4:orderDefendLocation(42, 4200)
+            ship5:orderDefendLocation(42, 4200)
+
+            Cron.tick(1)
+
+            ship4:orderIdle()
+            ship5:orderRoaming()
+
+            Cron.tick(1)
+
+            assert.is_same("Fly in formation", ship4:getOrder())
+            assert.is_same(-1400, ship4:getOrderTargetLocationY())
+            assert.is_same(0, ship4:getOrderTargetLocationX())
+            assert.is_same("Fly in formation", ship5:getOrder())
+            assert.is_same(1400, ship5:getOrderTargetLocationY())
+            assert.is_same(0, ship5:getOrderTargetLocationX())
+        end)
+        it("GM can issue new orders to fleet leader and are carried out if fleet leader is killed", function()
+            local ship1 = eeCpuShipMock()
+            local ship2 = eeCpuShipMock()
+            local ship3 = eeCpuShipMock()
+
+            Fleet:new({ship1, ship2, ship3})
+
+            ship1:orderDefendLocation(42, 4200)
+
+            Cron.tick(1)
+
+            ship1:destroy()
+
+            Cron.tick(1)
+
+            assert.is_same("Defend Location", ship2:getOrder())
+            assert.is_same(42, ship2:getOrderTargetLocationX())
+            assert.is_same(4200, ship2:getOrderTargetLocationY())
+            assert.is_same("Fly in formation", ship3:getOrder())
+        end)
+    end)
 end)
