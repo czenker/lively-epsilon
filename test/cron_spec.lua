@@ -337,4 +337,17 @@ insulate("Cron", function()
         end)
     end)
 
+
+    describe("now()", function()
+        it("gives the current time", function()
+            local now = Cron.now()
+            assert.is_true(isNumber(now))
+
+            Cron.tick(1)
+
+            assert.is_same(1, Cron.now() - now)
+        end)
+    end)
+
+
 end)

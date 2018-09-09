@@ -91,4 +91,7 @@ Cron = {
             events[name].next = events[name].next + delay
         end
     end,
+    now = function()
+        return now
+    end,
 }
