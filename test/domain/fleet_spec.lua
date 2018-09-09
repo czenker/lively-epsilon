@@ -25,6 +25,40 @@ insulate("Fleet", function()
         it("fails if a station is given", function()
             assert.has_error(function() Fleet:new({eeCpuShipMock(), eeStationMock()}) end)
         end)
+
+        it("allows to give config", function()
+            local ship = eeCpuShipMock()
+            local fleet = Fleet:new({ship}, {id = "foobar"})
+
+            assert.is_true(Fleet:isFleet(fleet))
+        end)
+
+        it("fails if the config is not a table", function()
+            local ship = eeCpuShipMock()
+            assert.has_error(function() Fleet:new({ship}, "This breaks") end)
+        end)
+
+        it("fails if id is not a string", function()
+            local ship = eeCpuShipMock()
+            assert.has_error(function() Fleet:new({ship}, {id = 42}) end)
+        end)
+    end)
+
+    describe("getId()", function()
+        it("returns the given id", function()
+            local ship = eeCpuShipMock()
+            local fleet = Fleet:new({ship}, {id = "foobar"})
+
+            assert.is_same("foobar", fleet:getId())
+        end)
+
+        it("generates an id if none is given", function()
+            local ship = eeCpuShipMock()
+            local fleet = Fleet:new({ship})
+
+            assert.is_true(isString(fleet:getId()))
+            assert.is_not_same("", fleet:getId())
+        end)
     end)
 
     describe("isValid()", function()

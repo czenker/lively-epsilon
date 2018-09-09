@@ -37,10 +37,19 @@ local getOrderToSetOrder = function(ship)
     end
 end
 
-Fleet.new = function(self, ships)
+Fleet.new = function(self, ships, config)
     if not isTable(ships) then error("Exptected ships to be a table, but got " .. type(ships), 2) end
     for _, ship in pairs(ships) do
         if not isEeShip(ship) then error("Expected all ships to be Ships, but got " .. type(ship), 2) end
+    end
+
+    config = config or {}
+    if not isTable(config) then
+        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+    end
+    local id = config.id or Util.randomUuid()
+    if not isString(id) then
+        error("Expected id to be a string, but " .. type(id) .. " given.", 2)
     end
 
     local currentShips = {}
@@ -82,6 +91,9 @@ Fleet.new = function(self, ships)
     end
 
     local fleet = {
+        getId = function(self)
+            return id
+        end,
         isValid = function(self)
             for _, ship in pairs(currentShips) do
                 if ship:isValid() then return true end
@@ -161,6 +173,7 @@ end
 
 Fleet.isFleet = function(self, thing)
     return isTable(thing) and
+            isFunction(thing.getId) and
             isFunction(thing.isValid) and
             isFunction(thing.getShips) and
             isFunction(thing.countShips) and

@@ -3,7 +3,9 @@ insulate("Station", function()
     require "test.mocks"
 
     local function fleetMock(ships)
+        local id = Util.randomUuid()
         local fleet = {
+            getId = function() return id end,
             isValid = function() return true end,
             getShips = function() return ships end,
             countShips = function() return Util.size(ships) end,
