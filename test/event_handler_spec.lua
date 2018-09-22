@@ -50,6 +50,31 @@ insulate("EventHandler", function()
         assert.is.equal("abcdefghi", result)
     end)
 
+    it("gives an additional argument to fire() to the listeners", function()
+        local secret = "Hello World"
+        local gottenArgument
+        local eh = EventHandler:new()
+
+        eh:register("test", function(self, argument) gottenArgument = argument end)
+        eh:fire("test", secret)
+
+        assert.is.equal(secret, gottenArgument)
+    end)
+
+    it("allows subsequent listener to modify the argument", function()
+        local secret = {name=""}
+
+        local eh = EventHandler:new()
+
+        eh:register("test", function(self, argument) argument.name = argument.name .. "a" end)
+        eh:register("test", function(self, argument) argument.name = argument.name .. "b" end)
+        eh:register("test", function(self, argument) argument.name = argument.name .. "c" end)
+
+        eh:fire("test", secret)
+
+        assert.is.equal("abc", secret.name)
+    end)
+
     describe("allows to limit events (in order to prevent typos)", function()
         it("allows to register and fire events from the whitelist", function()
             local eh = EventHandler:new({allowedEvents = {"foo"}})

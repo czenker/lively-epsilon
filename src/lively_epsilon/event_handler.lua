@@ -34,7 +34,7 @@ EventHandler = {
                 events[eventName][priority] = events[eventName][priority] or {}
                 table.insert(events[eventName][priority], handler)
             end,
-            fire = function(self, eventName)
+            fire = function(self, eventName, arg)
                 failIfEventNameNotAllowed(eventName)
                 if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 2) end
                 if events[eventName] ~= nil then
@@ -46,7 +46,7 @@ EventHandler = {
 
                     for _, prio in pairs(priorities) do
                         for _, handler in pairs(events[eventName][prio]) do
-                            handler()
+                            handler(nil, arg)
                         end
                     end
                 end
