@@ -139,6 +139,18 @@ insulate("EventHandler", function()
         end)
     end)
 
+    it("calls all listeners even if one raises an error", function()
+        local called = false
+        local eh = EventHandler:new()
+
+        eh:register("test", function() error("boom") end)
+        eh:register("test", function() called = true end)
+
+        eh:fire("test")
+
+        assert.is_true(called)
+    end)
+
 
     describe("new()", function()
         it("fails if config is not a table", function()

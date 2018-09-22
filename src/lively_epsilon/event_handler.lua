@@ -46,7 +46,14 @@ EventHandler = {
 
                     for _, prio in pairs(priorities) do
                         for _, handler in pairs(events[eventName][prio]) do
-                            handler(nil, arg)
+                            local status, error = pcall(handler, nil, arg)
+                            if not status then
+                                local msg = "An error occured while executing listeners for " .. eventName
+                                if isString(error) then
+                                    msg = msg .. ": " .. error
+                                end
+                                logError(msg)
+                            end
                         end
                     end
                 end
