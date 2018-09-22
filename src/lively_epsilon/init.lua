@@ -5,6 +5,7 @@
 
 local myPackages = {
     "src/lively_epsilon/cron.lua",
+    "src/lively_epsilon/event_handler.lua",
     "src/lively_epsilon/util.lua",
     "utils.lua",
     "src/lively_epsilon/utility/ee.lua",
