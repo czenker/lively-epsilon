@@ -22,18 +22,33 @@ EventHandler = {
         end
 
         local events = {}
+
         return {
-            register = function(self, eventName, handler)
+            register = function(self, eventName, handler, priority)
                 failIfEventNameNotAllowed(eventName)
                 if not isFunction(handler) then error("Expected handler to be a function, but got " .. type(handler), 2) end
+                priority = priority or 0
+                if not isNumber(priority) then error("Expected prioritiy to be a number, but got " .. type(priority), 2) end
+
                 events[eventName] = events[eventName] or {}
-                table.insert(events[eventName], handler)
+                events[eventName][priority] = events[eventName][priority] or {}
+                table.insert(events[eventName][priority], handler)
             end,
             fire = function(self, eventName)
                 failIfEventNameNotAllowed(eventName)
                 if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 2) end
-                for _, handler in pairs(events[eventName] or {}) do
-                    handler()
+                if events[eventName] ~= nil then
+                    local priorities = {}
+                    for priority, _ in pairs(events[eventName]) do
+                        table.insert(priorities, priority)
+                    end
+                    table.sort(priorities)
+
+                    for _, prio in pairs(priorities) do
+                        for _, handler in pairs(events[eventName][prio]) do
+                            handler()
+                        end
+                    end
                 end
             end
         }
