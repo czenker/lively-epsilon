@@ -3,7 +3,7 @@ EventHandler = {
         config = config or {}
         if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
         local failIfEventNameNotAllowed = function(eventName)
-            if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 4) end
+            if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 3) end
         end
         if config.allowedEvents ~= nil then
             local allowedEvents = {}
@@ -15,9 +15,9 @@ EventHandler = {
             end
 
             failIfEventNameNotAllowed = function(eventName)
-                if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 4) end
+                if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 3) end
 
-                if allowedEvents[eventName] == nil then error("The eventName " .. eventName .. " is not valid. Most likely you misstyped the eventName.", 4) end
+                if allowedEvents[eventName] == nil then error("The eventName " .. eventName .. " is not valid. Most likely you misstyped the eventName.", 3) end
             end
         end
 
