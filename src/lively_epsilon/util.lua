@@ -93,10 +93,11 @@ Util = {
         return math.deg(math.atan(dy, dx)), math.sqrt(dx * dx + dy * dy)
     end,
 
-    spawnAtStation = function(station, obj)
+    spawnAtStation = function(station, obj, distance)
+        distance = distance or 500
         local x, y = station:getPosition()
         local angle = math.random(0, 360)
-        local dx, dy = Util.vectorFromAngle(angle, 500)
+        local dx, dy = Util.vectorFromAngle(angle, distance)
         return obj:setPosition(x + dx, y + dy):setRotation(angle)
     end,
 
