@@ -37,6 +37,9 @@ EventHandler = {
             fire = function(self, eventName, arg)
                 failIfEventNameNotAllowed(eventName)
                 if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 2) end
+
+                logDebug("Event " .. eventName .. " fired")
+
                 if events[eventName] ~= nil then
                     local priorities = {}
                     for priority, _ in pairs(events[eventName]) do
