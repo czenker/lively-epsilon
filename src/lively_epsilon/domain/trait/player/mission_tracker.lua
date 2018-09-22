@@ -6,7 +6,7 @@ Player.withMissionTracker = function(self, player)
     local missions = {}
 
     player.addMission = function(self, mission)
-        if not Mission.isMission(mission) then error("Expected mission to be a Mission, but got " .. type(mission)) end
+        if not Mission:isMission(mission) then error("Expected mission to be a Mission, but got " .. type(mission)) end
         missions[mission:getId()] = mission
     end
 

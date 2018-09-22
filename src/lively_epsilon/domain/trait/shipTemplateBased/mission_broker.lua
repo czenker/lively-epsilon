@@ -24,7 +24,7 @@ ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
     spaceObject.removeMission = function(self, mission)
         if isString(mission) then
             missions[mission] = nil
-        elseif Mission.isMission(mission) then
+        elseif Mission:isMission(mission) then
             missions[mission:getId()] = nil
         else
             error("Expected mission to be a mission or mission id, but " .. type(mission) .. " given.", 2)

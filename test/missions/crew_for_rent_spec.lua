@@ -9,7 +9,7 @@ insulate("Missions", function()
             local ship = eeCpuShipMock()
             local mission = Missions:crewForRent(ship)
 
-            assert.is_true(Mission.isMission(mission))
+            assert.is_true(Mission:isMission(mission))
             assert.is_same(ship, mission:getNeedy())
             assert.is_same(0, mission:getRepairCrewCount())
         end)

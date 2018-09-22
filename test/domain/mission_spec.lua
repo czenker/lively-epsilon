@@ -38,7 +38,7 @@ insulate("Mission", function()
         it("should create a valid Mission", function()
             local mission = Mission:new()
 
-            assert.is_true(Mission.isMission(mission))
+            assert.is_true(Mission:isMission(mission))
         end)
 
         it("allows to give config", function()
@@ -46,7 +46,7 @@ insulate("Mission", function()
             local mission = Mission:new({id = id})
 
             assert.is_same(id, mission:getId())
-            assert.is_true(Mission.isMission(mission))
+            assert.is_true(Mission:isMission(mission))
         end)
 
         it("fails if the config is not a table", function()

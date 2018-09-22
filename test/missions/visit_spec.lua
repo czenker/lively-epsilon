@@ -8,7 +8,7 @@ insulate("Missions", function()
             local station = eeStationMock()
             local mission = Missions:visit(station, to)
 
-            assert.is_true(Mission.isMission(mission))
+            assert.is_true(Mission:isMission(mission))
         end)
         it("fails if first parameter is not a station", function()
             local station = eeCpuShipMock()

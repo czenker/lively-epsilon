@@ -9,7 +9,7 @@ insulate("Missions", function()
             local to = eeStationMock()
             local mission = Missions:transportToken(from, to)
 
-            assert.is_true(Mission.isMission(mission))
+            assert.is_true(Mission:isMission(mission))
         end)
         it("fails if first parameter is not a station", function()
             local from = eeCpuShipMock()

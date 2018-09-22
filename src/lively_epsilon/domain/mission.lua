@@ -114,7 +114,7 @@ Mission.new = function(self, config)
     return mission
 end
 
-Mission.isMission = function(mission)
+Mission.isMission = function(self, mission)
     return isTable(mission) and
             isFunction(mission.getId) and
             isFunction(mission.canBeAccepted) and

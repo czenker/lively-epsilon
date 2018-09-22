@@ -1,7 +1,7 @@
 Mission = Mission or {}
 
 Mission.forPlayer = function(self, mission, initPlayer)
-    if not Mission.isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
+    if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
     if Mission.isPlayerMission(mission) then error("The given mission is already a PlayerMission.", 2) end
 
     -- the player who has accepted or wants to accept the mission
@@ -28,7 +28,7 @@ Mission.forPlayer = function(self, mission, initPlayer)
 end
 
 Mission.isPlayerMission = function(thing)
-    return Mission.isMission(thing) and
+    return Mission:isMission(thing) and
             isFunction(thing.getPlayer) and
             isFunction(thing.setPlayer)
 end

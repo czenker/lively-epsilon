@@ -5,7 +5,7 @@ Mission = Mission or {}
 -- It is supposed to be used for side missions that ships can give you.
 
 Mission.withBroker = function(self, mission, title, config)
-    if not Mission.isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
+    if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
     if Mission.isBrokerMission(mission) then error("The given mission is already a StoryMission.", 2) end
     if not isString(title) and not isFunction(title) then error("Title needs to be a string or function, but " .. type(title) .. " given.", 2) end
 
@@ -78,7 +78,7 @@ Mission.withBroker = function(self, mission, title, config)
 end
 
 Mission.isBrokerMission = function(thing)
-    return Mission.isMission(thing) and
+    return Mission:isMission(thing) and
             isFunction(thing.getTitle) and
             isFunction(thing.getDescription) and
             isFunction(thing.getAcceptMessage) and
