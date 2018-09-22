@@ -41,7 +41,19 @@ Ship.withCrew = function (self, ship, positions)
     if not Ship:hasCrew(ship) then
         ship.crew = {}
         ship.hasCrewAtPosition = hasCrewAtPosition
+        ship.hasCaptain = function() return hasCrewAtPosition(ship, "captain") end
+        ship.hasHelmsOfficer = function() return hasCrewAtPosition(ship, "helms") end
+        ship.hasRelayOfficer = function() return hasCrewAtPosition(ship, "relay") end
+        ship.hasScienceOfficer = function() return hasCrewAtPosition(ship, "science") end
+        ship.hasWeaponsOfficer = function() return hasCrewAtPosition(ship, "weapons") end
+        ship.hasEngineeringOfficer = function() return hasCrewAtPosition(ship, "engineering") end
         ship.getCrewAtPosition = getCrewAtPosition
+        ship.getCaptain = function() return getCrewAtPosition(ship, "captain") end
+        ship.getHelmsOfficer = function() return getCrewAtPosition(ship, "helms") end
+        ship.getRelayOfficer = function() return getCrewAtPosition(ship, "relay") end
+        ship.getScienceOfficer = function() return getCrewAtPosition(ship, "science") end
+        ship.getWeaponsOfficer = function() return getCrewAtPosition(ship, "weapons") end
+        ship.getEngineeringOfficer = function() return getCrewAtPosition(ship, "engineering") end
     end
 
     for position, person in pairs(positions) do
@@ -59,5 +71,18 @@ Ship.withWeaponsOfficer = function(self, ship, person) Ship.withCrew(self, ship,
 Ship.withEngineeringOfficer = function(self, ship, person) Ship.withCrew(self, ship, {engineering = person}) end
 
 Ship.hasCrew = function(self, ship)
-    return isFunction(ship.hasCrewAtPosition) and isFunction(ship.getCrewAtPosition)
+    return isFunction(ship.hasCrewAtPosition) and
+            isFunction(ship.hasCaptain) and
+            isFunction(ship.hasHelmsOfficer) and
+            isFunction(ship.hasRelayOfficer) and
+            isFunction(ship.hasScienceOfficer) and
+            isFunction(ship.hasWeaponsOfficer) and
+            isFunction(ship.hasEngineeringOfficer) and
+            isFunction(ship.getCrewAtPosition) and
+            isFunction(ship.getCaptain) and
+            isFunction(ship.getHelmsOfficer) and
+            isFunction(ship.getRelayOfficer) and
+            isFunction(ship.getScienceOfficer) and
+            isFunction(ship.getWeaponsOfficer) and
+            isFunction(ship.getEngineeringOfficer)
 end
