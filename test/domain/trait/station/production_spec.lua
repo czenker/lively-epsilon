@@ -158,5 +158,36 @@ insulate("Station", function()
             assert.is_true(wasProduced)
             assert.is_same(990, station:getProductStorage(power))
         end)
+
+        it("stops producing if station is destroyed", function()
+            local station = eeStationMock()
+            local wasProduced = false
+            Station:withStorageRooms(station, {
+                [herring] = 1000,
+            })
+            Station:withProduction(station, {
+                {
+                    productionTime = 1,
+                    produces = function() wasProduced = true end,
+                    consumes = {
+                        { product = herring, amount = 1 },
+                    }
+                }
+            })
+            station:modifyProductStorage(herring, 1000)
+
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+
+            station:destroy()
+            wasProduced = false
+
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+
+            assert.is_false(wasProduced)
+        end)
     end)
 end)

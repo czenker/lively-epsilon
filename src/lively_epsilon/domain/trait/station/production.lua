@@ -101,7 +101,10 @@ Station.withProduction = function (self, station, configuration)
         end
 
         Cron.regular(cronId, function()
-            if canProduce() == true then
+            if not station:isValid() then
+                logWarning("Production " .. cronId .. " stopped because station is invalid.")
+                Cron.abort(cronId)
+            elseif canProduce() == true then
                 for _, consume in pairs(conf.consumes) do
                     station:modifyProductStorage(consume.product, -1 * consume.amount)
                 end
