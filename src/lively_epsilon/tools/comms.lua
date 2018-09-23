@@ -14,7 +14,11 @@ Tools.ensureComms = function(self, shipTemplateBased, player, description)
             logWarning("Aborting ensureComms because sender is no longer valid")
             Cron.abort(self)
         elseif player:isCommsInactive() then
-            shipTemplateBased:sendCommsMessage(player, description)
+            if isNil(description) then
+                shipTemplateBased:openCommsTo(player)
+            else
+                shipTemplateBased:sendCommsMessage(player, description)
+            end
             Cron.abort(self)
         end
     end, 0.1, 0)
