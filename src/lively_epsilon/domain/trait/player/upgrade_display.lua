@@ -15,7 +15,7 @@ Player.withUpgradeDisplay = function(self, player)
     player:addCustomButton(crewPosition, buttonId, buttonLabel, function()
         local upgrades = {}
         for _, upgrade in pairs(player:getUpgrades()) do
-            if Upgrade:isBrokerUpgrade(upgrade) then
+            if BrokerUpgrade:isUpgrade(upgrade) then
                 table.insert(upgrades, upgrade)
             end
         end
