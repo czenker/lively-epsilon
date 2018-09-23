@@ -14,10 +14,10 @@ Comms.missionBrokerFactory = function(self, config)
     local defaultCallbackConfig
 
     local formatMission = function(mission, station, player)
-        if Mission.isPlayerMission(mission) then
+        if Mission:isPlayerMission(mission) then
             mission:setPlayer(player)
         end
-        if Mission.isBrokerMission(mission) then
+        if Mission:isBrokerMission(mission) then
             mission:setMissionBroker(station)
         end
         local canBeAccepted, canBeAcceptedMessage = mission:canBeAccepted()
@@ -68,10 +68,10 @@ Comms.missionBrokerFactory = function(self, config)
                 logWarning("acceptScreen() should reply with true or false, but it replied with nil. Assuming 'true'.")
             end
             if success == true or success == nil then
-                if Mission.isPlayerMission(mission) then
+                if Mission:isPlayerMission(mission) then
                     mission:setPlayer(comms_source)
                 end
-                if Mission.isBrokerMission(mission) then
+                if Mission:isBrokerMission(mission) then
                     mission:setMissionBroker(comms_target)
                 end
                 comms_target:removeMission(mission)

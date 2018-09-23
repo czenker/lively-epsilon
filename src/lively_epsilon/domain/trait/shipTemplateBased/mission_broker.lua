@@ -14,7 +14,7 @@ ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
 
     spaceObject.addMission = function(self, mission)
 
-        if not Mission.isBrokerMission(mission) then
+        if not Mission:isBrokerMission(mission) then
             error("Expected mission to be a broker mission, but " .. type(mission) .. " given.", 2)
         end
 

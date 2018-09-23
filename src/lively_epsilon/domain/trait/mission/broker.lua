@@ -6,7 +6,7 @@ Mission = Mission or {}
 
 Mission.withBroker = function(self, mission, title, config)
     if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
-    if Mission.isBrokerMission(mission) then error("The given mission is already a StoryMission.", 2) end
+    if Mission:isBrokerMission(mission) then error("The given mission is already a StoryMission.", 2) end
     if not isString(title) and not isFunction(title) then error("Title needs to be a string or function, but " .. type(title) .. " given.", 2) end
 
     config = config or {}
@@ -77,7 +77,7 @@ Mission.withBroker = function(self, mission, title, config)
     if config.hint ~= nil then mission:setHint(config.hint) end
 end
 
-Mission.isBrokerMission = function(thing)
+Mission.isBrokerMission = function(self, thing)
     return Mission:isMission(thing) and
             isFunction(thing.getTitle) and
             isFunction(thing.getDescription) and

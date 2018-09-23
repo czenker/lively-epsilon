@@ -23,14 +23,14 @@ Product = {
     toId = function(self, product)
         if isString(product) then
             return product
-        elseif Product.isProduct(product) then
+        elseif Product:isProduct(product) then
             return product.getId()
         else
             error("The given object does not look like a product.", 3)
         end
     end,
 
-    isProduct = function(thing)
+    isProduct = function(self, thing)
         return isTable(thing) and
                 isFunction(thing.getId) and
                 isFunction(thing.getName) and

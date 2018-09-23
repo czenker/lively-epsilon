@@ -6,7 +6,7 @@ Person = {
         }
     end,
 
-    isPerson = function(thing)
+    isPerson = function(self, thing)
         return isTable(thing) and
                 isFunction(thing.getFormalName) and
                 isFunction(thing.getNickName)

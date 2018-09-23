@@ -15,7 +15,7 @@ insulate("Mission", function()
             local mission = missionMock()
             Mission:forPlayer(mission, player)
 
-            assert.is_true(Mission.isPlayerMission(mission))
+            assert.is_true(Mission:isPlayerMission(mission))
         end)
 
         it("fails if no mission is given", function()

@@ -17,7 +17,7 @@ Missions.bringProduct = function(self, station, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
     local product = config.product
-    if not Product.isProduct(product) then error("Expected a product, but got " .. type(product), 2) end
+    if not Product:isProduct(product) then error("Expected a product, but got " .. type(product), 2) end
 
     local totalAmount = config.amount or 1
     local broughtAmount = 0

@@ -33,7 +33,7 @@ Ship.withCrew = function (self, ship, positions)
         if not isString(position) then
             error("Position has to be a string. " .. type(position) .. " given.")
         end
-        if not Person.isPerson(person) then
+        if not Person:isPerson(person) then
             error("Thing given for position " .. position .. " is not a Person object.")
         end
     end

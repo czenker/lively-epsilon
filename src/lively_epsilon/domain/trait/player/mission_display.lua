@@ -14,7 +14,7 @@ Player.withMissionDisplay = function(self, player)
     player:addCustomButton("relay", buttonId, buttonLabel, function()
         local missions = {}
         for _, mission in pairs(player:getStartedMissions()) do
-            if Mission.isBrokerMission(mission) then
+            if Mission:isBrokerMission(mission) then
                 table.insert(missions, mission)
             end
         end

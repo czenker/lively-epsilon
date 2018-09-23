@@ -52,7 +52,7 @@ end
 
 -- validate
 for k, v in pairs(products) do
-    if not Product.isProduct(v) then
+    if not Product:isProduct(v) then
         error ("Product with id " .. k .. " is not valid.", 2)
     end
 end

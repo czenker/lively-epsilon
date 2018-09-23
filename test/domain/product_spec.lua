@@ -7,7 +7,7 @@ insulate("Product", function()
         it("returns a valid Product", function()
             local product = Product:new("Fake")
 
-            assert.is_true(Product.isProduct(product))
+            assert.is_true(Product:isProduct(product))
 
             assert.is_same("Fake", product:getName())
             assert.is_string(product:getId())

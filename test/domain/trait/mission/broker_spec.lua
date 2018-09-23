@@ -13,7 +13,7 @@ insulate("Mission", function()
             local mission = missionMock()
             Mission:withBroker(mission, "Hello World")
 
-            assert.is_true(Mission.isBrokerMission(mission))
+            assert.is_true(Mission:isBrokerMission(mission))
         end)
 
         it("fails if no mission is given", function()
