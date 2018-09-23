@@ -84,7 +84,7 @@ Missions.destroyRagingMiner = function(self, things, config)
         onDestruction = config.onDestruction,
         onSuccess = config.onSuccess,
         onFailure = config.onFailure,
-        onEnd = function()
+        onEnd = function(self)
             Cron.abort(cronId)
 
             if isFunction(config.onEnd) then config.onEnd(self) end

@@ -78,7 +78,7 @@ Missions.scan = function(self, things, config)
         end,
         onSuccess = config.onSuccess,
         onFailure = config.onFailure,
-        onEnd = function()
+        onEnd = function(self)
             Cron.abort(cronId)
 
             if isFunction(config.onEnd) then config.onEnd(self) end
