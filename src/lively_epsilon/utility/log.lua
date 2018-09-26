@@ -1,19 +1,19 @@
 logError = function (message)
-    print(message)
+    print("[ERROR] " .. message)
 end
 
 logWarning = function (message)
-    print(message)
+    print("[WARN] " .. message)
 end
 
 logInfo = function (message)
-    print(message)
+    print("[INFO] " .. message)
 end
 
 logDebug = function (message)
-    print(message)
+    print("[DEBUG] " .. message)
 end
 
 logTrace = function (message)
-    print(message)
+    print("[TRACE] " .. message)
 end
