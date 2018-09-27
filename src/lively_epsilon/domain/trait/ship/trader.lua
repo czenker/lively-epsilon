@@ -56,10 +56,10 @@ Ship.orderBuyer = function (self, ship, homeStation, product, config)
 
     Cron.regular(cronId, function()
         if not ship:isValid() then
-            print("ship for " .. cronId .. " is no longer valid")
+            logInfo("ship for " .. cronId .. " is no longer valid")
             Cron.abort(cronId)
         elseif not homeStation:isValid() then
-            print(ship:getCallSign() .. " has lost its home base. :(")
+            logInfo(ship:getCallSign() .. " has lost its home base. :(")
             ship:orderIdle()
             dockingTo = nil
             Cron.abort(cronId)
@@ -69,7 +69,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product, config)
                 local amount = ship:getProductStorage(product)
                 ship:modifyProductStorage(product, -1 * amount)
                 homeStation:modifyProductStorage(product, amount)
-                print(ship:getCallSign() .. " unloaded " .. amount .. " " .. product .. " at " .. homeStation:getCallSign())
+                logDebug(ship:getCallSign() .. " unloaded " .. amount .. " " .. product .. " at " .. homeStation:getCallSign())
             else
                 if dockingTo ~= homeStation then
                     ship:orderDock(homeStation)
@@ -85,11 +85,11 @@ Ship.orderBuyer = function (self, ship, homeStation, product, config)
                     dockingTo = homeStation
                 end
             else
-                print(ship:getCallSign() .. " is going to buy " .. product .. " from " .. seller:getCallSign())
+                logDebug(ship:getCallSign() .. " is going to buy " .. product .. " from " .. seller:getCallSign())
                 target = seller
             end
         elseif not isValidSeller(target) then
-            print(ship:getCallSign() .. " discarded the current seller")
+            logDebug(ship:getCallSign() .. " discarded the current seller")
             target = nil
         elseif ship:isDocked(target) then
             local amount = math.min(
@@ -100,7 +100,7 @@ Ship.orderBuyer = function (self, ship, homeStation, product, config)
 
             ship:modifyProductStorage(product, amount)
             target:modifyProductStorage(product, -1 * amount)
-            print(ship:getCallSign() .. " bought " .. amount .. " " .. product .. " at " .. target:getCallSign())
+            logDebug(ship:getCallSign() .. " bought " .. amount .. " " .. product .. " at " .. target:getCallSign())
             target = nil
         elseif dockingTo ~= target then
             ship:orderDock(target)

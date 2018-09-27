@@ -113,7 +113,7 @@ Station.withProduction = function (self, station, configuration)
                     for _, produce in pairs(conf.produces) do
                         station:modifyProductStorage(produce.product, produce.amount)
 
-                        print(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product:getId())
+                        logDebug(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product:getId())
                     end
                 elseif isFunction(conf.produces) then
                     local status, error = pcall(conf.produces)

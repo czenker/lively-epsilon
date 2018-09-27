@@ -61,7 +61,7 @@ Ship.patrol = function(self, ship, waypoints)
 
     Cron.regular(cronId, function()
         if not ship:isValid() then
-            print("ship for " .. cronId .. " is no longer valid")
+            logInfo("ship for " .. cronId .. " is no longer valid")
             Cron.abort(cronId)
         elseif delay > 0 then
             delay = delay - tick
@@ -73,11 +73,11 @@ Ship.patrol = function(self, ship, waypoints)
                 if isFunction(currentWaypoint.whileFlying) then
                     local status, error = pcall(currentWaypoint.whileFlying, ship, currentWaypoint.target)
                     if not status then
+                        local msg = "Error when calling whileFlying"
                         if isString(error) then
-                            print("Error when calling whileFlying: " .. error)
-                        else
-                            print("Error when calling whileFlying")
+                            msg = msg .. ": " .. error
                         end
+                        logError(msg)
                     end
                 end
 
@@ -85,11 +85,11 @@ Ship.patrol = function(self, ship, waypoints)
                     if isFunction(currentWaypoint.onArrival) then
                         local status, error = pcall(currentWaypoint.onArrival, ship, currentWaypoint.target)
                         if not status then
+                            local msg = "Error when calling onArrival"
                             if isString(error) then
-                                print("Error when calling onArrival: " .. error)
-                            else
-                                print("Error when calling onArrival")
+                                msg = msg .. ": " .. error
                             end
+                            logError(msg)
                         end
                     end
 
@@ -113,11 +113,11 @@ Ship.patrol = function(self, ship, waypoints)
                 if isFunction(currentWaypoint.onHeading) then
                     local status, error = pcall(currentWaypoint.onHeading, ship, currentWaypoint.target)
                     if not status then
+                        local msg = "Error when calling onHeading"
                         if isString(error) then
-                            print("Error when calling onHeading: " .. error)
-                        else
-                            print("Error when calling onHeading")
+                            msg = msg .. ": " .. error
                         end
+                        logError(msg)
                     end
                 end
             end

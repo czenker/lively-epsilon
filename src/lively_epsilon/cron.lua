@@ -20,11 +20,11 @@ Cron = {
                 local cronOverride
                 local status, error = pcall(value.func, key)
                 if not status then
+                    msg = "An error occured in Cron with " .. key
                     if type(error) == "string" then
-                        print("An error occured in Cron with " .. key .. ": " .. error)
-                    else
-                        print("An error occured in Cron with " .. key)
+                        msg = msg .. ": " .. error
                     end
+                    logError(msg)
                 elseif isNumber(error) then
                     cronOverride = error
                 end
