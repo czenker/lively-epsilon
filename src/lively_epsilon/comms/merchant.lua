@@ -41,8 +41,9 @@ Comms.merchantFactory = function(self, config)
     local formatBoughtProducts = function(station, player)
         local ret = {}
         for _, product in pairs(station:getProductsBought(player)) do
-            ret[product:getId()] = formatBoughtProduct(product, station, player)
+            table.insert(ret, formatBoughtProduct(product, station, player))
         end
+        table.sort(ret, function(a, b) return a.product:getName() < b.product:getName() end)
         return ret
     end
 
@@ -69,8 +70,9 @@ Comms.merchantFactory = function(self, config)
     local formatSoldProducts = function(station, player)
         local ret = {}
         for _, product in pairs(station:getProductsSold(player)) do
-            ret[product:getId()] = formatSoldProduct(product, station, player)
+            table.insert(ret, formatSoldProduct(product, station, player))
         end
+        table.sort(ret, function(a, b) return a.product:getName() < b.product:getName() end)
         return ret
     end
 
