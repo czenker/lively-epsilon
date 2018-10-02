@@ -17,26 +17,26 @@ Translator.new = function(self, defaultLocale)
             table.insert(locales, defaultLocale)
         end,
 
-        register = function(self, lang, key, label)
-            if isTable(lang) then
-                key = lang
-                lang = defaultLocale
+        register = function(self, locale, key, label)
+            if isTable(locale) then
+                key = locale
+                locale = defaultLocale
             elseif not isTable(key) and label == nil then
                 label = key
-                key = lang
-                lang = defaultLocale
+                key = locale
+                locale = defaultLocale
             end
-            if not isString(lang) then error("Expected lang to be a string, but got " .. type(lang), 2) end
+            if not isString(locale) then error("Expected locale to be a string, but got " .. type(locale), 2) end
             if isTable(key) then
                 for k, l in pairs(key) do
-                    self:register(lang, k, l)
+                    self:register(locale, k, l)
                 end
             else
-                if not isString(key) then error("Expected key to be a string for language " .. lang .. ", but got " .. type(key), 2) end
-                if not isString(label) and not isFunction(label) then error("Expected label to be a string or function for " .. key .. " in " .. lang ..", but got " .. type(label), 2) end
-                dictionaries[lang] = dictionaries[lang] or {}
-                if dictionaries[lang][key] ~= nil then logWarning("Translation for key " .. key .. " with locale " .. lang .. " does already exist. It will be overridden.") end
-                dictionaries[lang][key] = label
+                if not isString(key) then error("Expected key to be a string for locale " .. locale .. ", but got " .. type(key), 2) end
+                if not isString(label) and not isFunction(label) then error("Expected label to be a string or function for " .. key .. " in " .. locale ..", but got " .. type(label), 2) end
+                dictionaries[locale] = dictionaries[locale] or {}
+                if dictionaries[locale][key] ~= nil then logWarning("Translation for key " .. key .. " with locale " .. locale .. " does already exist. It will be overridden.") end
+                dictionaries[locale][key] = label
             end
         end,
 

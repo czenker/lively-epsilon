@@ -1,7 +1,7 @@
 insulate("Translator:new()", function()
     require "lively_epsilon"
 
-    it("should work when only using one language", function()
+    it("should work when only using one locale", function()
         local translator = Translator:new()
         assert.is_true(Translator:isTranslator(translator))
 
@@ -10,7 +10,7 @@ insulate("Translator:new()", function()
         assert.is_same("Hello World", translator:translate("say_hello"))
     end)
 
-    it("should basically work with a different language", function()
+    it("should basically work with a different locale", function()
         local translator = Translator:new()
 
         assert.is_true(Translator:isTranslator(translator))
@@ -72,7 +72,7 @@ insulate("Translator:new()", function()
             assert.is_same(arg2, givenArg2)
             assert.is_same(arg3, givenArg3)
         end)
-        it("tries fallback languages if function errors", function()
+        it("tries fallback locales if function errors", function()
             -- this behavior should not be problematic because translations should not have side-effects
             local translator = Translator:new("en")
             translator:useLocale("de")
@@ -81,7 +81,7 @@ insulate("Translator:new()", function()
 
             assert.is_same("Hello World", translator:translate("say_hello"))
         end)
-        it("tries fallback languages if function does not return a string", function()
+        it("tries fallback locales if function does not return a string", function()
             local translator = Translator:new("en")
             translator:useLocale("de")
             translator:register("en", "say_hello", function() return "Hello World" end)
@@ -102,7 +102,7 @@ insulate("Translator:new()", function()
 
             assert.is_same("Hello World", translator:translate("say_hello"))
         end)
-        it("should work with a different language", function()
+        it("should work with a different locale", function()
             local translator = Translator:new()
 
             translator:register({
@@ -196,7 +196,7 @@ insulate("Translator:new()", function()
                 translator:register("say_hello", nil)
             end)
         end)
-        it("fails if lang is not a string", function()
+        it("fails if locale is not a string", function()
             local translator = Translator:new()
 
             assert.has_error(function()
@@ -210,7 +210,7 @@ insulate("Translator:new()", function()
     end)
 
     describe("translate()", function()
-        it("should fail if key does not exist in translation or defaultLanguage", function()
+        it("should fail if key does not exist in translation or defaultLocale", function()
             local translator = Translator:new()
 
             translator:register("say_hello", "Hello World")
