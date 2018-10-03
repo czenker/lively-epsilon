@@ -8,53 +8,62 @@ local function calculateDelay(message)
     return numberOfWords / wordsPerMinute * 60
 end
 
-local function send(sender, message)
-    local i = 1
-    local player = getPlayerShip(i)
+-- -maxRange
+Chatter.new = function(_, config)
+    config = config or {}
+    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+    if not isNil(config.maxRange) and not isNumber(config.maxRange) then error("maxRange needs to be a number, but got " .. type(config.maxRange), 2) end
 
-    while player ~= nil do
-        player:addToShipLog(sender .. ": " .. message, "128,128,128")
+    local function send(sender, message)
+        local senderName
+        local i = 1
+        local player = getPlayerShip(i)
 
-        i = i+1
-        player = getPlayerShip(i)
-    end
-end
-
-local function conversation(messages)
-    local sender, message = table.unpack(table.remove(messages, 1))
-    if isEeShipTemplateBased(sender) then
-        if sender:isValid() then
-            sender = sender:getCallSign()
+        if isEeShipTemplateBased(sender) then
+            if sender:isValid() then
+                senderName = sender:getCallSign()
+            else
+                return false
+            end
         else
+            senderName = sender
+            sender = nil
+        end
+
+        while player ~= nil do
+            if config.maxRange == nil or sender == nil or distance(player, sender) < config.maxRange then
+                player:addToShipLog(senderName .. ": " .. message, "128,128,128")
+            end
+
+            i = i+1
+            player = getPlayerShip(i)
+        end
+
+        return true
+    end
+
+    local conversation
+    conversation = function(messages)
+        local sender, message = table.unpack(table.remove(messages, 1))
+
+        if not send(sender, message) then
             logWarning("Stopping conversation because sender is destroyed.")
-            return
+        else
+            if messages[1] ~= nil then
+                Cron.once(function() conversation(messages) end, calculateDelay(message))
+            end
         end
     end
 
-    if messages[1] ~= nil then
-        Cron.once(function() conversation(messages) end, calculateDelay(message))
-    end
-
-    send(sender, message)
-end
-
-Chatter.new = function()
     local self = {}
 
     self.say = function(_, sender, message)
-        if isEeShipTemplateBased(sender) then
-            if sender:isValid() then
-                sender = sender:getCallSign()
-            else
-                logWarning("Not sending chat because sender is destroyed.")
-                return
-            end
-        end
-        if not isString(sender) then error("Sender needs to be a shipTemplateBased or a string, but got " .. type(sender), 2) end
+        if not isEeShipTemplateBased(sender) and not isString(sender) then error("Sender needs to be a shipTemplateBased or a string, but got " .. type(sender), 2) end
         if not isString(message) then error("Message needs to be a string, but got " .. type(message), 2) end
 
-        send(sender, message)
-
+        if not send(sender, message) then
+            logWarning("Not sending chat because sender is destroyed.")
+        end
     end
     self.converse = function(_, messages)
         if not isTable(messages) then error("Expected messages to be a numeric table, but got " .. type(messages), 2) end

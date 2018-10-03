@@ -9,15 +9,13 @@ local function mockPlayers(...)
     -- gather all comms a ship got
     for _,player in pairs(players) do
         player.shipLogs = {}
-        player.addToShipLog = function(_, message, color)
+        player.addToShipLog = function(self, message, color)
             table.insert(player.shipLogs, {
                 message = message,
                 color = color
             })
         end
     end
-
-
 end
 
 insulate("Chatter", function()
@@ -25,9 +23,21 @@ insulate("Chatter", function()
     require "test.mocks"
     require "test.asserts"
 
+    after_each(function()
+        -- if there are non-broadcasted messages after the test (because it failed) they might trickle to
+        -- the next test because we are using global scope with getPlayerShip() and break that one too
+        for i=1,20 do Cron.tick(1) end
+    end)
+
     describe("new()", function()
-
-
+        it("fails when config is not a table", function()
+            assert.has_error(function()
+                Chatter:new(42)
+            end)
+            assert.has_error(function()
+                Chatter:new("foo")
+            end)
+        end)
     end)
 
     describe("say()", function()
@@ -185,5 +195,85 @@ insulate("Chatter", function()
             end)
         end)
     end)
+
+    describe("config.maxRange", function()
+        it("allows to hear chatter within range", function()
+            local player = eePlayerMock()
+            mockPlayers(player)
+            local chatter = Chatter:new({maxRange = 30000})
+            local ship = eeCpuShipMock():setCallSign("John Doe")
+            player:setPosition(0, 0)
+            ship:setPosition(2000, 0)
+
+            chatter:say(ship, "Hello World")
+            assert.is_same("John Doe: Hello World", player.shipLogs[1].message)
+        end)
+        it("does not allow to hear chatter outside range", function()
+            local player = eePlayerMock()
+            mockPlayers(player)
+            local chatter = Chatter:new({maxRange = 30000})
+            local ship = eeCpuShipMock():setCallSign("John Doe")
+            player:setPosition(0, 0)
+            ship:setPosition(99999, 0)
+
+            chatter:say(ship, "Hello World")
+            assert.is_same({}, player.shipLogs)
+        end)
+        it("does not limit range of non-ships", function()
+            local player = eePlayerMock()
+            mockPlayers(player)
+            local chatter = Chatter:new({maxRange = 30000})
+            player:setPosition(0, 0)
+
+            chatter:say("John Doe", "Hello World")
+            assert.is_same("John Doe: Hello World", player.shipLogs[1].message)
+        end)
+        it("can happen that players only hear half of a conversation", function()
+            local player = eePlayerMock()
+            mockPlayers(player)
+            local chatter = Chatter:new({maxRange = 30000})
+            local ship1 = eeCpuShipMock():setCallSign("Alice")
+            local ship2 = eeCpuShipMock():setCallSign("Bob")
+
+            player:setPosition(0, 0)
+            ship1:setPosition(2000, 0)
+            ship2:setPosition(99999, 0)
+
+            chatter:converse({
+                {ship1, "Hey Bob. What was your password again?"},
+                {ship2, "12345"},
+                {ship1, "That's the stupidest combination I have ever heard in my life!"},
+            })
+            for i=1,15 do Cron.tick(i) end
+
+            assert.is_same("Alice: Hey Bob. What was your password again?", player.shipLogs[1].message)
+            assert.is_same("Alice: That's the stupidest combination I have ever heard in my life!", player.shipLogs[2].message)
+        end)
+        it("works with multiple players", function()
+            local player1 = eePlayerMock()
+            local player2 = eePlayerMock()
+            mockPlayers(player1, player2)
+            local ship = eeCpuShipMock():setCallSign("John Doe")
+            local chatter = Chatter:new({maxRange = 30000})
+
+            player1:setPosition(0, 0)
+            ship:setPosition(2000, 0)
+            player2:setPosition(99999, 0)
+
+            chatter:say(ship, "Hello World")
+
+            assert.is_same("John Doe: Hello World", player1.shipLogs[1].message)
+            assert.is_same({}, player2.shipLogs)
+        end)
+        it("fails if maxRange is not a number", function()
+            assert.has_error(function()
+                Chatter:new({maxRange = "foobar"})
+            end)
+            assert.has_error(function()
+                Chatter:new({maxRange = function() end})
+            end)
+        end)
+    end)
+
 
 end)
