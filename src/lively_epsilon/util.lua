@@ -195,7 +195,7 @@ Util = {
     totalShieldLevel = function(ship)
         if not isEeShipTemplateBased(ship) then error("Expected ship to be a ShipTemplateBased, but got " .. type(ship), 2) end
         local total = 0
-        for i=1,ship:getShieldCount() do
+        for i=0,ship:getShieldCount()-1 do
             total = total + ship:getShieldLevel(i)
         end
 
