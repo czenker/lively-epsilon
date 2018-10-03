@@ -21,6 +21,7 @@ local myPackages = {
     "src/lively_epsilon/domain/ship_template_based.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/storage_rooms.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua",
+    "src/lively_epsilon/domain/trait/shipTemplateBased/events.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/mission_broker.lua",
     "src/lively_epsilon/domain/trait/shipTemplateBased/upgrade_broker.lua",
 
@@ -40,6 +41,7 @@ local myPackages = {
 
     "src/lively_epsilon/domain/ship.lua",
     "src/lively_epsilon/domain/trait/ship/crew.lua",
+    "src/lively_epsilon/domain/trait/ship/events.lua",
     "src/lively_epsilon/domain/trait/ship/fleet.lua",
     "src/lively_epsilon/domain/trait/ship/miner.lua",
     "src/lively_epsilon/domain/trait/ship/patrol.lua",

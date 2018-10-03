@@ -1,5 +1,7 @@
 local noop = function() end
 
+function getLongRangeRadarRange() return 30000 end
+
 function SpaceObject()
     local isValid = true
     local positionX, positionY = 0, 0
@@ -19,16 +21,43 @@ function SpaceObject()
 end
 function eeShipTemplateBasedMock()
     local callSign = Util.randomUuid()
+    local hull = 50
+    local hullMax = 50
+    local shield = 100
+    local shieldMax = 100
 
     return Util.mergeTables(SpaceObject(), {
         getCallSign = function() return callSign end,
         setSystemHealth = noop,
         getSystemHealth = function() return 1 end,
         getShieldCount = function() return 1 end,
-        setShields = noop,
-        setShieldsMax = noop,
-        getShieldMax = function() return 0 end,
+        setShields = function(_, amount, boom)
+            if boom ~= nil then error("Not implemented") end
+            shield = math.min(shieldMax, amount)
+        end,
+        setShieldsMax = function(_, amount, boom)
+            if boom ~= nil then error("Not implemented") end
+            shieldMax = amount
+            shield = math.min(amount, shield)
+        end,
+        getShieldLevel = function(_, id)
+            if id ~= 0 then error("Not implemented") end
+            return shield
+        end,
+        getShieldMax = function(_, id)
+            if id ~= 0 then error("Not implemented") end
+            return shieldMax
+        end,
         setCommsScript = noop,
+        setHullMax = function(_, amount)
+            hullMax = amount
+            hull = math.min(hull, amount)
+        end,
+        setHull = function(_, amount)
+            hull = math.min(amount, hullMax)
+        end,
+        getHull = function() return hull end,
+        getHullMax = function() return hullMax end,
     })
 end
 
@@ -48,6 +77,8 @@ function SpaceShip()
         nuke = 0,
         emp = 0,
     }
+    local docked
+
     return Util.mergeTables(eeShipTemplateBasedMock(), {
         getWeaponStorageMax = function(self, weapon)
             if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
@@ -78,6 +109,8 @@ function SpaceShip()
         notScannedByPlayer = function(self) scannedState = "not"; return self end,
         friendOrFoeIdentifiedByPlayer = function(self) scannedState = "friendorfoeidentified"; return self end,
         fullScannedByPlayer = function(self) scannedState = "full"; return self end,
+        setDockedAt = function(self, station) docked = station end,
+        isDocked = function(self, station) return station == docked end,
     })
 end
 
