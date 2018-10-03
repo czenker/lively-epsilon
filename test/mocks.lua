@@ -3,13 +3,23 @@ local noop = function() end
 function getLongRangeRadarRange() return 30000 end
 
 function SpaceObject()
+    local callSign = ""
     local isValid = true
     local positionX, positionY = 0, 0
     local reputationPoints = 0
 
     return {
+        setCallSign = function(self, sign)
+            callSign = sign
+            return self
+        end,
+        getCallSign = function() return callSign end,
         isValid = function() return isValid end,
-        destroy = function(self) isValid = false; return self end,
+        destroy = function(self)
+            isValid = false
+            self:setCallSign(nil)
+            return self
+        end,
         getPosition = function() return positionX, positionY end,
         setPosition = function(self, x, y) positionX, positionY = x, y; return self end,
         getObjectsInRange = function(self) return {} end,
@@ -20,14 +30,14 @@ function SpaceObject()
     }
 end
 function eeShipTemplateBasedMock()
-    local callSign = Util.randomUuid()
+
     local hull = 50
     local hullMax = 50
     local shield = 100
     local shieldMax = 100
 
-    return Util.mergeTables(SpaceObject(), {
-        getCallSign = function() return callSign end,
+    local object = SpaceObject():setCallSign(Util.randomUuid())
+    return Util.mergeTables(object, {
         setSystemHealth = noop,
         getSystemHealth = function() return 1 end,
         getShieldCount = function() return 1 end,

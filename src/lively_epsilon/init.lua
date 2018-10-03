@@ -12,6 +12,7 @@ local myPackages = {
     "src/lively_epsilon/utility/log.lua",
     "src/lively_epsilon/utility/lua.lua",
     "src/lively_epsilon/utility/comms.lua",
+    "src/lively_epsilon/utility/chatter.lua",
 
     "src/lively_epsilon/domain/trait/generic/tags.lua",
 
@@ -56,8 +57,6 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/player/upgrade_display.lua",
 
     "src/lively_epsilon/domain/broker_upgrade.lua",
-
-    "src/lively_epsilon/chit_chat.lua",
 
     "src/lively_epsilon/missions/bring_product.lua",
     "src/lively_epsilon/missions/capture.lua",

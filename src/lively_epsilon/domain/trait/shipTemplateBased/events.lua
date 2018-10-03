@@ -21,7 +21,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
                 Cron.abort(self)
                 local status, error = pcall(config.onDestruction, shipTemplateBased)
                 if not status then
-                    local errorMsg = "An error occurred while calling onDestruction for " .. shipTemplateBased:getCallSign()
+                    local errorMsg = "An error occurred while calling onDestruction"
                     if isString(error) then
                         errorMsg = errorMsg .. ": " .. error
                     end
