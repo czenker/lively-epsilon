@@ -14,8 +14,16 @@ Cron = {
     tick = function(delta)
         now = now + delta
 
-        for key, value in pairs(events) do
-            if value.next <= now then
+        local i = 1
+        local keys = {}
+        for key, _ in pairs(events) do
+            keys[i] = key
+            i = i + 1
+        end
+
+        for _, key in pairs(keys) do
+            local value = events[key]
+            if value ~= nil and value.next <= now then
                 if value.cron == nil then events[key] = nil end
                 local cronOverride
                 local status, error = pcall(value.func, key)
@@ -35,7 +43,6 @@ Cron = {
             end
         end
     end,
-
 
     -- Example:
     --

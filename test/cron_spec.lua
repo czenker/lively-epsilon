@@ -99,6 +99,36 @@ insulate("Cron", function()
             assert.is_same(3, called)
         end)
 
+        it("allows to set a new callback after removing the current one", function()
+            local i = 0
+            local fun
+            fun = function()
+                i = i+1
+                if i < 10 then Cron.once(fun, 1) end
+            end
+            Cron.once(fun, 1)
+            assert.not_has_error(function()
+                for i=1,10 do Cron.tick(1) end
+            end)
+        end)
+
+        it("allows to remove a callback by calling one callback", function()
+            local ids = {
+                "foo",
+                "bar",
+            }
+            for _, id in pairs(ids) do
+                Cron.once(id, function()
+                    for _, id in pairs(ids) do
+                        Cron.abort(id)
+                    end
+                end, 1)
+            end
+            assert.not_has_error(function()
+                Cron.tick(1)
+            end)
+        end)
+
     end)
 
     describe("regular()", function()
