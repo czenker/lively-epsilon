@@ -1,63 +1,25 @@
 Ship = Ship or {}
 
-local function filterRandomObject(station, filterFunction, radius)
-    local x, y = station:getPosition()
-    radius = radius or getLongRangeRadarRange()
-
-    local objects = {}
-    for k, object in pairs(getObjectsInRadius(x, y, radius)) do
-        if filterFunction(object) then objects[k] = object end
-    end
-
-    return Util.random(objects)
-end
-
-local function hasCrewAtPosition(ship, position)
-    return isTable(ship.crew) and ship.crew[position] ~= nil
-end
-
-local function getCrewAtPosition(ship, position)
-    if hasCrewAtPosition(ship, position) then
-        return ship.crew[position]
-    else
-        return nil
-    end
-end
-
 Ship.withCrew = function (self, ship, positions)
     positions = positions or {}
     if not (isEeShip(ship) or isEePlayer(ship)) or not ship:isValid() then
         error("Invalid ship given", 2)
     end
-    for position, person in pairs(positions) do
-        if not isString(position) then
-            error("Position has to be a string. " .. type(position) .. " given.")
-        end
-        if not Person:isPerson(person) then
-            error("Thing given for position " .. position .. " is not a Person object.")
-        end
-    end
+    ShipTemplateBased.withCrew(self, ship, positions)
 
     if not Ship:hasCrew(ship) then
-        ship.crew = {}
-        ship.hasCrewAtPosition = hasCrewAtPosition
-        ship.hasCaptain = function() return hasCrewAtPosition(ship, "captain") end
-        ship.hasHelmsOfficer = function() return hasCrewAtPosition(ship, "helms") end
-        ship.hasRelayOfficer = function() return hasCrewAtPosition(ship, "relay") end
-        ship.hasScienceOfficer = function() return hasCrewAtPosition(ship, "science") end
-        ship.hasWeaponsOfficer = function() return hasCrewAtPosition(ship, "weapons") end
-        ship.hasEngineeringOfficer = function() return hasCrewAtPosition(ship, "engineering") end
-        ship.getCrewAtPosition = getCrewAtPosition
-        ship.getCaptain = function() return getCrewAtPosition(ship, "captain") end
-        ship.getHelmsOfficer = function() return getCrewAtPosition(ship, "helms") end
-        ship.getRelayOfficer = function() return getCrewAtPosition(ship, "relay") end
-        ship.getScienceOfficer = function() return getCrewAtPosition(ship, "science") end
-        ship.getWeaponsOfficer = function() return getCrewAtPosition(ship, "weapons") end
-        ship.getEngineeringOfficer = function() return getCrewAtPosition(ship, "engineering") end
-    end
-
-    for position, person in pairs(positions) do
-        ship.crew[position] = person
+        ship.hasCaptain = function() return ship:hasCrewAtPosition("captain") end
+        ship.hasHelmsOfficer = function() return ship:hasCrewAtPosition("helms") end
+        ship.hasRelayOfficer = function() return ship:hasCrewAtPosition("relay") end
+        ship.hasScienceOfficer = function() return ship:hasCrewAtPosition("science") end
+        ship.hasWeaponsOfficer = function() return ship:hasCrewAtPosition("weapons") end
+        ship.hasEngineeringOfficer = function() return ship:hasCrewAtPosition("engineering") end
+        ship.getCaptain = function() return ship:getCrewAtPosition("captain") end
+        ship.getHelmsOfficer = function() return ship:getCrewAtPosition("helms") end
+        ship.getRelayOfficer = function() return ship:getCrewAtPosition("relay") end
+        ship.getScienceOfficer = function() return ship:getCrewAtPosition("science") end
+        ship.getWeaponsOfficer = function() return ship:getCrewAtPosition("weapons") end
+        ship.getEngineeringOfficer = function() return ship:getCrewAtPosition("engineering") end
     end
 
     return ship
