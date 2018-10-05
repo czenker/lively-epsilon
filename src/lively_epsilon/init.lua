@@ -45,9 +45,6 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/ship/crew.lua",
     "src/lively_epsilon/domain/trait/ship/events.lua",
     "src/lively_epsilon/domain/trait/ship/fleet.lua",
-    "src/lively_epsilon/domain/trait/ship/miner.lua",
-    "src/lively_epsilon/domain/trait/ship/patrol.lua",
-    "src/lively_epsilon/domain/trait/ship/trader.lua",
 
     "src/lively_epsilon/domain/player.lua",
     "src/lively_epsilon/domain/trait/player/mission_tracker.lua",
@@ -58,6 +55,10 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/player/upgrade_display.lua",
 
     "src/lively_epsilon/domain/broker_upgrade.lua",
+
+    "src/lively_epsilon/order/miner.lua",
+    "src/lively_epsilon/order/patrol.lua",
+    "src/lively_epsilon/order/trader.lua",
 
     "src/lively_epsilon/missions/bring_product.lua",
     "src/lively_epsilon/missions/capture.lua",
