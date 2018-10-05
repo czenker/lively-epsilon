@@ -1,6 +1,8 @@
 insulate("Mission", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     local function missionWithBrokerMock(config)
         local mission = missionMock()

@@ -1,6 +1,8 @@
 insulate("Person", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("byName()", function()
         it("should create a valid Person object by name", function()

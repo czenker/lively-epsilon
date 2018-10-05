@@ -1,7 +1,9 @@
 insulate("Fleet", function()
+
     require "lively_epsilon"
     require "test.mocks"
     require "test.asserts"
+
     describe("new()", function()
         it("creates a valid fleet", function()
             local fleet = Fleet:new({eeCpuShipMock(), eeCpuShipMock()})

@@ -1,6 +1,8 @@
 insulate("Generic", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withTags()", function()
         it("creates a valid tagged object", function()

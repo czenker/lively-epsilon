@@ -1,6 +1,8 @@
 insulate("Player", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     local product1 = productMock()
     local product2 = productMock()

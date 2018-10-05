@@ -2,6 +2,7 @@ insulate("Missions", function()
 
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("transportToken()", function()
         it("should create a valid Mission", function()

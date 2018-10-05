@@ -1,5 +1,8 @@
 insulate("Translator:new()", function()
+
     require "lively_epsilon"
+    require "test.mocks"
+    require "test.asserts"
 
     it("should work when only using one locale", function()
         local translator = Translator:new()

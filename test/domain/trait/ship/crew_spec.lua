@@ -1,6 +1,8 @@
 insulate("Station", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withCrew()", function()
         it("should create a crew", function()

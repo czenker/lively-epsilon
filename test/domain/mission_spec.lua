@@ -1,6 +1,8 @@
 insulate("Mission", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     local function newMission(config) return Mission:new(config) end
     local function acceptedMission(config)

@@ -1,6 +1,8 @@
 insulate("Ship:withEvents", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     it("fails if a number is given instead of ship", function()
         assert.has_error(function()

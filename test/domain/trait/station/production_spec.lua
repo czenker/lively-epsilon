@@ -1,6 +1,8 @@
 insulate("Station", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withProduction()", function()
         local power = Product:new("Power Cells", {id="power"})

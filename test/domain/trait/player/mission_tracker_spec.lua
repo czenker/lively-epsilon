@@ -1,6 +1,8 @@
 insulate("Player", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withMissionTracker()", function()
         it("creates a valid mission tracker", function()

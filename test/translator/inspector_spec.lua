@@ -1,5 +1,8 @@
 insulate("Translator:inspect()", function()
+
     require "lively_epsilon"
+    require "test.mocks"
+    require "test.asserts"
 
     it("finds missing translations", function()
         local translator = Translator:new("en")

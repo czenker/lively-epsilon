@@ -1,6 +1,8 @@
 insulate("EventHandler", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     it("allow to register a listener", function()
         local called = 0

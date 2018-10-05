@@ -1,6 +1,8 @@
 insulate("Station", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     local function fleetMock(ships)
         local id = Util.randomUuid()

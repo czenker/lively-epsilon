@@ -1,6 +1,8 @@
 insulate("ShipTemplateBased", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withUpgradeBroker()", function()
         it("causes hasUpgradeBroker() to be true", function()

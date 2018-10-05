@@ -1,6 +1,8 @@
 insulate("ShipTemplateBased", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withStorageRooms()", function()
         local product = Product:new("Power Cells", {id="power"})

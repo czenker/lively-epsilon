@@ -1,6 +1,8 @@
 insulate("ShipTemplateBased", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("withMissionBroker()", function()
         it("causes hasMissionBroker() to be true", function()
