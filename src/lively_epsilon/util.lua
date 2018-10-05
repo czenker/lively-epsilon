@@ -93,6 +93,13 @@ Util = {
         return math.deg(math.atan(dy, dx)), math.sqrt(dx * dx + dy * dy)
     end,
 
+    -- returns the heading in the coordinate system used for the science station
+    heading = function(spaceShip1, spaceShip2)
+        local s1x, s1y = spaceShip1:getPosition()
+        local s2x, s2y = spaceShip2:getPosition()
+        return (Util.angleFromVector(s2x - s1x, s2y - s1y) + 90) % 360
+    end,
+
     spawnAtStation = function(station, obj, distance)
         distance = distance or 500
         local x, y = station:getPosition()
@@ -176,6 +183,16 @@ Util = {
         end
 
         return string
+    end,
+
+    -- rounds mathematically correct
+    -- if `base` is given it rounds to the closest multiple of `base`
+    round = function(number, base)
+        if base == nil or base == 1 then
+            return math.floor(number + 0.5)
+        else
+            return math.floor((number + base/2) / base) * base
+        end
     end,
 
     totalLaserDps = function(ship)

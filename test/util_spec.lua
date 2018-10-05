@@ -1,6 +1,8 @@
 insulate("Util", function()
+
     require "lively_epsilon"
     require "test.mocks"
+    require "test.asserts"
 
     describe("size()", function()
         it("correctly determines size of an empty table", function()
@@ -269,6 +271,44 @@ insulate("Util", function()
         end)
     end)
 
+    describe("round()", function()
+        it("rounds mathematically correct for positive numbers", function()
+            assert.is_same(42, Util.round(42))
+            assert.is_same(42, Util.round(42.1))
+            assert.is_same(42, Util.round(42.4))
+            assert.is_same(42, Util.round(42.49))
+            -- because of float magic do not test 42.5 directly
+            assert.is_same(43, Util.round(42.51))
+            assert.is_same(43, Util.round(42.6))
+            assert.is_same(43, Util.round(42.9))
+        end)
+        it("rounds mathematically correct for negative numbers", function()
+            assert.is_same(-42, Util.round(-42))
+            assert.is_same(-42, Util.round(-42.1))
+            assert.is_same(-42, Util.round(-42.4))
+            assert.is_same(-42, Util.round(-42.49))
+            -- because of float magic do not test -42.5 directly
+            assert.is_same(-43, Util.round(-42.51))
+            assert.is_same(-43, Util.round(-42.6))
+            assert.is_same(-43, Util.round(-42.9))
+        end)
+        it("can round to different bases", function()
+            assert.is_same(40, Util.round(42, 5))
+            assert.is_same(42, Util.round(42, 7))
+            assert.is_same(40, Util.round(42, 10))
+        end)
+        it("can correctly round to a base of 10", function()
+            assert.is_same(0, Util.round(0, 10))
+            assert.is_same(0, Util.round(1, 10))
+            assert.is_same(0, Util.round(4, 10))
+            assert.is_same(0, Util.round(4.9, 10))
+            assert.is_same(10, Util.round(5.1, 10))
+            assert.is_same(10, Util.round(6, 10))
+            assert.is_same(10, Util.round(9, 10))
+            assert.is_same(10, Util.round(10, 10))
+        end)
+    end)
+
     describe("mergeTables()", function()
         it("returns a new table where all items and from the second are present", function()
             local a = {a = 1, b = 2}
@@ -346,6 +386,29 @@ insulate("Util", function()
 
             assert.is_same(90, math.floor(angle))
             assert.is_same(1000, math.floor(distance))
+        end)
+    end)
+
+    describe("heading()", function()
+        it("takes positive y axis as 180°", function()
+            local one, two = eeCpuShipMock(), eeCpuShipMock()
+            one:setPosition(0, 0)
+            two:setPosition(0, 1000)
+
+            assert.is_same(180, Util.heading(one, two))
+        end)
+        it("goes clockwise", function()
+            local one, two = eeCpuShipMock(), eeCpuShipMock()
+            one:setPosition(0, 0)
+
+            two:setPosition(-1000, 0)
+            assert.is_same(270, Util.heading(one, two))
+
+            two:setPosition(0, -1000)
+            assert.is_same(0, Util.heading(one, two))
+
+            two:setPosition(1000, 0)
+            assert.is_same(90, Util.heading(one, two))
         end)
     end)
 
