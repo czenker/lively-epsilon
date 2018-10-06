@@ -13,8 +13,6 @@ having a chat through comms. There is a lot to explore in that galaxy.
 
 ### State
 
-[![Build Status](https://travis-ci.org/czenker/lively-epsilon.svg?branch=master)](https://travis-ci.org/czenker/lively-epsilon) [![Test Coverage](https://codecov.io/github/czenker/lively-epsilon/branch/master/graphs/badge.svg)]
-
 The current state is best described as _Let's see where it goes_. Feel free to use it, steal everything
 you find useful or drop me a line if you like it.
 
@@ -222,6 +220,9 @@ Occasionally you will find spec-like tests in the ``test`` folder that should gi
 a pretty good idea how things are supposed to work.
 
 ### Development
+
+[![Build Status](https://travis-ci.org/czenker/lively-epsilon.svg?branch=master)](https://travis-ci.org/czenker/lively-epsilon)
+[![Test Coverage](https://codecov.io/github/czenker/lively-epsilon/branch/master/graphs/badge.svg)](https://codecov.io/gh/czenker/lively-epsilon)
 
 #### Tests
 
