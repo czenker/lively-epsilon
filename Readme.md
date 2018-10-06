@@ -232,7 +232,7 @@ do what they should. Most of the code can not be tested outside an Empty Epsilon
 You can run the tests by installing [Busted](https://olivinelabs.com/busted/) and run
 
 ```bash
-busted test/
+busted
 ```
 
 #### Contributing

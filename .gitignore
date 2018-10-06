@@ -3,6 +3,7 @@
 *~
 
 *.lua
+!.busted
 !.luacov
 !.travis.yml
 
