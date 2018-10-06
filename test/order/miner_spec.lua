@@ -444,9 +444,4 @@ insulate("Order:orderMiner()", function()
             end, "Station Home needs to have storage configured")
         end)
     end)
-
-    describe("stopOrderMiner()", function()
-        it("should")
-    end)
-
 end)
