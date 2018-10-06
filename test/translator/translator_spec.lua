@@ -222,6 +222,12 @@ insulate("Translator:new()", function()
                 translator:translate("mistyped")
             end)
         end)
+        it("returns an empty string if a translation errors and all fallbacks error too", function()
+            local translator = Translator:new()
+
+            translator:register("say_hello", function() error("Boom") end)
+            assert.is_same("", translator:translate("say_hello"))
+        end)
 
         it("should fail if key is not a string", function()
             local translator = Translator:new()

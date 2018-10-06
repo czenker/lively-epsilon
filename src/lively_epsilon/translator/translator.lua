@@ -47,12 +47,16 @@ Translator.new = function(self, defaultLocale)
                 key = table.remove(args, 1)
             end
             if not isString(key) then error("Expected key to be a string, but got " .. type(key), 2) end
+
+            local hadError = false
+
             for _,locale in pairs(locales) do
                 if dictionaries[locale] ~= nil and dictionaries[locale][key] ~= nil then
                     local trans = dictionaries[locale][key]
                     if isFunction(trans) then
                         local status, message = pcall(trans, table.unpack(args))
                         if not status then
+                            hadError = true
                             local errorMsg = "An error occured when getting translation for " .. key .. " in locale " .. locale
                             if type(message) == "string" then
                                 errorMsg = errorMsg .. ": " .. message
@@ -68,7 +72,11 @@ Translator.new = function(self, defaultLocale)
                     end
                 end
             end
-            error("No translation exists for key " .. key, 2)
+            if hadError then
+                return ""
+            else
+                error("No translation exists for key " .. key, 2)
+            end
         end,
 
         -- internal function
