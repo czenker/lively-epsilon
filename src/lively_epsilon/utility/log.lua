@@ -13,7 +13,3 @@ end
 logDebug = function (message)
     print("[DEBUG] " .. message)
 end
-
-logTrace = function (message)
-    print("[TRACE] " .. message)
-end
