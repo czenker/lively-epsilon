@@ -234,3 +234,7 @@ You can run the tests by installing [Busted](https://olivinelabs.com/busted/) an
 ```bash
 busted test/
 ```
+
+#### Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
