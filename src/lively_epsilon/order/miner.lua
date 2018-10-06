@@ -58,11 +58,25 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
     config.timeToUnload = config.timeToUnload or 15
+    if not isNumber(config.timeToUnload) then error("Expected timeToUnload to be a number, but got " .. type(config.timeToUnload), 2) end
     config.timeToMine = config.timeToMine or 15
+    if not isNumber(config.timeToMine) then error("Expected timeToMine to be a number, but got " .. type(config.timeToMine), 2) end
     config.timeToGoHome = config.timeToGoHome or 900
+    if not isNumber(config.timeToGoHome) then error("Expected timeToGoHome to be a number, but got " .. type(config.timeToGoHome), 2) end
     config.mineDistance = config.mineDistance or ship:getBeamWeaponRange(0)
+    if not isNumber(config.mineDistance) then error("Expected mineDistance to be a number, but got " .. type(config.mineDistance), 2) end
     config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
+    if not isNumber(config.maxDistanceFromHome) then error("Expected maxDistanceFromHome to be a number, but got " .. type(config.maxDistanceFromHome), 2) end
     config.maxDistanceToNext = config.maxDistanceToNext or (getLongRangeRadarRange() / 2)
+    if not isNumber(config.maxDistanceToNext) then error("Expected maxDistanceToNext to be a number, but got " .. type(config.maxDistanceToNext), 2) end
+    config.onHeadingAsteroid = config.onHeadingAsteroid or function() end
+    if not isFunction(config.onHeadingAsteroid) then error("Expected onHeadingAsteroid to be a function, but got " .. type(config.onHeadingAsteroid), 2) end
+    config.onAsteroidMined = config.onAsteroidMined or function() end
+    if not isFunction(config.onAsteroidMined) then error("Expected onAsteroidMined to be a function, but got " .. type(config.onAsteroidMined), 2) end
+    config.onHeadingHome = config.onHeadingHome or function() end
+    if not isFunction(config.onHeadingHome) then error("Expected onHeadingHome to be a function, but got " .. type(config.onHeadingHome), 2) end
+    config.onUnloaded = config.onUnloaded or function() end
+    if not isFunction(config.onUnloaded) then error("Expected onUnloaded to be a function, but got " .. type(config.onUnloaded), 2) end
 
     local cronId = "miner_" .. ship:getCallSign()
     local timeToGoHome = config.timeToGoHome -- when counter falls lower than 0 the ship will stop gathering and fly home
@@ -106,10 +120,26 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
         hasWarnedAboutNoAsteroids = false -- obviously an asteroid was found. So warn again if it goes missing.
         state = stateWayToAsteroid
         ship:orderAttack(asteroid)
+        local status, error = pcall(config.onHeadingAsteroid, ship, asteroid)
+        if not status then
+            local msg = "An error occured when calling onHeadingAsteroid"
+            if type(error) == "string" then
+                msg = msg .. ": " .. error
+            end
+            logError(msg)
+        end
     end
     local orderGoHome = function()
         state = stateWayHome
         ship:orderDock(homeStation)
+        local status, error = pcall(config.onHeadingHome, ship, homeStation, gatheredProducts)
+        if not status then
+            local msg = "An error occured when calling onHeadingHome"
+            if type(error) == "string" then
+                msg = msg .. ": " .. error
+            end
+            logError(msg)
+        end
     end
 
     stepMain = function()
@@ -182,22 +212,29 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
 
                     for product, amount in pairs(rewards) do
                         if amount > 0 then
-                            product = Product:toId(product)
                             if ship:canStoreProduct(product) and homeStation:canStoreProduct(product) then
                                 ship:modifyProductStorage(product, amount)
-                                gatheredProducts[product] = true
-                                logDebug(ship:getCallSign() .. " gathered " .. amount .. " " .. product .. " from mining")
+                                gatheredProducts[product] = (gatheredProducts[product] or 0) + amount
+                                logDebug(ship:getCallSign() .. " gathered " .. amount .. " " .. product:getId() .. " from mining")
 
                                 if ship:getEmptyProductStorage(product) == 0 then
                                     timeToGoHome = 0
-                                    logDebug(ship:getCallSign() .. " will head home, because store for " .. product .. " is full")
+                                    logDebug(ship:getCallSign() .. " will head home, because store for " .. product:getId() .. " is full")
                                 end
                             else
-                                logWarning("discarded mined " .. product .. " because miner or home base can not store it")
+                                logWarning("discarded mined " .. product:getId() .. " because miner or home base can not store it")
                             end
                         end
                     end
 
+                    local status, error = pcall(config.onAsteroidMined, ship, asteroid, rewards)
+                    if not status then
+                        local msg = "An error occured when calling onAsteroidMined"
+                        if type(error) == "string" then
+                            msg = msg .. ": " .. error
+                        end
+                        logError(msg)
+                    end
                     minedAsteroids[ship:getOrderTarget()] = true
                     decideWhatToDo()
                     Cron.regular(cronId, stepMain, tick, tick)
@@ -231,10 +268,19 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
                         ship:modifyProductStorage(product, -1 * amount)
                         if homeStation:canStoreProduct(product) then
                             homeStation:modifyProductStorage(product, amount)
-                            logInfo(ship:getCallSign() .. " unloaded " .. amount .. " " .. product .. " to " .. homeStation:getCallSign())
+                            logInfo(ship:getCallSign() .. " unloaded " .. amount .. " " .. product:getId() .. " to " .. homeStation:getCallSign())
                         else
-                            logWarning(product .. " gathered by " .. ship:getCallSign() .. " was discarded, because " .. homeStation:getCallSign() .. "can not store it")
+                            logWarning(product:getId() .. " gathered by " .. ship:getCallSign() .. " was discarded, because " .. homeStation:getCallSign() .. "can not store it")
                         end
+                    end
+
+                    local status, error = pcall(config.onUnloaded, ship, homeStation, gatheredProducts)
+                    if not status then
+                        local msg = "An error occured when calling onUnloaded"
+                        if type(error) == "string" then
+                            msg = msg .. ": " .. error
+                        end
+                        logError(msg)
                     end
 
                     gatheredProducts = {}

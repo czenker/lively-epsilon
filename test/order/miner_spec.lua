@@ -42,17 +42,45 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, miner, asteroid)
 
                 local whenMinedCalled = 0
+                local asteroidMinedCalled = 0
+                local asteroidMinedArg1, asteroidMinedArg2, asteroidMinedArg3
+                local headingAsteroidCalled = 0
+                local headingAsteroidArg1, headingAsteroidArg2
+                local unloadedCalled = 0
+                local unloadedArg1, unloadedArg2, unloadedArg3
+                local headingHomeCalled = 0
+                local headingHomeArg1, headingHomeArg2, headingHomeArg3
                 Ship:orderMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
                     }
-                end)
+                end, {
+                    onHeadingAsteroid = function(arg1, arg2)
+                        headingAsteroidCalled = headingAsteroidCalled + 1
+                        headingAsteroidArg1, headingAsteroidArg2 = arg1, arg2
+                    end,
+                    onAsteroidMined = function(arg1, arg2, arg3)
+                        asteroidMinedCalled = asteroidMinedCalled + 1
+                        asteroidMinedArg1, asteroidMinedArg2, asteroidMinedArg3 = arg1, arg2, arg3
+                    end,
+                    onHeadingHome = function(arg1, arg2, arg3)
+                        headingHomeCalled = headingHomeCalled + 1
+                        headingHomeArg1, headingHomeArg2, headingHomeArg3 = arg1, arg2, arg3
+                    end,
+                    onUnloaded = function(arg1, arg2, arg3)
+                        unloadedCalled = unloadedCalled + 1
+                        unloadedArg1, unloadedArg2, unloadedArg3 = arg1, arg2, arg3
+                    end,
+                })
 
                 -- find a close asteroid
                 assert.is_same("Attack", miner:getOrder())
                 assert.is_same(asteroid, miner:getOrderTarget())
                 assert.is_same("asteroid", miner:getMinerState())
+                assert.is_same(1, headingAsteroidCalled)
+                assert.is_same(miner, headingAsteroidArg1)
+                assert.is_same(asteroid, headingAsteroidArg2)
 
                 miner:setPosition(100, 0)
                 Cron.tick(1)
@@ -74,12 +102,26 @@ insulate("Order:orderMiner()", function()
                 -- ...let it mine a little...
                 for i=1,14 do Cron.tick(1) end
                 assert.is_same(0, whenMinedCalled)
+                assert.is_same(0, asteroidMinedCalled)
+                assert.is_same(0, headingHomeCalled)
                 assert.is_same("mining", miner:getMinerState())
 
                 -- now the mining should have finished
                 Cron.tick(1)
                 assert.is_same(1, whenMinedCalled)
                 assert.is_same(42, miner:getProductStorage(product))
+                assert.is_same(1, asteroidMinedCalled)
+                assert.is_same(miner, asteroidMinedArg1)
+                assert.is_same(asteroid, asteroidMinedArg2)
+                assert.is_same("table", type(asteroidMinedArg3))
+                assert.is_same(42, asteroidMinedArg3[product])
+
+                assert.is_same(1, headingHomeCalled)
+                assert.is_same(miner, headingHomeArg1)
+                assert.is_same(station, headingHomeArg2)
+                assert.is_same("table", type(headingHomeArg3))
+                assert.is_same(42, headingHomeArg3[product])
+
                 assert.is_same("Dock", miner:getOrder())
                 assert.is_same(station, miner:getOrderTarget())
                 assert.is_same("home", miner:getMinerState())
@@ -104,10 +146,17 @@ insulate("Order:orderMiner()", function()
                 assert.is_same(42, miner:getProductStorage(product))
                 assert.is_same(0, station:getProductStorage(product))
                 assert.is_same("unloading", miner:getMinerState())
+                assert.is_same(0, unloadedCalled)
 
+                -- ...now delivery should be complete
                 Cron.tick(1)
                 assert.is_same(0, miner:getProductStorage(product))
                 assert.is_same(42, station:getProductStorage(product))
+                assert.is_same(1, unloadedCalled)
+                assert.is_same(miner, unloadedArg1)
+                assert.is_same(station, unloadedArg2)
+                assert.is_same("table", type(unloadedArg3))
+                assert.is_same(42, unloadedArg3[product])
 
                 -- cycle starts again
                 assert.is_same("Attack", miner:getOrder())
