@@ -12,17 +12,18 @@ before_install:
 install:
 #  - luarocks install luacheck
   - luarocks install busted
-#  - luarocks install luacov
+  - luarocks install luacov
 #  - luarocks install luacov-coveralls
   - wget "https://raw.githubusercontent.com/daid/EmptyEpsilon/${EE_BRANCH}/scripts/utils.lua" -O utils.lua
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
 #  - busted --verbose --coverage test/
-  - busted --verbose test/
+  - busted --verbose --coverage test/
 
-#after_success:
+after_success:
 #  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
+  - bash <(curl -s https://codecov.io/bash)
 
 branches:
   except:

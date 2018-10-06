@@ -3,7 +3,10 @@
 *~
 
 *.lua
+!.luacov
+!.travis.yml
 
+luacov.*.out
 !scenario_00_aaa.lua
 !/src/**/*.lua
 !/example/**/*.lua
