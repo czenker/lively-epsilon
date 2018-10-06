@@ -65,7 +65,7 @@ insulate("Tools", function()
             end)
             it("fails when an other storyComms() is currently running", function()
                 finally(function() Tools:endStoryComms() end)
-                
+
                 Tools:storyComms(station, player, screen)
                 assert.has_error(function() Tools:storyComms(station, player, screen) end)
             end)

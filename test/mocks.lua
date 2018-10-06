@@ -1,12 +1,14 @@
 local noop = function() end
 
-function getLongRangeRadarRange() return 30000 end
+function _G.getLongRangeRadarRange() return 30000 end
+
 
 function SpaceObject()
     local callSign = ""
     local isValid = true
     local positionX, positionY = 0, 0
     local reputationPoints = 0
+    local factionId = 0
 
     return {
         setCallSign = function(self, sign)
@@ -27,6 +29,8 @@ function SpaceObject()
         getReputationPoints = function(self) return reputationPoints end,
         takeReputationPoints = function(self, amount) reputationPoints = math.max(0, reputationPoints - amount); return self end,
         addReputationPoints = function(self, amount) reputationPoints = reputationPoints + amount; return self end,
+        getFactionId = function(self) return factionId end,
+        setFactionId = function(self, id) factionId = id end,
     }
 end
 function eeShipTemplateBasedMock()
@@ -243,6 +247,18 @@ function Artifact()
         typeName = "Artifact",
         setModel = function(self) return self end,
         allowPickup = function(self) return self end,
+    })
+end
+
+function Asteroid()
+    return Util.mergeTables(SpaceShip(), {
+        typeName = "Asteroid",
+    })
+end
+
+function ExplosionEffect()
+    return Util.mergeTables(SpaceObject(), {
+        setSize = noop,
     })
 end
 

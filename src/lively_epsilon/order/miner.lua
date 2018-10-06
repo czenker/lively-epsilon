@@ -1,5 +1,12 @@
 Ship = Ship or {}
 
+local stateUnknown = "unknown"
+local stateWayToAsteroid = "asteroid"
+local stateMining = "mining"
+local stateWayHome = "home"
+local stateUnloading = "unloading"
+
+-- find a random mineable object in a certain vicinity
 local function filterRandomObject(station, filterFunction, radius)
     local x, y = station:getPosition()
 
@@ -11,22 +18,35 @@ local function filterRandomObject(station, filterFunction, radius)
     return Util.random(objects)
 end
 
-local tick = 2
+-- checks if the storage of a miner is full
+local isStorageFull = function(ship, gatheredProducts)
+    for product, amount in pairs(gatheredProducts) do
+        if ship:getEmptyProductStorage(product) == 0 then return true end
+    end
+    return false
+end
+
+-- how regular to run cron
+local tick = 1
 
 Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
-    if not isEeShip(ship) or not ship:isValid() then
-        error("Invalid ship given", 2)
+    if not isEeShip(ship) then
+        error("Expected ship to be a CpuShip, but got " .. type(ship), 2)
+    end
+    if not ship:isValid() then
+        error("Expected ship to be a valid CpuShip, but got a destroyed one", 2)
     end
     if not Ship:hasStorage(ship) then
-        error("ship " .. ship:getCallSign() .. " needs to have a storage configured", 2)
+        error("Ship " .. ship:getCallSign() .. " needs to have storage configured", 2)
     end
 
-    if not isEeStation(homeStation) or not homeStation:isValid() then
-        error("Invalid station given", 2)
+    if not isEeStation(homeStation) then
+        error("Expected homeStation to be a Station, but got " .. type(homeStation), 2)
     end
     if not Ship:hasStorage(homeStation) then
-        error ("station " .. homeStation:getCallSign() .. " needs to have a storage configured", 2)
+        error ("Station " .. homeStation:getCallSign() .. " needs to have storage configured", 2)
     end
+    -- @TODO: handling when station is destroyed or nil - it should not be problematic when GM can assign a new home station
 
     if ship:getBeamWeaponRange(0) == 0 then
         logWarning(ship:getCallSign() .. " did not have a laser needed for mining, so it is given a weak one")
@@ -45,12 +65,11 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
     config.maxDistanceToNext = config.maxDistanceToNext or (getLongRangeRadarRange() / 2)
 
     local cronId = "miner_" .. ship:getCallSign()
-    local target
-    local timeToGoHome -- when counter falls lower than 0 the ship will stop gethering  and fly home
-    local timeToMine
-    local timeToUnload
+    local timeToGoHome = config.timeToGoHome -- when counter falls lower than 0 the ship will stop gathering and fly home
     local gatheredProducts = {}
     local minedAsteroids = {}
+    local state = stateUnknown
+    local hasWarnedAboutNoAsteroids = false
 
     local function isValidAsteroid(object)
         if isEeAsteroid(object) and object:isValid() then
@@ -69,76 +88,96 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
         end
     end
 
-    Cron.regular(cronId, function()
-        if not ship:isValid() then
-            logError("ship for " .. cronId .. " is no longer valid")
-            Cron.abort(cronId)
-        elseif not homeStation:isValid() then
-            logError(ship:getCallSign() .. " has lost its home base. :(")
-            ship:orderIdle()
-            target = nil
-            Cron.abort(cronId)
-        elseif target == nil then
-            if timeToGoHome ~= nil and timeToGoHome <= 0 then
-                target = homeStation
-                timeToUnload = nil
-                logInfo(ship:getCallSign() .. " is flying back to home base")
-                ship:orderDock(target)
-            else
-                target = filterRandomObject(homeStation, isValidAsteroid, config.maxDistanceFromHome)
-                if target == nil then
-                    if Util.size(gatheredProducts) > 0 then
-                        -- if ship has already gathered stuff
-                        logDebug(ship:getCallSign() .. " did not find any more asteroids and will return home")
-                    else
-                        logWarning(ship:getCallSign() .. " did not find a valid asteroid in range to mine")
-                    end
-                    timeToGoHome = 0
-                else
-                    timeToMine = nil
-                    ship:orderAttack(target)
-                end
-            end
-        elseif target == homeStation then
-            if ship:isDocked(homeStation) then
-                if timeToUnload == nil then
-                    timeToUnload = config.timeToUnload
-                else
-                    timeToUnload = timeToUnload - tick
-                end
-                if timeToUnload <= 0 then
-                    for product, _ in pairs(gatheredProducts) do
-                        local amount = ship:getProductStorage(product)
-                        ship:modifyProductStorage(product, -1 * amount)
-                        homeStation:modifyProductStorage(product, amount)
-                        logInfo(ship:getCallSign() .. " unloaded " .. amount .. " " .. product .. " to " .. homeStation:getCallSign())
-                        gatheredProducts[product] = nil
-                    end
+    local stepMain, stepMineAsteroid, stepUnload, decideWhatToDo
 
-                    timeToGoHome = nil
-                    minedAsteroids = {}
-                    target = nil
+    local onMinerDestroyed = function()
+        logWarning("ship for " .. cronId .. " is no longer valid")
+        state = stateUnknown
+        Cron.abort(cronId)
+    end
+
+    local onHomeStationDestroyed = function()
+        logWarning(ship:getCallSign() .. " has lost its home base. :(")
+        state = stateUnknown
+        Cron.regular(cronId, stepMain, tick, tick)
+    end
+
+    local orderMine = function(asteroid)
+        hasWarnedAboutNoAsteroids = false -- obviously an asteroid was found. So warn again if it goes missing.
+        state = stateWayToAsteroid
+        ship:orderAttack(asteroid)
+    end
+    local orderGoHome = function()
+        state = stateWayHome
+        ship:orderDock(homeStation)
+    end
+
+    stepMain = function()
+        if not ship:isValid() then
+            onMinerDestroyed()
+        else
+            timeToGoHome = timeToGoHome - tick
+            if not homeStation:isValid() then
+                onHomeStationDestroyed()
+            end
+            if ship:getOrder() == "Idle" then
+                decideWhatToDo()
+            end
+            if ship:getOrder() == "Fly towards" then
+                local x, y = ship:getOrderTargetLocation()
+                local asteroids = {}
+                for _, thing in pairs(getObjectsInRadius(x, y, 2000)) do
+                    if isEeAsteroid(thing) then
+                        table.insert(asteroids, thing)
+                    end
+                end
+                table.sort(asteroids, function(a, b)
+                    return distance(a, x, y) < distance(b, x, y)
+                end)
+                if asteroids[1] ~= nil then
+                    orderMine(asteroids[1])
+                    logInfo(string.format("Going to mine asteroid at %d,%d because of GM interaction", math.floor(x), math.floor(y)))
                 end
             end
-        elseif isEeAsteroid(target) then
-            if timeToGoHome == nil then
-                timeToGoHome = config.timeToGoHome
+            if ship:getOrder() == "Attack" and isEeAsteroid(ship:getOrderTarget()) then
+                if distance(ship, ship:getOrderTarget()) < config.mineDistance then
+                    stepMineAsteroid(ship:getOrderTarget())
+                end
+            elseif ship:getOrder() == "Dock" and ship:getOrderTarget() == homeStation then
+                if ship:isDocked(homeStation) then
+                    stepUnload(homeStation)
+                end
+            else
+                -- some GM order!?
+                state = stateUnknown
+            end
+        end
+        -- @TODO: search new home base
+    end
+
+    stepMineAsteroid = function(asteroid)
+        local timeToMine = config.timeToMine
+
+        -- @TODO: callback
+        logDebug(ship:getCallSign() .. " starts mining asteroid")
+        state = stateMining
+
+        Cron.regular(cronId, function()
+            if not ship:isValid() then
+                onMinerDestroyed()
+            elseif not homeStation:isValid() then
+                onHomeStationDestroyed()
+            elseif not ship:getOrder() == "Attack" or ship:getOrderTarget() ~= asteroid then
+                logDebug(ship:getCallSign() .. " aborted mining because of changed orders")
+                state = stateUnknown
+                stepMain()
+                Cron.regular(cronId, stepMain, tick, tick)
             else
                 timeToGoHome = timeToGoHome - tick
-            end
-
-            if not isValidAsteroid(target) then
-                target = nil
-            elseif distance(ship, target) <= config.mineDistance then
-                if timeToMine == nil then
-                    timeToMine = config.timeToMine
-                else
-                    timeToMine = timeToMine - tick
-                end
-
+                timeToMine = timeToMine - tick
                 if timeToMine <= 0 then
-                    local rewards = whenMined(target, ship, homeStation)
-                    local x, y = target:getPosition()
+                    local rewards = whenMined(ship:getOrderTarget(), ship, homeStation)
+                    local x, y = ship:getOrderTarget():getPosition()
                     ExplosionEffect():setPosition(x, y):setSize(150)
 
                     for product, amount in pairs(rewards) do
@@ -147,20 +186,101 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
                             if ship:canStoreProduct(product) and homeStation:canStoreProduct(product) then
                                 ship:modifyProductStorage(product, amount)
                                 gatheredProducts[product] = true
-                                logInfo(ship:getCallSign() .. " gathered " .. amount .. " " .. product .. " from mining")
+                                logDebug(ship:getCallSign() .. " gathered " .. amount .. " " .. product .. " from mining")
 
                                 if ship:getEmptyProductStorage(product) == 0 then
                                     timeToGoHome = 0
-                                    logInfo(ship:getCallSign() .. " will head home, because store for " .. product .. " is full")
+                                    logDebug(ship:getCallSign() .. " will head home, because store for " .. product .. " is full")
                                 end
+                            else
+                                logWarning("discarded mined " .. product .. " because miner or home base can not store it")
                             end
                         end
                     end
 
-                    minedAsteroids[target] = true
-                    target = nil
+                    minedAsteroids[ship:getOrderTarget()] = true
+                    decideWhatToDo()
+                    Cron.regular(cronId, stepMain, tick, tick)
                 end
             end
+        end, tick)
+    end
+
+    stepUnload = function(station)
+        local timeToUnload = config.timeToUnload
+
+        -- @TODO: callback
+        logDebug(ship:getCallSign() .. " starts unloading mined goods at " .. station:getCallSign())
+
+        state = stateUnloading
+        Cron.regular(cronId, function()
+            if not ship:isValid() then
+                onMinerDestroyed()
+            elseif not homeStation:isValid() then
+                onHomeStationDestroyed()
+            elseif not ship:getOrder() == "Dock" or ship:getOrderTarget() ~= station then
+                logDebug(ship:getCallSign() .. " aborted unloading because of changed orders")
+                state = stateUnknown
+                Cron.regular(cronId, stepMain, tick, tick)
+            else
+                timeToGoHome = timeToGoHome - tick
+                timeToUnload = timeToUnload - tick
+                if timeToUnload <= 0 then
+                    for product, _ in pairs(gatheredProducts) do
+                        local amount = ship:getProductStorage(product)
+                        ship:modifyProductStorage(product, -1 * amount)
+                        if homeStation:canStoreProduct(product) then
+                            homeStation:modifyProductStorage(product, amount)
+                            logInfo(ship:getCallSign() .. " unloaded " .. amount .. " " .. product .. " to " .. homeStation:getCallSign())
+                        else
+                            logWarning(product .. " gathered by " .. ship:getCallSign() .. " was discarded, because " .. homeStation:getCallSign() .. "can not store it")
+                        end
+                    end
+
+                    gatheredProducts = {}
+                    timeToGoHome = config.timeToGoHome
+                    minedAsteroids = {}
+
+                    decideWhatToDo()
+                    Cron.regular(cronId, stepMain, tick, tick)
+                end
+            end
+        end, tick)
+    end
+
+    decideWhatToDo = function()
+        if timeToGoHome <= 0 then
+            if Util.size(gatheredProducts) == 0 then
+                logWarning(ship:getCallSign() .. " is heading home without any gathered minerals")
+            else
+                logDebug(ship:getCallSign() .. " is heading home to " .. homeStation:getCallSign() .. " because time is up.")
+            end
+            orderGoHome()
+        elseif isStorageFull(ship, gatheredProducts) then
+            logDebug(ship:getCallSign() .. " is heading home to " .. homeStation:getCallSign() .. " because storage is full.")
+            orderGoHome()
+        else
+            local next = filterRandomObject(homeStation, isValidAsteroid, config.maxDistanceFromHome)
+            if next == nil then
+                if Util.size(minedAsteroids) == 0 then
+                    if not hasWarnedAboutNoAsteroids then
+                        logWarning(ship:getCallSign() .. " did not find any mineable asteroids around " .. homeStation:getCallSign())
+                        hasWarnedAboutNoAsteroids = true
+                    end
+                else
+                    logDebug(ship:getCallSign() .. " is heading home to " .. homeStation:getCallSign() .. " because no more asteroids where found.")
+                    orderGoHome()
+                end
+            else
+                orderMine(next)
+            end
         end
-    end, tick, 1)
+    end
+
+    decideWhatToDo()
+    Cron.regular(cronId, stepMain, tick, tick)
+
+    ship.getMinerState = function(self)
+        return state
+    end
 end
