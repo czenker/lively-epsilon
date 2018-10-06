@@ -292,7 +292,7 @@ insulate("Order:orderMiner()", function()
                 assert.is_same("mining", miner:getMinerState())
 
                 -- now the GM interjects
-                miner:orderFlyTowards(asteroid2:getPosition()) -- GM interface does not allow to issue Attack orders on asteroids
+                miner:orderFlyTowardsBlind(asteroid2:getPosition()) -- GM interface does not allow to issue Attack orders on asteroids
                 Cron.tick(1)
                 assert.is_same("Attack", miner:getOrder())
                 assert.is_same(asteroid2, miner:getOrderTarget())

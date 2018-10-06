@@ -164,7 +164,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
                 if ship:getOrder() == "Idle" then
                     decideWhatToDo()
                 end
-                if ship:getOrder() == "Fly towards" then
+                if ship:getOrder() == "Fly towards (ignore all)" then
                     local x, y = ship:getOrderTargetLocation()
                     local asteroids = {}
                     for _, thing in pairs(getObjectsInRadius(x, y, 2000)) do
