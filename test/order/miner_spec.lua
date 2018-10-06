@@ -385,6 +385,62 @@ insulate("Order:orderMiner()", function()
                 end
             end)
         end)
+
+        it("can force a miner to go home", function()
+            withUniverse(function(universe)
+                finally(universe.destroy)
+
+                local station = mockValidStation()
+                local miner = mockValidMiner()
+                local asteroid = Asteroid()
+
+                station:setPosition(0, 0)
+                miner:setPosition(1000, 0)
+                asteroid:setPosition(1000, 0)
+
+                universe:add(station, miner, asteroid)
+
+                local headingHomeCalled = 0
+                Ship:orderMiner(miner, station, function()
+                    return { [product] = 42, }
+                end, {
+                    onHeadingHome = function()
+                        headingHomeCalled = headingHomeCalled + 1
+                    end
+                })
+
+                local asteroid2 = Asteroid()
+                universe:add(asteroid2)
+                asteroid2:setPosition(2000, 0)
+
+                for i=1,20 do Cron.tick(1) end
+                assert.is_same("Attack", miner:getOrder())
+                assert.is_same(asteroid2, miner:getOrderTarget())
+
+                miner:orderDock(station)
+                Cron.tick(1)
+                assert.is_same(1, headingHomeCalled)
+
+                -- ...GM rethinks...
+                miner:orderIdle()
+                Cron.tick(1)
+                assert.is_same("asteroid", miner:getMinerState())
+
+                -- ...but then orders miner home again...
+                miner:orderDock(station)
+                Cron.tick(1)
+                assert.is_same(2, headingHomeCalled)
+
+                miner:setPosition(station:getPosition())
+                miner:setDockedAt(station)
+                for i=1,20 do Cron.tick(1) end
+
+                assert.is_same(0, miner:getProductStorage(product))
+                assert.is_same(42, station:getProductStorage(product))
+                -- ...miner goes on as usual after unloading
+                assert.is_same("Attack", miner:getOrder())
+            end)
+        end)
     end)
 
     describe("orderMiner()", function()

@@ -84,6 +84,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
     local minedAsteroids = {}
     local state = stateUnknown
     local hasWarnedAboutNoAsteroids = false
+    local hasCalledHeadingHome = false
 
     local function isValidAsteroid(object)
         if isEeAsteroid(object) and object:isValid() then
@@ -140,6 +141,7 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
             end
             logError(msg)
         end
+        hasCalledHeadingHome = true
     end
 
     stepMain = function()
@@ -150,37 +152,43 @@ Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
             if not homeStation:isValid() then
                 onHomeStationDestroyed()
             end
-            if ship:getOrder() == "Idle" then
-                decideWhatToDo()
-            end
-            if ship:getOrder() == "Fly towards" then
-                local x, y = ship:getOrderTargetLocation()
-                local asteroids = {}
-                for _, thing in pairs(getObjectsInRadius(x, y, 2000)) do
-                    if isEeAsteroid(thing) then
-                        table.insert(asteroids, thing)
-                    end
+            if ship:getOrder() == "Dock" and ship:getOrderTarget() == homeStation then
+                if not hasCalledHeadingHome then
+                    orderGoHome()
                 end
-                table.sort(asteroids, function(a, b)
-                    return distance(a, x, y) < distance(b, x, y)
-                end)
-                if asteroids[1] ~= nil then
-                    orderMine(asteroids[1])
-                    logInfo(string.format("Going to mine asteroid at %d,%d because of GM interaction", math.floor(x), math.floor(y)))
-                end
-            end
-            if ship:getOrder() == "Attack" and isEeAsteroid(ship:getOrderTarget()) then
-                if distance(ship, ship:getOrderTarget()) < config.mineDistance then
-                    stepMineAsteroid(ship:getOrderTarget())
-                end
-            elseif ship:getOrder() == "Dock" and ship:getOrderTarget() == homeStation then
                 if ship:isDocked(homeStation) then
                     stepUnload(homeStation)
                 end
             else
-                -- some GM order!?
-                state = stateUnknown
+                hasCalledHeadingHome = false
+                if ship:getOrder() == "Idle" then
+                    decideWhatToDo()
+                end
+                if ship:getOrder() == "Fly towards" then
+                    local x, y = ship:getOrderTargetLocation()
+                    local asteroids = {}
+                    for _, thing in pairs(getObjectsInRadius(x, y, 2000)) do
+                        if isEeAsteroid(thing) then
+                            table.insert(asteroids, thing)
+                        end
+                    end
+                    table.sort(asteroids, function(a, b)
+                        return distance(a, x, y) < distance(b, x, y)
+                    end)
+                    if asteroids[1] ~= nil then
+                        orderMine(asteroids[1])
+                        logInfo(string.format("Going to mine asteroid at %d,%d because of GM interaction", math.floor(x), math.floor(y)))
+                    end
+                end
+                if ship:getOrder() == "Attack" and isEeAsteroid(ship:getOrderTarget()) then
+                    if distance(ship, ship:getOrderTarget()) < config.mineDistance then
+                        stepMineAsteroid(ship:getOrderTarget())
+                    end
+                else
+                    state = stateUnknown
+                end
             end
+
         end
         -- @TODO: search new home base
     end
