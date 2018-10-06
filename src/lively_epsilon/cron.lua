@@ -28,7 +28,7 @@ Cron = {
                 local cronOverride
                 local status, error = pcall(value.func, key)
                 if not status then
-                    msg = "An error occured in Cron with " .. key
+                    local msg = "An error occured in Cron with " .. key
                     if type(error) == "string" then
                         msg = msg .. ": " .. error
                     end
