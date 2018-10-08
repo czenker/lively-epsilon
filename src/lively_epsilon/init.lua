@@ -56,9 +56,9 @@ local myPackages = {
 
     "src/lively_epsilon/domain/broker_upgrade.lua",
 
-    "src/lively_epsilon/order/miner.lua",
-    "src/lively_epsilon/order/patrol.lua",
-    "src/lively_epsilon/order/trader.lua",
+    "src/lively_epsilon/behaviors/miner.lua",
+    "src/lively_epsilon/behaviors/patrol.lua",
+    "src/lively_epsilon/behaviors/trader.lua",
 
     "src/lively_epsilon/missions/bring_product.lua",
     "src/lively_epsilon/missions/capture.lua",

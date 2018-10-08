@@ -165,7 +165,7 @@ function init()
         Ship:withStorageRooms(ship, {
             [products.power] = 1000,
         })
-        Ship:orderBuyer(ship, stationFabricate, products.power)
+        Ship:behaveAsBuyer(ship, stationFabricate, products.power)
 
         removeGMFunction("Test Production")
     end)
@@ -198,7 +198,7 @@ function init()
             [products.ore] = 250,
             [products.plutoniumOre] = 50,
         })
-        Ship:orderMiner(minerShip, stationMine, function(asteroid, ship, station)
+        Ship:behaveAsMiner(minerShip, stationMine, function(asteroid, ship, station)
             local resources = {
                 [products.ore] = math.random(10, 50)
             }

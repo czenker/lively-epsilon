@@ -11,7 +11,7 @@ local function filterRandomObject(station, filterFunction, radius)
     return Util.random(objects)
 end
 
-Ship.orderBuyer = function (self, ship, homeStation, product, config)
+Ship.behaveAsBuyer = function (self, ship, homeStation, product, config)
     product = Product:toId(product)
 
     if not isEeShip(ship) or not ship:isValid() then

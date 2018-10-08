@@ -181,7 +181,7 @@ local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
 Ship:withStorageRooms(ship, {
     [products.power] = 1000,
 })
-Ship:orderBuyer(ship, buyer, products.power)
+Ship:behaveAsBuyer(ship, buyer, products.power)
 ```
 
 This trader will try to find a station close to its home base ``buyer`` that sells power, buy it and bring
@@ -204,7 +204,7 @@ local ship = CpuShip():setTemplate("Goods Freighter 1"):setPosition(11000, 0)
 Ship:withStorageRooms(ship, {
     [products.ore] = 1000,
 })
-Ship:orderBuyer(ship, factory, function(asteroid, ship, station)
+Ship:behaveAsBuyer(ship, factory, function(asteroid, ship, station)
     return {
        [products.ore] = math.random(10, 50)
     }

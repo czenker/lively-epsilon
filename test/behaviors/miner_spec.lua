@@ -1,4 +1,4 @@
-insulate("Order:orderMiner()", function()
+insulate("Ship:behaveAsMiner()", function()
 
     require "lively_epsilon"
     require "test.mocks"
@@ -50,7 +50,7 @@ insulate("Order:orderMiner()", function()
                 local unloadedArg1, unloadedArg2, unloadedArg3
                 local headingHomeCalled = 0
                 local headingHomeArg1, headingHomeArg2, headingHomeArg3
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
@@ -182,7 +182,7 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, miner, asteroid1)
 
                 local whenMinedCalled = 0
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
@@ -223,7 +223,7 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, miner, asteroid)
 
                 local whenMinedCalled = 0
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
@@ -266,7 +266,7 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, miner, asteroid1, asteroid2)
 
                 local whenMinedCalled = 0
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
@@ -338,7 +338,7 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, otherStation, miner, asteroid)
 
                 local whenMinedCalled = 0
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     whenMinedCalled = whenMinedCalled + 1
                     return {
                         [product] = 42,
@@ -401,7 +401,7 @@ insulate("Order:orderMiner()", function()
                 universe:add(station, miner, asteroid)
 
                 local headingHomeCalled = 0
-                Ship:orderMiner(miner, station, function()
+                Ship:behaveAsMiner(miner, station, function()
                     return { [product] = 42, }
                 end, {
                     onHeadingHome = function()
@@ -443,20 +443,20 @@ insulate("Order:orderMiner()", function()
         end)
     end)
 
-    describe("orderMiner()", function()
+    describe("behaveAsMiner()", function()
         it("fails if ship is not a ship", function()
             local station = mockValidStation()
             assert.has_error(function()
-                Ship:orderMiner(nil, station, function() end)
+                Ship:behaveAsMiner(nil, station, function() end)
             end, "Expected ship to be a CpuShip, but got nil")
             assert.has_error(function()
-                Ship:orderMiner(42, station, function() end)
+                Ship:behaveAsMiner(42, station, function() end)
             end, "Expected ship to be a CpuShip, but got number")
             assert.has_error(function()
-                Ship:orderMiner(eeStationMock(), station, function() end)
+                Ship:behaveAsMiner(eeStationMock(), station, function() end)
             end, "Expected ship to be a CpuShip, but got table")
             assert.has_error(function()
-                Ship:orderMiner(SpaceShip(), station, function() end)
+                Ship:behaveAsMiner(SpaceShip(), station, function() end)
             end, "Expected ship to be a CpuShip, but got table")
         end)
         it("fails if ship is destroyed", function()
@@ -465,7 +465,7 @@ insulate("Order:orderMiner()", function()
             miner:destroy()
 
             assert.has_error(function()
-                Ship:orderMiner(miner, station, function() end)
+                Ship:behaveAsMiner(miner, station, function() end)
             end, "Expected ship to be a valid CpuShip, but got a destroyed one")
         end)
         it("fails if ship does not have storage", function()
@@ -473,7 +473,7 @@ insulate("Order:orderMiner()", function()
             local miner = eeCpuShipMock():setCallSign("Dummy")
 
             assert.has_error(function()
-                Ship:orderMiner(miner, station, function() end)
+                Ship:behaveAsMiner(miner, station, function() end)
             end, "Ship Dummy needs to have storage configured")
         end)
 
@@ -482,13 +482,13 @@ insulate("Order:orderMiner()", function()
             local miner = mockValidMiner()
 
             assert.has_error(function()
-                Ship:orderMiner(miner, nil, function() end)
+                Ship:behaveAsMiner(miner, nil, function() end)
             end, "Expected homeStation to be a Station, but got nil")
             assert.has_error(function()
-                Ship:orderMiner(miner, 42, function() end)
+                Ship:behaveAsMiner(miner, 42, function() end)
             end, "Expected homeStation to be a Station, but got number")
             assert.has_error(function()
-                Ship:orderMiner(miner, SpaceShip(), function() end)
+                Ship:behaveAsMiner(miner, SpaceShip(), function() end)
             end, "Expected homeStation to be a Station, but got table")
         end)
         it("fails if station does not have storage", function()
@@ -496,7 +496,7 @@ insulate("Order:orderMiner()", function()
             local miner = mockValidMiner()
 
             assert.has_error(function()
-                Ship:orderMiner(miner, station, function() end)
+                Ship:behaveAsMiner(miner, station, function() end)
             end, "Station Home needs to have storage configured")
         end)
     end)

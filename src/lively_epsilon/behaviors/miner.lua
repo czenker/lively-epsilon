@@ -29,7 +29,7 @@ end
 -- how regular to run cron
 local tick = 1
 
-Ship.orderMiner = function (self, ship, homeStation, whenMined, config)
+Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     if not isEeShip(ship) then
         error("Expected ship to be a CpuShip, but got " .. type(ship), 2)
     end

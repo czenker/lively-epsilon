@@ -1,6 +1,6 @@
 Ship = Ship or {}
 
-local tick = 1
+local tick = 0.1
 
 local function validateWaypoint(waypoint)
     return isEeStation(waypoint.target) or isVector2f(waypoint.target)
