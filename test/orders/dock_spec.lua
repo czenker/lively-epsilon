@@ -1,0 +1,328 @@
+insulate("Order", function()
+
+    require "lively_epsilon"
+    require "test.mocks"
+    require "test.asserts"
+    require "test.orders.helper"
+
+    describe("dock()", function()
+        testSignature(Order.dock, {eeStationMock()}, it, assert)
+        testHappyShipCase(Order.dock, function()
+            local station = eeStationMock()
+            return {
+                args = { station },
+                setUp = function() end,
+                assertOrder = "Dock",
+                assertOrderTarget = station,
+                assertOrderTargetLocation = nil,
+                complete = function(ship)
+                    ship:setDockedAt(station)
+                end,
+            }
+        end, it, assert)
+        testHappyFleetCase(Order.dock, function()
+            local station = eeStationMock()
+            return {
+                args = { station },
+                setUp = function() end,
+                assertOrder = "Dock",
+                assertOrderTarget = station,
+                assertOrderTargetLocation = nil,
+                complete = function(fleet)
+                    for _, ship in pairs(fleet:getShips()) do ship:setDockedAt(station) end
+                end,
+            }
+        end, it, assert)
+
+        it("fails if station is an enemy for ship", function()
+            local ship = eeCpuShipMock():setFactionId(1)
+            local station = eeStationMock():setFactionId(2)
+
+            Ship:withOrderQueue(ship)
+
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            ship:addOrder(order)
+
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("enemy_station", abortArg2)
+            assert.is_same(ship, abortArg3)
+            assert.is_same("Idle", ship:getOrder())
+        end)
+        it("fails if station is an enemy for fleet", function()
+            local fleet = Fleet:new({
+                eeCpuShipMock():setFactionId(1),
+                eeCpuShipMock():setFactionId(1),
+                eeCpuShipMock():setFactionId(1),
+            })
+            local station = eeStationMock():setFactionId(2)
+
+            Fleet:withOrderQueue(fleet)
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            fleet:addOrder(order)
+
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("enemy_station", abortArg2)
+            assert.is_same(fleet, abortArg3)
+            assert.is_same("Idle", fleet:getLeader():getOrder())
+        end)
+        it("fails if station turns into an enemy for ship", function()
+            local ship = eeCpuShipMock():setFactionId(1)
+            local station = eeStationMock():setFactionId(0)
+
+            Ship:withOrderQueue(ship)
+
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            ship:addOrder(order)
+
+            Cron.tick(1)
+            assert.is_same("Dock", ship:getOrder())
+
+            station:setFactionId(2)
+            Cron.tick(1)
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("enemy_station", abortArg2)
+            assert.is_same(ship, abortArg3)
+            assert.is_same("Idle", ship:getOrder())
+        end)
+        it("fails if station turns into an enemy for fleet", function()
+            local fleet = Fleet:new({
+                eeCpuShipMock():setFactionId(1),
+                eeCpuShipMock():setFactionId(1),
+                eeCpuShipMock():setFactionId(1),
+            })
+            local station = eeStationMock():setFactionId(0)
+
+            Fleet:withOrderQueue(fleet)
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            fleet:addOrder(order)
+
+            Cron.tick(1)
+            assert.is_same("Dock", fleet:getLeader():getOrder())
+
+            station:setFactionId(2)
+            Cron.tick(1)
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("enemy_station", abortArg2)
+            assert.is_same(fleet, abortArg3)
+            assert.is_same("Idle", fleet:getLeader():getOrder())
+        end)
+        it("fails if station is destroyed for ship", function()
+            local ship = eeCpuShipMock()
+            local station = eeStationMock()
+
+            Ship:withOrderQueue(ship)
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            ship:addOrder(order)
+
+            Cron.tick(1)
+            assert.is_same("Dock", ship:getOrder())
+
+            station:destroy()
+
+            Cron.tick(1)
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("invalid_station", abortArg2)
+            assert.is_same(ship, abortArg3)
+            assert.is_same("Idle", ship:getOrder())
+        end)
+        it("fails if station is destroyed for fleet", function()
+            local fleet = Fleet:new({eeCpuShipMock(), eeCpuShipMock(), eeCpuShipMock()})
+            local station = eeStationMock()
+
+            Fleet:withOrderQueue(fleet)
+            local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
+            local order = Order:dock(station, {
+                onAbort = function(arg1, arg2, arg3)
+                    onAbortCalled = onAbortCalled + 1
+                    abortArg1 = arg1
+                    abortArg2 = arg2
+                    abortArg3 = arg3
+                end,
+            })
+            fleet:addOrder(order)
+
+            Cron.tick(1)
+            assert.is_same("Dock", fleet:getLeader():getOrder())
+
+            station:destroy()
+
+            Cron.tick(1)
+            assert.is_same(1, onAbortCalled)
+            assert.is_same(order, abortArg1)
+            assert.is_same("invalid_station", abortArg2)
+            assert.is_same(fleet, abortArg3)
+            assert.is_same("Idle", fleet:getLeader():getOrder())
+        end)
+        it("repairs a docked ship if the station is friendly and supports it", function()
+            local ship = eeCpuShipMock():setHullMax(100):setHull(50)
+
+            local station = eeStationMock()
+            station:setRepairDocked(true)
+
+            Ship:withOrderQueue(ship)
+            local completed = false
+            ship:addOrder(Order:dock(station, {
+                onCompletion = function() completed = true end,
+            }))
+
+            -- ship not docked
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked but unrepaired
+            ship:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked and repaired
+            ship:setHull(100)
+            Cron.tick(1)
+            assert.is_true(completed)
+        end)
+        it("repairs a docked fleet if the station is friendly and supports it", function()
+            local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship3 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local fleet = Fleet:new({ship1, ship2, ship3})
+
+            local station = eeStationMock()
+            station:setRepairDocked(true)
+
+            Fleet:withOrderQueue(fleet)
+            local completed = false
+            fleet:addOrder(Order:dock(station, {
+                onCompletion = function() completed = true end,
+            }))
+            fleet:addOrder(Order:flyTo(1000, 0))
+
+            -- fleet leader not docked
+            Cron.tick(1)
+            assert.is_false(completed)
+            assert.is_same("Dock", ship1:getOrder())
+            assert.is_same("Fly in formation", ship2:getOrder())
+            assert.is_same("Fly in formation", ship3:getOrder())
+
+            -- fleet leader docked, fleet leader unrepaired
+            ship1:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_false(completed)
+            assert.is_same("Dock", ship1:getOrder())
+            assert.is_same("Dock", ship2:getOrder())
+            assert.is_same(station, ship2:getOrderTarget())
+            assert.is_same("Dock", ship3:getOrder())
+            assert.is_same(station, ship3:getOrderTarget())
+
+            -- fleet leader docked, fleet leader repaired, wingmen not docked
+            ship1:setHull(100)
+            Cron.tick(1)
+            assert.is_false(completed)
+            assert.is_same("Dock", ship1:getOrder())
+            assert.is_same("Dock", ship2:getOrder())
+            assert.is_same("Dock", ship3:getOrder())
+
+            -- fleet leader repaired, wingmen docked
+            ship2:setDockedAt(station)
+            ship3:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- fleet leader repaired, wingmen repaired
+            ship2:setHull(100)
+            ship3:setHull(100)
+            Cron.tick(1)
+            assert.is_true(completed)
+
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+
+            assert.is_same("Fly towards", ship1:getOrder())
+            assert.is_same("Fly in formation", ship2:getOrder())
+            assert.is_same("Fly in formation", ship3:getOrder())
+        end)
+        it("undocks all fleet ships if the order is aborted", function()
+            local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship3 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local fleet = Fleet:new({ship1, ship2, ship3})
+
+            local station = eeStationMock()
+            station:setRepairDocked(true)
+
+            Fleet:withOrderQueue(fleet)
+            fleet:addOrder(Order:dock(station))
+
+            -- fleet leader docked, fleet leader unrepaired
+            ship1:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_same("Dock", ship1:getOrder())
+            assert.is_same("Dock", ship2:getOrder())
+            assert.is_same("Dock", ship3:getOrder())
+
+            fleet:abortCurrentOrder()
+            Cron.tick(1)
+
+            assert.is_same("Idle", ship1:getOrder())
+            assert.is_same("Fly in formation", ship2:getOrder())
+            assert.is_same("Fly in formation", ship3:getOrder())
+        end)
+
+        it("fails if no station is given", function()
+            assert.has_error(function()
+                Order:dock(nil)
+            end)
+            assert.has_error(function()
+                Order:dock("foo")
+            end)
+            assert.has_error(function()
+                Order:dock(eeCpuShipMock())
+            end)
+        end)
+    end)
+end)

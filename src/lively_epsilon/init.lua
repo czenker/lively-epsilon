@@ -45,6 +45,12 @@ local myPackages = {
     "src/lively_epsilon/domain/trait/ship/crew.lua",
     "src/lively_epsilon/domain/trait/ship/events.lua",
     "src/lively_epsilon/domain/trait/ship/fleet.lua",
+    "src/lively_epsilon/orders/generic.lua",
+    "src/lively_epsilon/orders/attack.lua",
+    "src/lively_epsilon/orders/defend.lua",
+    "src/lively_epsilon/orders/dock.lua",
+    "src/lively_epsilon/orders/fly_to.lua",
+    "src/lively_epsilon/orders/order_queue.lua",
 
     "src/lively_epsilon/domain/player.lua",
     "src/lively_epsilon/domain/trait/player/mission_tracker.lua",

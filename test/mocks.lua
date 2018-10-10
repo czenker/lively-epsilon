@@ -30,7 +30,9 @@ function SpaceObject()
         takeReputationPoints = function(self, amount) reputationPoints = math.max(0, reputationPoints - amount); return self end,
         addReputationPoints = function(self, amount) reputationPoints = reputationPoints + amount; return self end,
         getFactionId = function(self) return factionId end,
-        setFactionId = function(self, id) factionId = id end,
+        setFactionId = function(self, id) factionId = id; return self end,
+        isEnemy = function(self, other) return self:getFactionId() > 0 and other:getFactionId() > 0 and self:getFactionId() ~= other:getFactionId() end,
+        isFriendly = function(self, other) return self:getFactionId() == other:getFactionId() end,
     }
 end
 function eeShipTemplateBasedMock()
@@ -39,6 +41,7 @@ function eeShipTemplateBasedMock()
     local hullMax = 50
     local shield = 100
     local shieldMax = 100
+    local repairDocked = false
 
     local object = SpaceObject():setCallSign(Util.randomUuid())
     return Util.mergeTables(object, {
@@ -63,15 +66,19 @@ function eeShipTemplateBasedMock()
             return shieldMax
         end,
         setCommsScript = noop,
-        setHullMax = function(_, amount)
+        setHullMax = function(self, amount)
             hullMax = amount
             hull = math.min(hull, amount)
+            return self
         end,
-        setHull = function(_, amount)
+        setHull = function(self, amount)
             hull = math.min(amount, hullMax)
+            return self
         end,
         getHull = function() return hull end,
         getHullMax = function() return hullMax end,
+        getRepairDocked = function() return repairDocked end,
+        setRepairDocked = function(_, value) repairDocked = value end,
     })
 end
 
@@ -344,4 +351,25 @@ end
 
 function fleetMock(ships)
     return Fleet:new(ships)
+end
+
+function mockOrder()
+    local order = Order:_generic()
+
+    order.getShipExecutor = function()
+        return {
+            go = noop,
+            tick = noop,
+        }
+    end
+    order.getFleetExecutor = function()
+        return {
+            go = noop,
+            tick = noop,
+        }
+    end
+
+    assert(Order:isOrder(order))
+
+    return order
 end
