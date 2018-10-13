@@ -129,7 +129,9 @@ Fleet.new = function(self, ships, config)
                     order, orderA, orderB, orderC = key, a, b, c
                     local leader = self:getLeader()
 
-                    if leader ~= nil then
+                    if leader == nil then
+                        logWarning("ignoring command " .. key .. ", because fleet is not valid")
+                    else
                         leader[order](leader, orderA, orderB, orderC)
                     end
                 end
