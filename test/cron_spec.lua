@@ -132,6 +132,20 @@ insulate("Cron", function()
             end)
         end)
 
+        it("will get the elapsed time as argument to the function", function()
+            local calledArg = nil
+            Cron.once(function(_, arg)
+                calledArg = arg
+            end, 5)
+
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1)
+            Cron.tick(1.2)
+            assert.is_near(5.2, calledArg, 0.0001)
+        end)
+
     end)
 
     describe("regular()", function()
@@ -270,6 +284,25 @@ insulate("Cron", function()
 
             Cron.tick(1)
             assert.is_same(4, called)
+        end)
+
+        it("will get the elapsed time as argument to the function", function()
+            local called, calledArg = 0, nil
+            Cron.regular(function(_, arg)
+                called = called + 1
+                calledArg = arg
+            end, 1, 1)
+
+            Cron.tick(1)
+            assert.is_same(1, called)
+            assert.is_same(1, calledArg)
+            Cron.tick(1.2)
+            assert.is_same(2, called)
+            assert.is_near(1.2, calledArg, 0.0001)
+            Cron.tick(0.7)
+            Cron.tick(0.7)
+            assert.is_same(3, called)
+            assert.is_near(1.4, calledArg, 0.0001)
         end)
     end)
 

@@ -26,7 +26,7 @@ Cron = {
             if value ~= nil and value.next <= now then
                 if value.cron == nil then events[key] = nil end
                 local cronOverride
-                local status, error = pcall(value.func, key)
+                local status, error = pcall(value.func, key, now - value.last)
                 if not status then
                     local msg = "An error occured in Cron with " .. key
                     if type(error) == "string" then
@@ -39,6 +39,7 @@ Cron = {
 
                 if value.cron ~= nil then
                     value.next = value.next + (cronOverride or value.cron)
+                    value.last = now
                 end
             end
         end
@@ -57,7 +58,8 @@ Cron = {
         events[name] = {
             next = now + (delay or 0),
             func = func,
-            cron = nil
+            cron = nil,
+            last = now,
         }
 
         return name
@@ -73,7 +75,8 @@ Cron = {
         events[name] = {
             next = now + (delay or 0),
             func = func,
-            cron = interval or 0
+            cron = interval or 0,
+            last = now,
         }
 
         return name
