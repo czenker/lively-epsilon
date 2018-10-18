@@ -204,6 +204,23 @@ insulate("Cron", function()
             assert.is_same(1, called)
         end)
 
+        it("will call a function at every tick", function()
+            local called = 0
+            Cron.regular(function() called = called + 1 end)
+
+            assert.is_same(0, called)
+            Cron.tick(10)
+            assert.is_same(1, called)
+            Cron.tick(1)
+            assert.is_same(2, called)
+            Cron.tick(0.5)
+            assert.is_same(3, called)
+            Cron.tick(0.1)
+            assert.is_same(4, called)
+            Cron.tick(0.01)
+            assert.is_same(5, called)
+        end)
+
         it("the function gets its id as first parameter", function()
             local theFirstParameter
             Cron.regular("foobar", function(cronId)

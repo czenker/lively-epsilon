@@ -73,7 +73,7 @@ Cron = {
         events[name] = {
             next = now + (delay or 0),
             func = func,
-            cron = interval or 60
+            cron = interval or 0
         }
 
         return name
