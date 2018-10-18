@@ -39,31 +39,38 @@ function eeShipTemplateBasedMock()
 
     local hull = 50
     local hullMax = 50
-    local shield = 100
-    local shieldMax = 100
     local repairDocked = false
+    local shieldsMax = {}
+    local shields = {}
+
+    local normalizeShields = function()
+        local newShields = {}
+        for i,v in pairs(shieldsMax) do
+            newShields[i] = math.min(shields[i] or v, v)
+        end
+        shields = newShields
+    end
 
     local object = SpaceObject():setCallSign(Util.randomUuid())
     return Util.mergeTables(object, {
         setSystemHealth = noop,
         getSystemHealth = function() return 1 end,
-        getShieldCount = function() return 1 end,
-        setShields = function(_, amount, boom)
-            if boom ~= nil then error("Not implemented") end
-            shield = math.min(shieldMax, amount)
+        getShieldCount = function() return Util.size(shieldsMax) end,
+        setShields = function(self, ...)
+            shields = {...}
+            normalizeShields()
+            return self
         end,
-        setShieldsMax = function(_, amount, boom)
-            if boom ~= nil then error("Not implemented") end
-            shieldMax = amount
-            shield = math.min(amount, shield)
+        setShieldsMax = function(self, ...)
+            shieldsMax = {...}
+            normalizeShields()
+            return self
         end,
         getShieldLevel = function(_, id)
-            if id ~= 0 then error("Not implemented") end
-            return shield
+            return shields[id + 1]
         end,
         getShieldMax = function(_, id)
-            if id ~= 0 then error("Not implemented") end
-            return shieldMax
+            return shieldsMax[id + 1]
         end,
         setCommsScript = noop,
         setHullMax = function(self, amount)
@@ -118,6 +125,7 @@ function SpaceShip()
         setWeaponStorage = function(self, weapon, amount)
             if weaponStorage[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
             weaponStorage[weapon] = math.max(0, math.min(amount, weaponStorageMax[weapon]))
+            return self
         end,
         isFriendOrFoeIdentifiedBy = function(self, player)
             if not isEePlayer(player) then error("Mock only works for player", 2) end

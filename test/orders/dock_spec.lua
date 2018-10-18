@@ -224,6 +224,58 @@ insulate("Order", function()
             Cron.tick(1)
             assert.is_true(completed)
         end)
+
+        it("waits for missiles to be refilled", function()
+            local ship = eeCpuShipMock():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0)
+
+            local station = eeStationMock()
+
+            Ship:withOrderQueue(ship)
+            local completed = false
+            ship:addOrder(Order:dock(station, {
+                onCompletion = function() completed = true end,
+            }))
+
+            -- ship not docked
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked but no missiles
+            ship:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked and refilled
+            ship:setWeaponStorage("homing", 8)
+            Cron.tick(1)
+            assert.is_true(completed)
+        end)
+
+        it("waits for shields to recharge", function()
+            local ship = eeCpuShipMock():setShieldsMax(100, 50, 10):setShields(20, 50, 0)
+
+            local station = eeStationMock()
+
+            Ship:withOrderQueue(ship)
+            local completed = false
+            ship:addOrder(Order:dock(station, {
+                onCompletion = function() completed = true end,
+            }))
+
+            -- ship not docked
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked but low shields
+            ship:setDockedAt(station)
+            Cron.tick(1)
+            assert.is_false(completed)
+
+            -- ship docked and shields loaded
+            ship:setShields(100, 50, 10)
+            Cron.tick(1)
+            assert.is_true(completed)
+        end)
         it("repairs a docked fleet if the station is friendly and supports it", function()
             local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)
             local ship2 = eeCpuShipMock():setHullMax(100):setHull(50)
@@ -285,6 +337,51 @@ insulate("Order", function()
             assert.is_same("Fly towards", ship1:getOrder())
             assert.is_same("Fly in formation", ship2:getOrder())
             assert.is_same("Fly in formation", ship3:getOrder())
+        end)
+        it("waits for all ships to be repaired, refilled and recharged", function()
+            local ship1 = eeCpuShipMock()
+            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50) -- damaged
+            local ship3 = eeCpuShipMock():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0) -- weapons
+            local ship4 = eeCpuShipMock():setShieldsMax(100, 50, 10):setShields(20, 50, 0) -- broken shields
+            local fleet = Fleet:new({ship1, ship2, ship3, ship4})
+
+            local station = eeStationMock()
+            station:setRepairDocked(true)
+
+            Fleet:withOrderQueue(fleet)
+            local completed = false
+            fleet:addOrder(Order:dock(station, {
+                onCompletion = function() completed = true end,
+            }))
+            fleet:addOrder(Order:flyTo(1000, 0))
+
+            ship1:setDockedAt(station)
+            ship2:setDockedAt(station)
+            ship3:setDockedAt(station)
+            ship4:setDockedAt(station)
+
+            assert.is_false(completed)
+
+            -- repair ship
+            ship2:setHull(100)
+            Cron.tick(1)
+            Cron.tick(1) --twice for Fleet's cron to catch up
+            assert.is_false(completed)
+            assert.is_same("Fly in formation", ship2:getOrder())
+
+            -- refill missiles
+            ship3:setWeaponStorage("homing", 8)
+            Cron.tick(1)
+            Cron.tick(1) --twice for Fleet's cron to catch up
+            assert.is_false(completed)
+            assert.is_same("Fly in formation", ship3:getOrder())
+
+            -- recharge shields
+            ship4:setShields(100, 50, 10)
+            Cron.tick(1)
+            Cron.tick(1) --twice for Fleet's cron to catch up
+            assert.is_true(completed)
+            assert.is_same("Fly in formation", ship4:getOrder())
         end)
         it("undocks all fleet ships if the order is aborted", function()
             local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)

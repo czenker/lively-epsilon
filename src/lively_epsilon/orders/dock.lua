@@ -14,7 +14,7 @@ Order.dock = function(self, station, config)
     order.onCompletion = function(self, thing)
         if Fleet:isFleet(thing) then
             for _, ship in pairs(thing:getShips()) do
-                if not ship:isFleetLeader() and ship:getOrder() == "Dock" and ship:getOrderTarget() == station then
+                if not ship:isFleetLeader() and ((ship:getOrder() == "Dock" and ship:getOrderTarget() == station) or ship:isDocked(station)) then
                     -- reset dock order of all ships
                     ship:orderIdle()
                 end
@@ -28,7 +28,7 @@ Order.dock = function(self, station, config)
     order.onAbort = function(self, reason, thing)
         if Fleet:isFleet(thing) then
             for _, ship in pairs(thing:getShips()) do
-                if not ship:isFleetLeader() and ship:getOrder() == "Dock" and ship:getOrderTarget() == station then
+                if (ship:getOrder() == "Dock" and ship:getOrderTarget() == station) or ship:isDocked(station) then
                     -- reset dock order of all ships
                     ship:orderIdle()
                 end
@@ -36,6 +36,25 @@ Order.dock = function(self, station, config)
         end
         parentOnAbort(self, reason, thing)
     end
+
+    -- returns true if a ship is repaired, recharged and refilled on missiles
+    local function isReady(ship)
+        if station:getRepairDocked() and ship:getHull() < ship:getHullMax() then
+            return false
+        end
+        -- @see CpuShip::update
+        for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
+            if ship:getWeaponStorageMax(weapon) > ship:getWeaponStorage(weapon) then return false end
+        end
+        local shields, shieldsMax = 0, 0
+        for i=0,ship:getShieldCount()-1 do
+            shields = shields + ship:getShieldLevel(i)
+            shieldsMax = shieldsMax + ship:getShieldMax(i)
+        end
+        if shields < shieldsMax then return false end
+        return true
+    end
+
 
     order.getShipExecutor = function()
         return {
@@ -49,10 +68,8 @@ Order.dock = function(self, station, config)
                 if station:isEnemy(ship) then
                     return false, "enemy_station"
                 end
-                if ship:isDocked(station) then
-                    if not station:getRepairDocked() or ship:getHull() == ship:getHullMax() then
-                        return true
-                    end
+                if ship:isDocked(station) and isReady(ship) then
+                    return true
                 end
             end,
         }
@@ -73,11 +90,13 @@ Order.dock = function(self, station, config)
                 if fleet:getLeader():isDocked(station) then
                     local allReady = true
                     for _,ship in pairs(fleet:getShips()) do
-                        if station:getRepairDocked() then
-                            ship:orderDock(station)
-                            if ship:getHull() ~= ship:getHullMax() then
-                                allReady = false
+                        if not isReady(ship) then
+                            allReady = false
+                            if not ship:isFleetLeader() and not (ship:getOrder() == "Dock" and ship:getOrderTarget() == station) then
+                                ship:orderDock(station)
                             end
+                        elseif not ship:isFleetLeader() and (ship:getOrder() == "Dock" and ship:getOrderTarget() == station) then
+                            ship:orderIdle() -- make it undock
                         end
                     end
                     if allReady == true then
