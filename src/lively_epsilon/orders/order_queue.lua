@@ -49,7 +49,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                 end
             end
             if currentOrder ~= nil then
-                if (isEeShip(object) and object:getOrder() == "Idle") or (Fleet:isFleet(object) and object:getLeader():getOrder() == "Idle") then
+                if (isEeShip(object) and object:isValid() and object:getOrder() == "Idle") or (Fleet:isFleet(object) and object:isValid() and object:getLeader():getOrder() == "Idle") then
                     currentOrderExecutor:go(object)
                 end
                 local result, errorCode = currentOrderExecutor:tick(object)
