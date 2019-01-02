@@ -108,13 +108,13 @@ insulate("Chatter", function()
 
                 -- chat for ship only
                 noise:addChatFactory(Chatter:newFactory(1,
-                    function() return chat1 end, {
+                    function(one) if one == ship then return chat1  end end, {
                     filters = { filterShip }
                 }), "chat1")
 
                 -- chat for station only
                 noise:addChatFactory(Chatter:newFactory(1,
-                    function() return chat2 end, {
+                    function(one) if one == station then return chat2 end end, {
                     filters = { filterStation }
                 }), "chat2")
 
@@ -131,14 +131,14 @@ insulate("Chatter", function()
                 }), "chat3")
 
                 -- chat for station and ship
-                noise:addChatFactory(Chatter:newFactory(1,
-                    function() return chat4 end, {
+                noise:addChatFactory(Chatter:newFactory(2,
+                    function(one, two) if one == station and two == ship then return chat4 end end, {
                     filters = { filterStation, filterShip }
                 }), "chat4")
 
                 -- chat for ship and station
-                noise:addChatFactory(Chatter:newFactory(1,
-                    function() return chat5 end, {
+                noise:addChatFactory(Chatter:newFactory(2,
+                    function(one, two) if one == ship and two == station then return chat5 end end, {
                     filters = { filterShip, filterStation }
                 }), "chat5")
 
