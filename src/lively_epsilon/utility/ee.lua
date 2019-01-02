@@ -17,6 +17,15 @@ function isEeStation(thing)
     return isEeObject(thing) and thing.typeName == "SpaceStation"
 end
 
+-- check if the given variable is a Nebula object from EmptyEpsilon
+function isEeNebula(thing)
+    return isEeObject(thing) and thing.typeName == "Nebula"
+end
+-- check if the given variable is an Artifact object from EmptyEpsilon
+function isEeArtifact(thing)
+    return isEeObject(thing) and thing.typeName == "Artifact"
+end
+
 -- check if the given variable is a ShipTemplateBased object from EmptyEpsilon
 function isEeShipTemplateBased(thing)
     return isEeShip(thing) or isEePlayer(thing) or isEeStation(thing)
