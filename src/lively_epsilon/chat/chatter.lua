@@ -8,7 +8,11 @@ local function calculateDelay(message)
     return numberOfWords / wordsPerMinute * 60
 end
 
--- -maxRange
+-- Chatter is a module to handle random messages flying through space.
+-- Usually they come from nearby ships and stations and the comms officer is able to monitor them.
+--
+-- Config:
+--   * maxRange
 Chatter.new = function(_, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
@@ -87,4 +91,10 @@ Chatter.new = function(_, config)
     end
 
     return self
+end
+
+Chatter.isChatter = function(self, thing)
+    return isTable(thing) and
+            isFunction(thing.say) and
+            isFunction(thing.converse)
 end

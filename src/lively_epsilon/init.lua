@@ -12,7 +12,10 @@ local myPackages = {
     "src/lively_epsilon/utility/log.lua",
     "src/lively_epsilon/utility/lua.lua",
     "src/lively_epsilon/utility/comms.lua",
-    "src/lively_epsilon/utility/chatter.lua",
+
+    "src/lively_epsilon/chat/chatter.lua",
+    "src/lively_epsilon/chat/chat_factory.lua",
+    "src/lively_epsilon/chat/chat_noise.lua",
 
     "src/lively_epsilon/domain/trait/generic/tags.lua",
 

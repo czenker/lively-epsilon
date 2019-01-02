@@ -20,12 +20,16 @@ end
 function withUniverse(func)
     local universe = {
         knownObjects = {},
+        players = {},
         add = function(self, ...)
             for _,thing in pairs({...}) do
                 if isFunction(thing.getPosition) then
                     thing.getObjectsInRange = getObjectsInRange
                 end
                 table.insert(self.knownObjects, thing)
+                if isEePlayer(thing) then
+                    table.insert(self.players, thing)
+                end
             end
         end,
         destroy = function()
@@ -45,6 +49,10 @@ function withUniverse(func)
         end
 
         return ret
+    end
+
+    _G.getPlayerShip = function(id)
+        if id == -1 then return universe.players[1] else return universe.players[id] end
     end
 
     func(universe)

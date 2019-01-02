@@ -381,3 +381,35 @@ function mockOrder()
 
     return order
 end
+
+function mockChatter()
+    local lastSender, lastMessage, lastMessages
+    local chatter = {
+        say = function(_, sender, message)
+            lastSender, lastMessage = sender, message
+        end,
+        converse = function(_, messages)
+            lastMessages = messages
+        end,
+        getLastSender = function() return lastSender end,
+        getLastMessage = function() return lastMessage end,
+        getLastMessages = function() return lastMessages end,
+    }
+
+    assert(Chatter:isChatter(chatter))
+
+    return chatter
+end
+
+function mockChatFactory()
+
+    local chatFactory = Chatter:newFactory(1, function(one)
+        return {
+            {one, "Hello World"}
+        }
+    end)
+
+    assert(Chatter:isChatFactory(chatFactory))
+
+    return chatFactory
+end

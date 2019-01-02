@@ -31,6 +31,10 @@ insulate("Chatter", function()
     end)
 
     describe("new()", function()
+        it("creates a valid chatter", function()
+            local chatter = Chatter:new()
+            assert.is_true(Chatter:isChatter(chatter))
+        end)
         it("fails when config is not a table", function()
             assert.has_error(function()
                 Chatter:new(42)
@@ -275,6 +279,4 @@ insulate("Chatter", function()
             end)
         end)
     end)
-
-
 end)
