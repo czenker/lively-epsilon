@@ -347,6 +347,51 @@ insulate("Util", function()
         end)
     end)
 
+    describe("appendTables()", function()
+        it("returns a new table where all the items of all tables are present", function()
+            local a = {1, 2}
+            local b = {3, 4}
+
+            local merged = Util.appendTables(a, b)
+            assert.is_same({1, 2, 3, 4}, merged)
+
+            -- ensure the original tables are not overridden
+            assert.not_same(a, merged)
+            assert.not_same(b, merged)
+        end)
+        it("does not remove duplicates", function()
+            local a = {1, 3}
+            local b = {3, 7}
+
+            local merged = Util.appendTables(a, b)
+            assert.is_same({1, 3, 3, 7}, merged)
+
+            -- ensure the original tables are not overridden
+            assert.not_same(a, merged)
+            assert.not_same(b, merged)
+        end)
+        it("can merge three tables", function()
+            local a = {1, 2}
+            local b = {3, 4}
+            local c = {5, 6}
+
+            local merged = Util.appendTables(a, b, c)
+            assert.is_same({1, 2, 3, 4, 5, 6}, merged)
+            -- ensure the original tables are not overridden
+            assert.not_same(a, merged)
+            assert.not_same(b, merged)
+            assert.not_same(c, merged)
+        end)
+        it("fails if the first argument is not a numeric table", function()
+            assert.has_error(function() Util.appendTables(42, {1}) end)
+            assert.has_error(function() Util.appendTables(nil, {1}) end)
+        end)
+        it("fails if the second argument is not a table", function()
+            assert.has_error(function() Util.appendTables({1}, 42) end)
+        end)
+
+    end)
+
     describe("vectorFromAngle()", function()
         it ("has the x axis for 0 degree", function()
             local x, y = Util.vectorFromAngle(0, 1000)

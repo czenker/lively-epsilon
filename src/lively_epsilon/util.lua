@@ -85,6 +85,18 @@ Util = {
         return ret
     end,
 
+    -- merges multiple tables together where all items of following tables are appended to the first one
+    appendTables = function(...)
+        local args = {...}
+        local ret = {}
+        for i=1,#args do
+            for _,v in ipairs(args[i]) do
+                table.insert(ret, v)
+            end
+        end
+        return ret
+    end,
+
     vectorFromAngle = function(angle, length)
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,
