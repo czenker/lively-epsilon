@@ -1,14 +1,18 @@
 Missions = Missions or {}
 
+local function isValid(thing)
+    return isEeShipTemplateBased(thing) or isEeWarpJammer(thing) or isEeScanProbe(thing)
+end
+
 local function validateAndInitEnemies(things)
-    if isEeShipTemplateBased(things) then things = {things} end
+    if isValid(things) then things = {things} end
     if not isTable(things) then error("things needs to be a table of space objects, but " .. type(things) .. " given", 2) end
 
     local enemies = {}
     local knownValidEnemies = {}
 
     for _,v in pairs(things) do
-        if isEeShipTemplateBased(v) then
+        if isValid(v) then
             table.insert(enemies, v)
             if v:isValid() then
                 knownValidEnemies[v] = true
@@ -25,7 +29,7 @@ end
 -- onApproach
 -- onDestruction
 Missions.destroy = function(self, things, config)
-    if isEeShipTemplateBased(things) then things = {things} end
+    if isValid(things) then things = {things} end
 
     local cronId = Util.randomUuid()
     local enemies

@@ -283,6 +283,20 @@ function ElectricExplosionEffect()
     })
 end
 
+function WarpJammer()
+    return Util.mergeTables(SpaceObject(), {
+        typeName = "WarpJammer",
+        setRange = noop,
+    })
+end
+
+function ScanProbe()
+    return Util.mergeTables(SpaceObject(), {
+        typeName = "ScanProbe",
+        setRange = noop,
+    })
+end
+
 function personMock()
     return {
         getFormalName = function() return "Johnathan Doe" end,
