@@ -69,6 +69,7 @@ local myPackages = {
     "src/lively_epsilon/behaviors/patrol.lua",
     "src/lively_epsilon/behaviors/trader.lua",
 
+    "src/lively_epsilon/missions/answer.lua",
     "src/lively_epsilon/missions/bring_product.lua",
     "src/lively_epsilon/missions/capture.lua",
     "src/lively_epsilon/missions/crew_for_rent.lua",
