@@ -25,6 +25,10 @@ end
 function isEeArtifact(thing)
     return isEeObject(thing) and thing.typeName == "Artifact"
 end
+-- check if the given variable is an SupplyDrop object from EmptyEpsilon
+function isEeSupplyDrop(thing)
+    return isEeObject(thing) and thing.typeName == "SupplyDrop"
+end
 
 -- check if the given variable is a ShipTemplateBased object from EmptyEpsilon
 function isEeShipTemplateBased(thing)
@@ -34,6 +38,29 @@ end
 -- check if the given variable is an Asteroid object from EmptyEpsilon
 function isEeAsteroid(thing)
     return isEeObject(thing) and thing.typeName == "Asteroid"
+end
+
+-- check if the given variable is a Mine object from EmptyEpsilon
+function isEeMine(thing)
+    return isEeObject(thing) and thing.typeName == "Mine"
+end
+
+-- check if the given variable is a WormHole object from EmptyEpsilon
+function isEeWormHole(thing)
+    return isEeObject(thing) and thing.typeName == "WormHole"
+end
+-- check if the given variable is a BlackHole object from EmptyEpsilon
+function isEeBlackHole(thing)
+    return isEeObject(thing) and thing.typeName == "BlackHole"
+end
+
+-- check if the given variable is a BlackHole object from EmptyEpsilon
+function isEeWarpJammer(thing)
+    return isEeObject(thing) and thing.typeName == "WarpJammer"
+end
+-- check if the given variable is a ScanProbe object from EmptyEpsilon
+function isEeScanProbe(thing)
+    return isEeObject(thing) and thing.typeName == "ScanProbe"
 end
 
 function isVector2f(thing)
