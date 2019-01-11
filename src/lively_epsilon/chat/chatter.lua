@@ -16,7 +16,9 @@ end
 Chatter.new = function(_, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if not isNil(config.maxRange) and not isNumber(config.maxRange) then error("maxRange needs to be a number, but got " .. type(config.maxRange), 2) end
+    local maxRange = config.maxRange or (getLongRangeRadarRange() * 1.5)
+    if not isNumber(maxRange) then error("maxRange needs to be a number, but got " .. type(config.maxRange), 2) end
+
 
     local function send(sender, message)
         local senderName
@@ -35,7 +37,7 @@ Chatter.new = function(_, config)
         end
 
         while player ~= nil do
-            if config.maxRange == nil or sender == nil or distance(player, sender) < config.maxRange then
+            if sender == nil or distance(player, sender) < maxRange then
                 player:addToShipLog(senderName .. ": " .. message, "128,128,128")
             end
 
