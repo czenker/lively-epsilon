@@ -2,7 +2,9 @@ require "src/lively_epsilon/utility/lua.lua"
 require "src/lively_epsilon/domain/trait/shipTemplateBased/comms.lua"
 
 local function printScreen(screen)
-    setCommsMessage(screen.npcSays)
+    if screen.npcSays ~= nil then
+        setCommsMessage(screen.npcSays)
+    end
     for _, reaction in pairs(screen.howPlayerCanReact) do
         local visible = reaction.condition(comms_target, player)
         if visible then
