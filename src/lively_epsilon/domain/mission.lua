@@ -96,7 +96,7 @@ Mission.new = function(self, config)
                 error("Mission \"" .. self:getId() .. "\" can not fail, because it is not currently running.", 2)
             end
 
-            if isFunction(config.onFail) then config.onFail(self) end
+            if isFunction(config.onFailure) then config.onFailure(self) end
             if isFunction(config.onEnd) then config.onEnd(self) end
             state = 99
         end,

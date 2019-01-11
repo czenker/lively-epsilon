@@ -211,30 +211,30 @@ insulate("Mission", function()
     end)
 
     describe("fail()", function()
-        it ("calls the onFail callback and then the onEnd callback", function()
-            local onFailCalled = false
+        it ("calls the onFailure callback and then the onEnd callback", function()
+            local onFailure = false
             local onEndCalled = false
 
             local mission
             mission = startedMission({
-                onFail = function(self)
+                onFailure = function(self)
                     assert.is_same(mission, self)
-                    onFailCalled = true
+                    onFailure = true
                 end,
                 onEnd = function(self)
                     assert.is_same(mission, self)
-                    assert.is_true(onFailCalled)
+                    assert.is_true(onFailure)
                     onEndCalled = true
                 end
             })
 
             mission:fail()
-            assert.is_true(onFailCalled)
+            assert.is_true(onFailure)
             assert.is_true(onEndCalled)
         end)
 
-        it("fails if onFail callback fails", function()
-            local mission = startedMission({onFail = function() error("boom") end})
+        it("fails if onFailure callback fails", function()
+            local mission = startedMission({onFailure = function() error("boom") end})
 
             assert.has_error(function() mission:fail() end)
         end)
