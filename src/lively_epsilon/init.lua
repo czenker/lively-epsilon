@@ -17,6 +17,9 @@ local myPackages = {
     "src/lively_epsilon/chat/chat_factory.lua",
     "src/lively_epsilon/chat/chat_noise.lua",
 
+    "src/lively_epsilon/menu/menu.lua",
+    "src/lively_epsilon/menu/menu_item.lua",
+
     "src/lively_epsilon/domain/trait/generic/tags.lua",
 
     "src/lively_epsilon/domain/product.lua",
@@ -56,6 +59,7 @@ local myPackages = {
     "src/lively_epsilon/orders/order_queue.lua",
 
     "src/lively_epsilon/domain/player.lua",
+    "src/lively_epsilon/domain/trait/player/menu.lua",
     "src/lively_epsilon/domain/trait/player/mission_tracker.lua",
     "src/lively_epsilon/domain/trait/player/mission_display.lua",
     "src/lively_epsilon/domain/trait/player/storage.lua",

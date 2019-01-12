@@ -211,7 +211,6 @@ function eePlayerMock()
             if button.pos == pos and button.label == label then return button end
         end
     end
-    local infoByPos = {}
 
     return Util.mergeTables(SpaceShip(), {
         typeName = "PlayerSpaceship",
@@ -222,19 +221,17 @@ function eePlayerMock()
                 pos = pos,
                 id = id,
                 label = label,
-                callback = callback or nil
+                callback = callback or nil,
             }
             return self
         end,
         addCustomInfo = function(self, pos, id, label)
-            infoByPos[pos] = label
-            return self
-        end,
-        getCustomInfo = function(self, pos)
-            return infoByPos[pos]
-        end,
-        closeCustomInfo = function(self, pos)
-            infoByPos[pos] = nil
+            playerButtons[id] = {
+                pos = pos,
+                id = id,
+                label = label,
+                callback = nil,
+            }
             return self
         end,
         removeCustom = function(self, id) playerButtons[id] = nil; return self end,
@@ -453,4 +450,48 @@ function mockChatFactory()
     assert(Chatter:isChatFactory(chatFactory))
 
     return chatFactory
+end
+
+function mockMenuLabel(label)
+    label = label or "Hello World"
+
+    local item = Menu:newItem(label)
+
+    assert(Menu:isMenuItem(item))
+
+    return item
+end
+
+function mockMenu()
+    local menu = Menu:new()
+
+    assert(Menu:isMenu(menu))
+
+    return menu
+end
+
+function mockSubmenu(label, subMenuCallback)
+    label = label or "Submenu"
+
+    local item = Menu:newItem(label, function()
+        local menu = mockMenu()
+        if isFunction(subMenuCallback) then subMenuCallback(menu) end
+        return menu
+    end)
+
+    assert(Menu:isMenuItem(item))
+
+    return item
+end
+
+function mockMenuItemWithSideEffects(label)
+    label = label or "Side Effects"
+
+    local item = Menu:newItem(label, function()
+        -- do something and return nil
+    end)
+
+    assert(Menu:isMenuItem(item))
+
+    return item
 end
