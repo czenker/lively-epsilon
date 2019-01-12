@@ -258,10 +258,20 @@ function eePlayerMock()
 end
 
 function Artifact()
+    local onPickUpCallback
+
     return Util.mergeTables(SpaceShip(), {
         typeName = "Artifact",
         setModel = function(self) return self end,
         allowPickup = function(self) return self end,
+        onPickUp = function(self, callback)
+            onPickUpCallback = callback
+            return self
+        end,
+        pickUp = function(self, player)
+            if isFunction(onPickUpCallback) then onPickUpCallback(self, player) end
+            self:destroy()
+        end,
     })
 end
 
@@ -294,6 +304,23 @@ function ScanProbe()
     return Util.mergeTables(SpaceObject(), {
         typeName = "ScanProbe",
         setRange = noop,
+    })
+end
+
+function SupplyDrop()
+    local onPickUpCallback
+
+    return Util.mergeTables(SpaceObject(), {
+        typeName = "SupplyDrop",
+        setEnergy = noop,
+        onPickUp = function(self, callback)
+            onPickUpCallback = callback
+            return self
+        end,
+        pickUp = function(self, player)
+            if isFunction(onPickUpCallback) then onPickUpCallback(self, player) end
+            self:destroy()
+        end,
     })
 end
 
