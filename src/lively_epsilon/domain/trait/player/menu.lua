@@ -40,7 +40,22 @@ Player.withMenu = function(self, player, config)
                 currentlyDrawnIds[id] = nil
             end
 
-            for id,item in pairs(theMenu:getItems()) do
+            -- sort the items, because items is an unordered table at this point
+            local items = theMenu:getItems()
+            local ids = {}
+            for id,_ in pairs(items) do
+                table.insert(ids, id)
+            end
+            table.sort(ids, function(idA, idB)
+                if items[idA]:getPriority() == items[idB]:getPriority() then
+                    return idA < idB
+                else
+                    return items[idA]:getPriority() < items[idB]:getPriority()
+                end
+            end)
+
+            for _,id in pairs(ids) do
+                local item = items[id]
                 local uid = uniqueId(id)
                 currentlyDrawnIds[uid] = uid
                 if isFunction(item.onClick) then
