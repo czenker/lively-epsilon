@@ -53,8 +53,6 @@ function eeShipTemplateBasedMock()
 
     local object = SpaceObject():setCallSign(Util.randomUuid())
     return Util.mergeTables(object, {
-        setSystemHealth = noop,
-        getSystemHealth = function() return 1 end,
         getShieldCount = function() return Util.size(shieldsMax) end,
         setShields = function(self, ...)
             shields = {...}
@@ -107,6 +105,9 @@ function SpaceShip()
     }
     local docked
 
+    local systemPower = {}
+    local systemCoolant = {}
+
     return Util.mergeTables(eeShipTemplateBasedMock(), {
         getWeaponStorageMax = function(self, weapon)
             if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
@@ -140,6 +141,22 @@ function SpaceShip()
         fullScannedByPlayer = function(self) scannedState = "full"; return self end,
         setDockedAt = function(self, station) docked = station end,
         isDocked = function(self, station) return station == docked end,
+        setSystemHealth = noop,
+        getSystemHealth = function() return 1 end,
+        setSystemPower = function(self, system, power)
+            systemPower[system] = power
+            return self
+        end,
+        getSystemPower = function(self, system)
+            return systemPower[system] or 1
+        end,
+        setSystemCoolant = function(self, system, power)
+            systemCoolant[system] = power
+            return self
+        end,
+        getSystemCoolant = function(self, system)
+            return systemCoolant[system] or 0
+        end,
     })
 end
 
@@ -211,10 +228,20 @@ function eePlayerMock()
             if button.pos == pos and button.label == label then return button end
         end
     end
+    local lastCustomMessage = {}
 
     return Util.mergeTables(SpaceShip(), {
         typeName = "PlayerSpaceship",
-        addCustomMessage = noop,
+        addCustomMessage = function(self, position, _, caption)
+            lastCustomMessage[position] = caption
+            return self
+        end,
+        hasCustomMessage = function(self, position)
+            return lastCustomMessage[position] ~= nil
+        end,
+        getCustomMessage = function(self, position)
+            return lastCustomMessage[position]
+        end,
         commandMainScreenOverlay = noop,
         addCustomButton = function(self, pos, id, label, callback)
             playerButtons[id] = {
@@ -251,6 +278,8 @@ function eePlayerMock()
         end,
         setRepairCrewCount = function(self, count) repairCrewCount = count; return self end,
         getRepairCrewCount = function() return repairCrewCount end,
+        commandSetSystemPowerRequest = function(self, system, power) return self:setSystemPower(system, power) end,
+        commandSetSystemCoolantRequest = function(self, system, coolant) return self:setSystemCoolant(system, coolant) end,
     })
 end
 
