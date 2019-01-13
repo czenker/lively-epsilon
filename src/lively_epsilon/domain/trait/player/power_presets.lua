@@ -20,11 +20,7 @@ Player.withPowerPresets = function(self, player, config)
     if not Player:hasMenu(player) then error("Expected player " .. player:getCallSign() .. " to have menus enabled, but it does not", 2) end
     if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
     config.slots = config.slots or 8
-    if not isNumber(config.slots) then error("Expected slots to be a number, but got " .. type(config.slots), 2) end
-    if config.slots > 9 then
-        config.slots = 9
-        logWarning("More than 9 slots in power presets could overflow the screen making it impossible to return to the main menu. Setting it to 9.")
-    end
+    if not isNumber(config.slots) or config.slots < 1 then error("Expected slots to be a positive number, but got " .. type(config.slots), 2) end
     if not isString(config.label) then error("Expected label to be a string, but got " .. type(config.label), 2) end
     if not isString(config.labelLoad) then error("Expected labelLoad to be a string, but got " .. type(config.labelLoad), 2) end
     if not isString(config.labelStore) then error("Expected labelStore to be a string, but got " .. type(config.labelStore), 2) end

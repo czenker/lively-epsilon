@@ -481,10 +481,10 @@ function mockChatFactory()
     return chatFactory
 end
 
-function mockMenuLabel(label)
+function mockMenuLabel(label, pos)
     label = label or "Hello World"
 
-    local item = Menu:newItem(label)
+    local item = Menu:newItem(label, pos)
 
     assert(Menu:isMenuItem(item))
 
@@ -499,26 +499,26 @@ function mockMenu()
     return menu
 end
 
-function mockSubmenu(label, subMenuCallback)
+function mockSubmenu(label, subMenuCallback, pos)
     label = label or "Submenu"
 
     local item = Menu:newItem(label, function()
         local menu = mockMenu()
         if isFunction(subMenuCallback) then subMenuCallback(menu) end
         return menu
-    end)
+    end, pos)
 
     assert(Menu:isMenuItem(item))
 
     return item
 end
 
-function mockMenuItemWithSideEffects(label)
+function mockMenuItemWithSideEffects(label, pos)
     label = label or "Side Effects"
 
     local item = Menu:newItem(label, function()
         -- do something and return nil
-    end)
+    end, pos)
 
     assert(Menu:isMenuItem(item))
 

@@ -219,5 +219,155 @@ insulate("Player", function()
             assert.is_false(player:hasButton("weapons", "Override Item"))
             assert.is_false(player:hasButton("weapons", "Back"))
         end)
+
+        it("paginates long main menus", function()
+            local player = eePlayerMock()
+            Player:withMenu(player, {
+                backLabel = "Back",
+                labelNext = "Next",
+                labelPrevious = "Previous",
+                itemsPerPage = 8,
+            })
+            for i=1,10 do
+                player:addMenuItem("helms", mockMenuLabel("Item " .. i, i))
+            end
+            assert.is_true(player:hasButton("helms", "Item 1"))
+            assert.is_true(player:hasButton("helms", "Item 2"))
+            assert.is_true(player:hasButton("helms", "Item 3"))
+            assert.is_true(player:hasButton("helms", "Item 4"))
+            assert.is_true(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Item 7"))
+            assert.is_false(player:hasButton("helms", "Item 8"))
+            assert.is_true(player:hasButton("helms", "Next"))
+            assert.is_false(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Next")
+            assert.is_false(player:hasButton("helms", "Item 7"))
+            assert.is_true(player:hasButton("helms", "Item 8"))
+            assert.is_true(player:hasButton("helms", "Item 9"))
+            assert.is_true(player:hasButton("helms", "Item 10"))
+            assert.is_false(player:hasButton("helms", "Next"))
+            assert.is_true(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Previous")
+            assert.is_true(player:hasButton("helms", "Item 1"))
+            assert.is_true(player:hasButton("helms", "Item 2"))
+            assert.is_true(player:hasButton("helms", "Item 3"))
+            assert.is_true(player:hasButton("helms", "Item 4"))
+            assert.is_true(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Item 7"))
+            assert.is_false(player:hasButton("helms", "Item 8"))
+        end)
+        it("draws a main menu on one page if it fits", function()
+            local player = eePlayerMock()
+            Player:withMenu(player, {
+                backLabel = "Back",
+                labelNext = "Next",
+                labelPrevious = "Previous",
+                itemsPerPage = 8,
+            })
+            for i=1,8 do
+                player:addMenuItem("helms", mockMenuLabel("Item " .. i, i))
+            end
+            assert.is_true(player:hasButton("helms", "Item 1"))
+            assert.is_true(player:hasButton("helms", "Item 2"))
+            assert.is_true(player:hasButton("helms", "Item 3"))
+            assert.is_true(player:hasButton("helms", "Item 4"))
+            assert.is_true(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Item 7"))
+            assert.is_true(player:hasButton("helms", "Item 8"))
+            assert.is_false(player:hasButton("helms", "Next"))
+            assert.is_false(player:hasButton("helms", "Previous"))
+        end)
+        it("draws the last page of the main menu on one page if it fits", function()
+            local player = eePlayerMock()
+            Player:withMenu(player, {
+                backLabel = "Back",
+                labelNext = "Next",
+                labelPrevious = "Previous",
+                itemsPerPage = 6,
+            })
+            for i=1,14 do
+                player:addMenuItem("helms", mockMenuLabel("Item " .. i, i))
+            end
+            assert.is_true(player:hasButton("helms", "Item 1"))
+            assert.is_true(player:hasButton("helms", "Item 2"))
+            assert.is_true(player:hasButton("helms", "Item 3"))
+            assert.is_true(player:hasButton("helms", "Item 4"))
+            assert.is_true(player:hasButton("helms", "Item 5"))
+            assert.is_false(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Next"))
+            assert.is_false(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Next")
+            assert.is_false(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Item 7"))
+            assert.is_true(player:hasButton("helms", "Item 8"))
+            assert.is_true(player:hasButton("helms", "Item 9"))
+            assert.is_false(player:hasButton("helms", "Item 10"))
+            assert.is_true(player:hasButton("helms", "Next"))
+            assert.is_true(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Next")
+            assert.is_false(player:hasButton("helms", "Item 9"))
+            assert.is_true(player:hasButton("helms", "Item 10"))
+            assert.is_true(player:hasButton("helms", "Item 11"))
+            assert.is_true(player:hasButton("helms", "Item 12"))
+            assert.is_true(player:hasButton("helms", "Item 13"))
+            assert.is_true(player:hasButton("helms", "Item 14"))
+            assert.is_false(player:hasButton("helms", "Next"))
+            assert.is_true(player:hasButton("helms", "Previous"))
+        end)
+        it("compensates for the back button on submenus", function()
+            local player = eePlayerMock()
+            Player:withMenu(player, {
+                backLabel = "Back",
+                labelNext = "Next",
+                labelPrevious = "Previous",
+                itemsPerPage = 6,
+            })
+
+            local menu = Menu:new()
+            player:addMenuItem("helms", Menu:newItem("Click Me", menu))
+
+            for i=1,11 do
+                menu:addItem(mockMenuLabel("Item " .. i, i))
+            end
+
+            player:clickButton("helms", "Click Me")
+
+            assert.is_true(player:hasButton("helms", "Item 1"))
+            assert.is_true(player:hasButton("helms", "Item 2"))
+            assert.is_true(player:hasButton("helms", "Item 3"))
+            assert.is_true(player:hasButton("helms", "Item 4"))
+            assert.is_false(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Back"))
+            assert.is_true(player:hasButton("helms", "Next"))
+            assert.is_false(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Next")
+            assert.is_false(player:hasButton("helms", "Item 4"))
+            assert.is_true(player:hasButton("helms", "Item 5"))
+            assert.is_true(player:hasButton("helms", "Item 6"))
+            assert.is_true(player:hasButton("helms", "Item 7"))
+            assert.is_false(player:hasButton("helms", "Item 8"))
+            assert.is_true(player:hasButton("helms", "Back"))
+            assert.is_true(player:hasButton("helms", "Next"))
+            assert.is_true(player:hasButton("helms", "Previous"))
+
+            player:clickButton("helms", "Next")
+            assert.is_false(player:hasButton("helms", "Item 7"))
+            assert.is_true(player:hasButton("helms", "Item 8"))
+            assert.is_true(player:hasButton("helms", "Item 9"))
+            assert.is_true(player:hasButton("helms", "Item 10"))
+            assert.is_true(player:hasButton("helms", "Item 11"))
+            assert.is_true(player:hasButton("helms", "Back"))
+            assert.is_false(player:hasButton("helms", "Next"))
+            assert.is_true(player:hasButton("helms", "Previous"))
+        end)
     end)
 end)

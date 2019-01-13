@@ -4,17 +4,40 @@ local function upperFirst(string)
     return string:sub(1,1):upper() .. string:sub(2)
 end
 
+local positions = {"helms", "relay", "science", "weapons", "engineering"}
+
 -- config
 -- - backLabel
+-- - labelNext
+-- - labelPrevious
+-- - itemsPerPage
 Player.withMenu = function(self, player, config)
     config = config or {}
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
     if Player:hasMenu(player) then error("Player already has menus", 2) end
     if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    config.backLabel = config.backLabel or "<-"
+    config.backLabel = config.backLabel or "||<<"
     if not isString(config.backLabel) then error("Expected backLabel to be a string, but got " .. type(config.backLabel), 2) end
+    config.labelNext = config.labelNext or "=>"
+    if not isString(config.labelNext) then error("Expected labelNext to be a string, but got " .. type(config.labelNext), 2) end
+    config.labelPrevious = config.labelPrevious or "<="
+    if not isString(config.labelPrevious) then error("Expected labelPrevious to be a string, but got " .. type(config.labelPrevious), 2) end
+    config.itemsPerPage = config.itemsPerPage or 12
+    if isNumber(config.itemsPerPage) then
+        local itemsPerPosition = {}
+        for _, position in pairs(positions) do
+            itemsPerPosition[position] = config.itemsPerPage
+        end
+        config.itemsPerPage = itemsPerPosition
+    end
+    if not isTable(config.itemsPerPage) then error("Expected itemsPerPage to be a table, but got " .. type(config.itemsPerPage), 2) end
+    for _,position in pairs(positions) do
+        if config.itemsPerPage[position] == nil then error("Expected itemsPerPage to be set for " .. position, 3) end
+        if not isNumber(config.itemsPerPage[position]) then error("Expected itemsPerPage to be a positive number for " .. position .. ", but got " .. type(config.itemsPerPage[position]), 3) end
+        if config.itemsPerPage[position] < 4 then error("Expected itemsPerPage for " .. position .. " to be larger than 4, but got " .. config.itemsPerPage[position], 3) end
+    end
 
-    for _,position in pairs({"helms", "relay", "science", "weapons", "engineering"}) do
+    for _,position in pairs(positions) do
         local upper = upperFirst(position)
         local adderName = "add" .. upper .. "MenuItem"
         local removerName = "remove" .. upper .. "MenuItem"
@@ -31,10 +54,19 @@ Player.withMenu = function(self, player, config)
 
         local currentlyDrawnIds = {}
         local draw
-        draw = function(theMenu)
+        draw = function(theMenu, page)
             nextSuffix = (nextSuffix + 1) % 10
+            if isNumber(theMenu) then
+                page = theMenu
+                theMenu = nil
+            end
             theMenu = theMenu or menu
+            local isMainMenu = theMenu == menu
 
+            page = page or 1
+            page = math.max(1, page)
+
+            -- remove the old buttons
             for _, id in pairs(currentlyDrawnIds) do
                 player:removeCustom(id)
                 currentlyDrawnIds[id] = nil
@@ -54,7 +86,36 @@ Player.withMenu = function(self, player, config)
                 end
             end)
 
-            for _,id in pairs(ids) do
+            -- paginate
+            local itemsPerPage = config.itemsPerPage[position]
+            if not isMainMenu then itemsPerPage = itemsPerPage - 1 end -- compensate for the back button
+            local numberOfItems = Util.size(items)
+            local firstItemId, lastItemId = 1, 99
+            local hasNextButton, hasPreviousButton = false, false
+
+            if page == 1 then
+                hasPreviousButton = false
+                firstItemId = 1
+                lastItemId = firstItemId + itemsPerPage - 1
+            else
+                hasPreviousButton = true
+                firstItemId = itemsPerPage + (page - 2) * (itemsPerPage - 2)
+                lastItemId = firstItemId + itemsPerPage - 2 -- one less to compensate for the previous button
+            end
+
+            if lastItemId >= numberOfItems then
+                -- if the last page
+                hasNextButton = false
+                lastItemId = math.min(lastItemId, numberOfItems)
+            else
+                -- if not the last page
+                hasNextButton = true
+                lastItemId = lastItemId - 1 -- make space for the next button
+            end
+
+            -- draw
+            for i=firstItemId, lastItemId do
+                local id = ids[i]
                 local item = items[id]
                 local uid = uniqueId(id)
                 currentlyDrawnIds[uid] = uid
@@ -80,6 +141,30 @@ Player.withMenu = function(self, player, config)
                 else
                     player:addCustomInfo(position, uid, item:getLabel())
                 end
+            end
+
+            if hasPreviousButton then
+                local prevUid = uniqueId("the_magic_previous_button")
+                currentlyDrawnIds[prevUid] = prevUid
+
+                player:addCustomButton(position, prevUid, config.labelPrevious, function()
+                    -- some reference to the global scope needed to avoid the "upvalue error" in EE
+                    -- ??[convert<ScriptSimpleCallback>::param] Upvalue 1 of function is not a table
+                    string.format("")
+                    draw(theMenu, page - 1)
+                end)
+            end
+
+            if hasNextButton then
+                local nextUid = uniqueId("the_magic_next_button")
+                currentlyDrawnIds[nextUid] = nextUid
+
+                player:addCustomButton(position, nextUid, config.labelNext, function()
+                    -- some reference to the global scope needed to avoid the "upvalue error" in EE
+                    -- ??[convert<ScriptSimpleCallback>::param] Upvalue 1 of function is not a table
+                    string.format("")
+                    draw(theMenu, page + 1)
+                end)
             end
 
             if theMenu ~= menu then
