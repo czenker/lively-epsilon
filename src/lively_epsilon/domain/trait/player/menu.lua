@@ -44,6 +44,7 @@ Player.withMenu = function(self, player, config)
         local drawName = "draw" .. upper .. "Menu"
 
         local menu = Menu:new()
+        local isOnMainMenu = true
 
         -- EE has problems when removing and adding buttons with the same name in quick succession.
         -- adding a suffix ensures that the name changes.
@@ -65,12 +66,6 @@ Player.withMenu = function(self, player, config)
 
             page = page or 1
             page = math.max(1, page)
-
-            -- remove the old buttons
-            for _, id in pairs(currentlyDrawnIds) do
-                player:removeCustom(id)
-                currentlyDrawnIds[id] = nil
-            end
 
             -- sort the items, because items is an unordered table at this point
             local items = theMenu:getItems()
@@ -111,6 +106,14 @@ Player.withMenu = function(self, player, config)
                 -- if not the last page
                 hasNextButton = true
                 lastItemId = lastItemId - 1 -- make space for the next button
+            end
+
+            isOnMainMenu = isMainMenu
+
+            -- remove the old buttons
+            for _, id in pairs(currentlyDrawnIds) do
+                player:removeCustom(id)
+                currentlyDrawnIds[id] = nil
             end
 
             -- draw
@@ -186,12 +189,12 @@ Player.withMenu = function(self, player, config)
         end
         player[adderName] = function(self, id, menuItem)
             menu:addItem(id, menuItem)
-            draw()
+            if isOnMainMenu == true then draw() end
             return self
         end
         player[removerName] = function(self, id)
             menu:removeItem(id)
-            draw()
+            if isOnMainMenu == true then draw() end
             return self
         end
     end

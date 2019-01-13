@@ -140,6 +140,34 @@ insulate("Player", function()
             -- you usually do not need to call that, but lets test in anyways
             player:drawMenu("engineering")
         end)
+
+        it("does not redraw the menu if some submenu is currently opened", function()
+            local player = eePlayerMock()
+            Player:withMenu(player, {backLabel = "Back"})
+
+            local menu = Menu:new()
+            menu:addItem("dummy", Menu:newItem("You are in the submenu"))
+
+            player:addMenuItem("engineering", "submenu", Menu:newItem("Submenu", menu))
+            player:clickButton("engineering", "Submenu")
+
+            assert.is_true(player:hasButton("engineering", "You are in the submenu"))
+            player:addMenuItem("engineering", "dummy", mockMenuLabel("Main Menu"))
+
+            -- assert you are not thrown back to the main menu
+            assert.is_true(player:hasButton("engineering", "You are in the submenu"))
+            player:clickButton("engineering", "Back")
+            assert.is_true(player:hasButton("engineering", "Main Menu"))
+            player:clickButton("engineering", "Submenu")
+            assert.is_true(player:hasButton("engineering", "You are in the submenu"))
+
+            player:removeMenuItem("engineering", "dummy")
+
+            -- assert you are not thrown back to the main menu
+            assert.is_true(player:hasButton("engineering", "You are in the submenu"))
+            player:clickButton("engineering", "Back")
+            assert.is_false(player:hasButton("engineering", "Main Menu"))
+        end)
     end)
     describe("addMenuItem()", function()
         it("fails if an invalid position is given", function()
