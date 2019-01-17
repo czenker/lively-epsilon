@@ -36,16 +36,7 @@ Ship.withEvents  = function(self, ship, config)
                 if ship:isDocked(station) then
                     dockedStation = station
                     Cron.regular(cronId, waitForUndock, tick, tick)
-                    if isFunction(config.onDocking) then
-                        local status, error = pcall(config.onDocking, ship, station)
-                        if not status then
-                            local errorMsg = "An error occurred while calling onDocking for " .. ship:getCallSign()
-                            if isString(error) then
-                                errorMsg = errorMsg .. ": " .. error
-                            end
-                            logError(errorMsg)
-                        end
-                    end
+                    userCallback(config.onDocking, ship, station)
                 end
             end
         end
@@ -55,16 +46,7 @@ Ship.withEvents  = function(self, ship, config)
                 Cron.abort(cronId)
             elseif not dockedStation:isValid() or not ship:isDocked(dockedStation) then
                 Cron.regular(cronId, waitForDock, tick, tick)
-                if isFunction(config.onUndocking) then
-                    local status, error = pcall(config.onUndocking, ship, dockedStation)
-                    if not status then
-                        local errorMsg = "An error occurred while calling onUndocking for " .. ship:getCallSign()
-                        if isString(error) then
-                            errorMsg = errorMsg .. ": " .. error
-                        end
-                        logError(errorMsg)
-                    end
-                end
+                userCallback(config.onUndocking, ship, dockedStation)
                 dockedStation = nil
             end
         end
@@ -87,14 +69,7 @@ Ship.withEvents  = function(self, ship, config)
                 if distance(ship, station) < 5000 then
                     targetStation = station
                     Cron.regular(cronId, waitForOrderChange, tick, tick)
-                    local status, error = pcall(config.onDockInitiation, ship, targetStation)
-                    if not status then
-                        local errorMsg = "An error occurred while calling onDockInitiation for " .. ship:getCallSign()
-                        if isString(error) then
-                            errorMsg = errorMsg .. ": " .. error
-                        end
-                        logError(errorMsg)
-                    end
+                    userCallback(config.onDockInitiation, ship, targetStation)
                 end
             end
         end

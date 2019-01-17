@@ -121,26 +121,12 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
         hasWarnedAboutNoAsteroids = false -- obviously an asteroid was found. So warn again if it goes missing.
         state = stateWayToAsteroid
         ship:orderAttack(asteroid)
-        local status, error = pcall(config.onHeadingAsteroid, ship, asteroid)
-        if not status then
-            local msg = "An error occured when calling onHeadingAsteroid"
-            if type(error) == "string" then
-                msg = msg .. ": " .. error
-            end
-            logError(msg)
-        end
+        userCallback(config.onHeadingAsteroid, ship, asteroid)
     end
     local orderGoHome = function()
         state = stateWayHome
         ship:orderDock(homeStation)
-        local status, error = pcall(config.onHeadingHome, ship, homeStation, gatheredProducts)
-        if not status then
-            local msg = "An error occured when calling onHeadingHome"
-            if type(error) == "string" then
-                msg = msg .. ": " .. error
-            end
-            logError(msg)
-        end
+        userCallback(config.onHeadingHome, ship, homeStation, gatheredProducts)
         hasCalledHeadingHome = true
     end
 
@@ -235,14 +221,7 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
                         end
                     end
 
-                    local status, error = pcall(config.onAsteroidMined, ship, asteroid, rewards)
-                    if not status then
-                        local msg = "An error occured when calling onAsteroidMined"
-                        if type(error) == "string" then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
+                    userCallback(config.onAsteroidMined, ship, asteroid, rewards)
                     minedAsteroids[ship:getOrderTarget()] = true
                     decideWhatToDo()
                     Cron.regular(cronId, stepMain, tick, tick)
@@ -282,14 +261,7 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
                         end
                     end
 
-                    local status, error = pcall(config.onUnloaded, ship, homeStation, gatheredProducts)
-                    if not status then
-                        local msg = "An error occured when calling onUnloaded"
-                        if type(error) == "string" then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
+                    userCallback(config.onUnloaded, ship, homeStation, gatheredProducts)
 
                     gatheredProducts = {}
                     timeToGoHome = config.timeToGoHome

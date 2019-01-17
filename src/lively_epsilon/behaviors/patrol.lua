@@ -70,28 +70,10 @@ Ship.patrol = function(self, ship, waypoints)
                 waypointId = 1
                 nextWaypoint = waypoints[waypointId]
             elseif nextWaypoint == nil and currentWaypoint ~= nil then
-                if isFunction(currentWaypoint.whileFlying) then
-                    local status, error = pcall(currentWaypoint.whileFlying, ship, currentWaypoint.target)
-                    if not status then
-                        local msg = "Error when calling whileFlying"
-                        if isString(error) then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
-                end
+                userCallback(currentWaypoint.whileFlying, ship, currentWaypoint.target)
 
                 if isWaypointReached(ship, currentWaypoint) then
-                    if isFunction(currentWaypoint.onArrival) then
-                        local status, error = pcall(currentWaypoint.onArrival, ship, currentWaypoint.target)
-                        if not status then
-                            local msg = "Error when calling onArrival"
-                            if isString(error) then
-                                msg = msg .. ": " .. error
-                            end
-                            logError(msg)
-                        end
-                    end
+                    userCallback(currentWaypoint.onArrival, ship, currentWaypoint.target)
 
                     waypointId = waypointId + 1
                     if waypointId > Util.size(waypoints) then
@@ -110,16 +92,7 @@ Ship.patrol = function(self, ship, waypoints)
                 currentWaypoint = nextWaypoint
                 nextWaypoint = nil
 
-                if isFunction(currentWaypoint.onHeading) then
-                    local status, error = pcall(currentWaypoint.onHeading, ship, currentWaypoint.target)
-                    if not status then
-                        local msg = "Error when calling onHeading"
-                        if isString(error) then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
-                end
+                userCallback(currentWaypoint.onHeading, ship, currentWaypoint.target)
             end
         end
     end, tick)

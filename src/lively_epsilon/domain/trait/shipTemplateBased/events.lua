@@ -19,14 +19,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
         Cron.regular(function(self)
             if not shipTemplateBased:isValid() then
                 Cron.abort(self)
-                local status, error = pcall(config.onDestruction, shipTemplateBased)
-                if not status then
-                    local errorMsg = "An error occurred while calling onDestruction"
-                    if isString(error) then
-                        errorMsg = errorMsg .. ": " .. error
-                    end
-                    logError(errorMsg)
-                end
+                userCallback(config.onDestruction, shipTemplateBased)
             end
 
         end, tick)
@@ -43,16 +36,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
                 Cron.abort(tick)
             elseif shipTemplateBased:areEnemiesInRange(getLongRangeRadarRange()) then
                 Cron.regular(cronId, waitForLeave, tick, tick)
-                if isFunction(config.onEnemyDetection) then
-                    local status, error = pcall(config.onEnemyDetection, shipTemplateBased)
-                    if not status then
-                        local errorMsg = "An error occurred while calling onEnemyDetection for " .. shipTemplateBased:getCallSign()
-                        if isString(error) then
-                            errorMsg = errorMsg .. ": " .. error
-                        end
-                        logError(errorMsg)
-                    end
-                end
+                userCallback(config.onEnemyDetection, shipTemplateBased)
             end
         end
 
@@ -61,16 +45,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
                 Cron.abort(tick)
             elseif not shipTemplateBased:areEnemiesInRange(getLongRangeRadarRange()) then
                 Cron.regular(cronId, waitForEnter, tick, tick)
-                if isFunction(config.onEnemyClear) then
-                    local status, error = pcall(config.onEnemyClear, shipTemplateBased)
-                    if not status then
-                        local errorMsg = "An error occurred while calling onEnemyClear for " .. shipTemplateBased:getCallSign()
-                        if isString(error) then
-                            errorMsg = errorMsg .. ": " .. error
-                        end
-                        logError(errorMsg)
-                    end
-                end
+                userCallback(config.onEnemyClear, shipTemplateBased)
             end
         end
 
@@ -102,14 +77,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
                     elseif shipTemplateBased:areEnemiesInRange(5000) then
                         lock = true
                         Cron.once(cronIdLockReset, function() lock = false end, lockResetDelay)
-                        local status, error = pcall(config.onBeingAttacked, shipTemplateBased)
-                        if not status then
-                            local errorMsg = "An error occurred while calling onBeingAttacked for " .. shipTemplateBased:getCallSign()
-                            if isString(error) then
-                                errorMsg = errorMsg .. ": " .. error
-                            end
-                            logError(errorMsg)
-                        end
+                        userCallback(config.onBeingAttacked, shipTemplateBased)
                     end
                 end
                 hull = currentHull

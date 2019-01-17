@@ -56,15 +56,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         return function(station, player)
             local responseText = config.correctAnswerResponse
             if isFunction(config.correctAnswerResponse) then
-                local status, error = pcall(config.correctAnswerResponse, mission, answer, player)
-                if not status then
-                    local errorMsg = "An error occurred while calling correctAnswerResponse"
-                    if isString(error) then
-                        errorMsg = errorMsg .. ": " .. error
-                    end
-                    logError(errorMsg)
-                    responseText = ""
-                end
+                userCallback(config.correctAnswerResponse, mission, answer, player)
             end
 
             mission:success()
@@ -75,15 +67,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         return function(station, player)
             local responseText = config.wrongAnswerResponse
             if isFunction(config.wrongAnswerResponse) then
-                local status, error = pcall(config.wrongAnswerResponse, mission, answer, player)
-                if not status then
-                    local errorMsg = "An error occurred while calling wrongAnswerResponse"
-                    if isString(error) then
-                        errorMsg = errorMsg .. ": " .. error
-                    end
-                    logError(errorMsg)
-                    responseText = ""
-                end
+                userCallback(config.wrongAnswerResponse, mission, answer, player)
             end
 
             mission:fail()

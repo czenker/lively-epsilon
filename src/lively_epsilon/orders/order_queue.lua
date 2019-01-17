@@ -15,14 +15,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
 
         -- abort the currently executed order
         local function abort(reason)
-            local status, error = pcall(currentOrder.onAbort, currentOrder, reason, object)
-            if not status then
-                local msg = "An error occured when executing onAbort for " .. cronId
-                if type(error) == "string" then
-                    msg = msg .. ": " .. error
-                end
-                logError(msg)
-            end
+            userCallback(currentOrder.onAbort, currentOrder, reason, object)
             object:orderIdle()
             currentOrder, currentOrderExecutor, delayUntil = nil, nil, nil
             tick()
@@ -38,14 +31,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                 else
                     currentOrderExecutor = currentOrder["get" .. label .. "Executor"](currentOrder)
                     currentOrderExecutor:go(object)
-                    local status, error = pcall(currentOrder.onExecution, currentOrder, object)
-                    if not status then
-                        local msg = "An error occured when executing onExecution for " .. cronId
-                        if type(error) == "string" then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
+                    userCallback(currentOrder.onExecution, currentOrder, object)
                 end
             end
             if currentOrder ~= nil then
@@ -54,14 +40,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                 end
                 local result, errorCode = currentOrderExecutor:tick(object)
                 if result == true then
-                    local status, error = pcall(currentOrder.onCompletion, currentOrder, object)
-                    if not status then
-                        local msg = "An error occured when executing onCompletion for " .. cronId
-                        if type(error) == "string" then
-                            msg = msg .. ": " .. error
-                        end
-                        logError(msg)
-                    end
+                    userCallback(currentOrder.onCompletion, currentOrder, object)
                     delayUntil = Cron.now() + currentOrder:getDelayAfter()
 
                     currentOrder, currentOrderExecutor = nil, nil

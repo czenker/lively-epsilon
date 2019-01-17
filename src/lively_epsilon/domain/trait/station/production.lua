@@ -116,14 +116,7 @@ Station.withProduction = function (self, station, configuration)
                         logDebug(station:getCallSign() .. " produced " .. produce.amount .. " " .. produce.product:getId())
                     end
                 elseif isFunction(conf.produces) then
-                    local status, error = pcall(conf.produces)
-                    if not status then
-                        if type(error) == "string" then
-                            error("An error occured during the production cycle:" .. error)
-                        else
-                            error("An error occured during the production cycle")
-                        end
-                    end
+                    userCallback(conf.produces)
                 end
             end
         end, conf.productionTime, conf.productionTime)
