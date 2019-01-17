@@ -36,7 +36,7 @@ insulate("Order", function()
             }
         end, it, assert)
         it("carries out the order for 30 seconds (ship)", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             _G.getObjectsInRadius = function() return {} end
 
             Ship:withOrderQueue(ship)
@@ -64,11 +64,11 @@ insulate("Order", function()
             assert.is_same(1, onCompletionCalled)
         end)
         it("carries out the order until there are no enemies in range for 15 seconds (ship)", function()
-            local ship = eeCpuShipMock():setFactionId(1)
+            local ship = CpuShip():setFactionId(1)
             local calledRange = nil
             _G.getObjectsInRadius = function(_, _, range)
                 calledRange = range
-                return {eeCpuShipMock():setFactionId(2)}
+                return {CpuShip():setFactionId(2)}
             end
 
             Ship:withOrderQueue(ship)
@@ -98,7 +98,7 @@ insulate("Order", function()
             assert.is_same(0, onCompletionCalled)
 
             -- ...an other enemy appears
-            _G.getObjectsInRadius = function() return {eeCpuShipMock():setFactionId(2)} end
+            _G.getObjectsInRadius = function() return {CpuShip():setFactionId(2)} end
             Cron.tick(1)
             assert.is_same(0, onCompletionCalled)
 
@@ -114,9 +114,9 @@ insulate("Order", function()
         end)
         it("carries out the order for 30 seconds (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
             fleet:getLeader().areEnemiesInRange = function() return false end
 
@@ -147,14 +147,14 @@ insulate("Order", function()
 
         it("carries out the order until there are no enemies in range for 15 seconds (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
             })
             local calledRange = nil
             _G.getObjectsInRadius = function(_, _, range)
                 calledRange = range
-                return {eeCpuShipMock():setFactionId(2)}
+                return {CpuShip():setFactionId(2)}
             end
 
             Fleet:withOrderQueue(fleet)
@@ -184,7 +184,7 @@ insulate("Order", function()
             assert.is_same(0, onCompletionCalled)
 
             -- ...an other enemy appears
-            _G.getObjectsInRadius = function() return {eeCpuShipMock():setFactionId(2)} end
+            _G.getObjectsInRadius = function() return {CpuShip():setFactionId(2)} end
             Cron.tick(1)
             assert.is_same(0, onCompletionCalled)
 
@@ -213,10 +213,10 @@ insulate("Order", function()
                 Order:defend(5000, "foo")
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), 42)
+                Order:defend(SpaceStation(), 42)
             end)
             assert.has_error(function()
-                Order:defend(5000, eeStationMock())
+                Order:defend(5000, SpaceStation())
             end)
         end)
 
@@ -228,7 +228,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend(0, 0, {
-                    minDefendTime = eeStationMock(),
+                    minDefendTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
@@ -246,7 +246,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend(0, 0, {
-                    minClearTime = eeStationMock(),
+                    minClearTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
@@ -264,7 +264,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend(0, 0, {
-                    range = eeStationMock(),
+                    range = SpaceStation(),
                 })
             end)
             assert.has_error(function()

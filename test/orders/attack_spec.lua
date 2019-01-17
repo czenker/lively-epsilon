@@ -6,9 +6,9 @@ insulate("Order", function()
     require "test.orders.helper"
 
     describe("attack()", function()
-        testSignature(Order.attack, {eeCpuShipMock():setFactionId(2)}, it, assert)
+        testSignature(Order.attack, {CpuShip():setFactionId(2)}, it, assert)
         testHappyShipCase(Order.attack, function()
-            local enemy = eeCpuShipMock():setFactionId(2)
+            local enemy = CpuShip():setFactionId(2)
             return {
                 args = { enemy },
                 setUp = function(ship)
@@ -23,7 +23,7 @@ insulate("Order", function()
             }
         end, it, assert)
         testHappyFleetCase(Order.attack, function()
-            local enemy = eeCpuShipMock():setFactionId(2)
+            local enemy = CpuShip():setFactionId(2)
             return {
                 args = { enemy },
                 setUp = function(fleet)
@@ -39,8 +39,8 @@ insulate("Order", function()
         end, it, assert)
 
         it("fails if enemy is neutral for ship", function()
-            local ship = eeCpuShipMock():setFactionId(0)
-            local enemy = eeStationMock():setFactionId(1)
+            local ship = CpuShip():setFactionId(0)
+            local enemy = SpaceStation():setFactionId(1)
 
             Ship:withOrderQueue(ship)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -62,11 +62,11 @@ insulate("Order", function()
         end)
         it("fails if enemy is neutral for fleet", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(0),
-                eeCpuShipMock():setFactionId(0),
-                eeCpuShipMock():setFactionId(0),
+                CpuShip():setFactionId(0),
+                CpuShip():setFactionId(0),
+                CpuShip():setFactionId(0),
             })
-            local enemy = eeStationMock():setFactionId(1)
+            local enemy = SpaceStation():setFactionId(1)
 
             Fleet:withOrderQueue(fleet)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -87,8 +87,8 @@ insulate("Order", function()
             assert.is_same("Idle", fleet:getLeader():getOrder())
         end)
         it("fails if enemy turns into neutral for ship", function()
-            local ship = eeCpuShipMock():setFactionId(1)
-            local enemy = eeStationMock():setFactionId(2)
+            local ship = CpuShip():setFactionId(1)
+            local enemy = SpaceStation():setFactionId(2)
 
             Ship:withOrderQueue(ship)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -116,11 +116,11 @@ insulate("Order", function()
         end)
         it("fails if enemy turns into neutral for fleet", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
             })
-            local enemy = eeStationMock():setFactionId(2)
+            local enemy = SpaceStation():setFactionId(2)
 
             Fleet:withOrderQueue(fleet)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil

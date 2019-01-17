@@ -11,7 +11,7 @@ insulate("Station", function()
         local herring = Product:new("Red Herring", {id="herring"})
 
         it("produces products in a interval", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [power] = 1000,
                 [herring] = 1000,
@@ -50,7 +50,7 @@ insulate("Station", function()
         end)
 
         it("does not produce if any of the consumed products is not available", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [power] = 1000,
                 [ore] = 1000,
@@ -84,7 +84,7 @@ insulate("Station", function()
         end)
 
         it("does not produce if there is no storage space for products left", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [power] = 1000,
                 [herring] = 1000,
@@ -111,7 +111,7 @@ insulate("Station", function()
         end)
 
         it("does produce as long as there is any space left", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [power] = 1000,
                 [herring] = 1000,
@@ -140,7 +140,7 @@ insulate("Station", function()
 
 
         it("produces with callbacks", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local wasProduced = false
             Station:withStorageRooms(station, {
                 [power] = 1000,
@@ -162,7 +162,7 @@ insulate("Station", function()
         end)
 
         it("stops producing if station is destroyed", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local wasProduced = false
             Station:withStorageRooms(station, {
                 [herring] = 1000,

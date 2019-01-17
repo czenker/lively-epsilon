@@ -12,9 +12,9 @@ insulate("Tools", function()
             it("can be created", function()
                 finally(function() Tools:endStoryComms() end)
 
-                local station = eeStationMock()
+                local station = SpaceStation()
                 Station:withComms(station)
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local screen = commsScreenMock()
                 Tools:storyComms(station, player, screen)
             end)
@@ -24,9 +24,9 @@ insulate("Tools", function()
             require "lively_epsilon"
             require "test.mocks"
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withComms(station)
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local screen = commsScreenMock()
 
             it("can be created", function()
@@ -46,16 +46,16 @@ insulate("Tools", function()
             require "lively_epsilon"
             require "test.mocks"
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withComms(station)
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local screen = commsScreenMock()
 
             it("fails when called without station", function()
                 assert.has_error(function() Tools:storyComms(nil, player, screen) end)
             end)
             it("fails when called with station without comms", function()
-                assert.has_error(function() Tools:storyComms(eeStationMock(), player, screen) end)
+                assert.has_error(function() Tools:storyComms(SpaceStation(), player, screen) end)
             end)
             it("fails when called without player", function()
                 assert.has_error(function() Tools:storyComms(station, nil, screen) end)

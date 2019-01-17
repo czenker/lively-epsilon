@@ -6,22 +6,22 @@ insulate("Missions", function()
 
     describe("visit()", function()
         it("should create a valid Mission", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = Missions:visit(station, to)
 
             assert.is_true(Mission:isMission(mission))
         end)
         it("fails if first parameter is not a station", function()
-            local station = eeCpuShipMock()
+            local station = CpuShip()
             assert.has_error(function() Missions:visit(station) end)
         end)
         it("fails if second parameter is a number", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             assert.has_error(function() Missions:visit(station, 3) end)
         end)
 
         it("fails to start if mission is not a broker mission", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = Missions:visit(station)
 
             assert.has_error(function() mission:accept() end)
@@ -30,8 +30,8 @@ insulate("Missions", function()
         it("successful mission", function()
             local onVisitCalled = false
 
-            local station = eeStationMock()
-            local player = eePlayerMock()
+            local station = SpaceStation()
+            local player = PlayerSpaceship()
             local mission = Missions:visit(station, {
                 onVisit = function() onVisitCalled = true end,
             })

@@ -5,19 +5,19 @@ insulate("Missions", function()
     require "test.asserts"
 
     describe("transportProduct()", function()
-        local from = eeStationMock()
-        local to = eeStationMock()
+        local from = SpaceStation()
+        local to = SpaceStation()
         local product = productMock()
         it("should create a valid Mission", function()
             local mission = Missions:transportProduct(from, to, product)
             assert.is_true(Mission:isMission(mission))
         end)
         it("fails if first parameter is not a station", function()
-            local from = eeCpuShipMock()
+            local from = CpuShip()
             assert.has_error(function() Missions:transportProduct(from, to, product) end)
         end)
         it("fails if second parameter is not a station", function()
-            assert.has_error(function() Missions:transportProduct(from, eeCpuShipMock, product) end)
+            assert.has_error(function() Missions:transportProduct(from, CpuShip, product) end)
         end)
         it("fails if third parameter is a number", function()
             assert.has_error(function() Missions:transportProduct(from, to, 3) end)
@@ -33,7 +33,7 @@ insulate("Missions", function()
 
         it("fails to accept if the player ship has no storage at all", function()
             local acceptConditionCalled = false
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local mission
             mission = Missions:transportProduct(from, to, product, {
                 acceptCondition = function(theMission, theError)
@@ -58,7 +58,7 @@ insulate("Missions", function()
 
         it("fails to accept if the player ship has too little storage even if they removed everything", function()
             local acceptConditionCalled = false
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local mission
             mission = Missions:transportProduct(from, to, product, {
                 amount = 42,
@@ -86,7 +86,7 @@ insulate("Missions", function()
         it("successful mission", function()
             local onLoadCalled = false
             local onUnloadCalled = false
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local mission
             mission = Missions:transportProduct(from, to, product, {
                 amount = 42,
@@ -155,7 +155,7 @@ insulate("Missions", function()
         end)
         it("fails when product is sold or lost", function()
             local onProductLostCalled = false
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage=100})
 
             local mission
@@ -206,7 +206,7 @@ insulate("Missions", function()
         end)
         it("calls onInsufficientStorage if the player ship has no storage as soon as the player docks", function()
             local onInsufficientStorageCalled = 0
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
 
             local mission
             mission = Missions:transportProduct(from, to, product, {

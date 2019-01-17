@@ -35,7 +35,7 @@ function SpaceObject()
         isFriendly = function(self, other) return self:getFactionId() == other:getFactionId() end,
     }
 end
-function eeShipTemplateBasedMock()
+function ShipTemplateBasedObject()
 
     local hull = 50
     local hullMax = 50
@@ -111,7 +111,7 @@ function SpaceShip()
 
     local hasJumpDrive, hasWarpDrive = false, false
 
-    return Util.mergeTables(eeShipTemplateBasedMock(), {
+    return Util.mergeTables(ShipTemplateBasedObject(), {
         getWeaponStorageMax = function(self, weapon)
             if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
             return weaponStorageMax[weapon]
@@ -182,13 +182,13 @@ function SpaceShip()
     })
 end
 
-function eeStationMock()
-    return Util.mergeTables(eeShipTemplateBasedMock(), {
+function SpaceStation()
+    return Util.mergeTables(ShipTemplateBasedObject(), {
         typeName = "SpaceStation",
     })
 end
 
-function eeCpuShipMock()
+function CpuShip()
     local order, orderTarget, orderX, orderY = "Idle", nil, nil, nil
 
     return Util.mergeTables(SpaceShip(), {
@@ -242,7 +242,7 @@ function eeCpuShipMock()
     })
 end
 
-function eePlayerMock()
+function PlayerSpaceship()
     local repairCrewCount = 0
     local playerButtons = {}
     local getButton = function(pos, label)
@@ -386,7 +386,7 @@ end
 function missionWithBrokerMock(broker)
     local mission = missionMock()
     Mission:withBroker(mission, "Hello World")
-    mission:setMissionBroker(broker or eeStationMock())
+    mission:setMissionBroker(broker or SpaceStation())
 
     return mission
 end

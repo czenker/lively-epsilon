@@ -38,7 +38,7 @@ insulate("Order", function()
             }
         end, it, assert)
         it("carries out the order for 30 seconds by default (ship)", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             ship.areEnemiesInRange = function() return false end
 
             Ship:withOrderQueue(ship)
@@ -64,7 +64,7 @@ insulate("Order", function()
             assert.is_same(1, onCompletionCalled)
         end)
         it("carries out the order until there are no enemies in range for 15 seconds (ship)", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             local calledRange = nil
             ship.areEnemiesInRange = function(_, range)
                 calledRange = range
@@ -112,9 +112,9 @@ insulate("Order", function()
         end)
         it("carries out the order for 30 seconds by default (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
             fleet:getLeader().areEnemiesInRange = function() return false end
 
@@ -143,9 +143,9 @@ insulate("Order", function()
 
         it("carries out the order until there are no enemies in range for 15 seconds (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
             local calledRange = nil
             fleet:getLeader().areEnemiesInRange = function(_, range)
@@ -201,7 +201,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend({
-                    minDefendTime = eeStationMock(),
+                    minDefendTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
@@ -219,7 +219,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend({
-                    minClearTime = eeStationMock(),
+                    minClearTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
@@ -237,7 +237,7 @@ insulate("Order", function()
             end)
             assert.has_error(function()
                 Order:defend({
-                    range = eeStationMock(),
+                    range = SpaceStation(),
                 })
             end)
             assert.has_error(function()

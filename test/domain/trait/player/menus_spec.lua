@@ -6,7 +6,7 @@ insulate("Player", function()
 
     describe("withMenu()", function()
         it("creates a valid menu", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             assert.is_true(Player:hasMenu(player))
@@ -17,7 +17,7 @@ insulate("Player", function()
         end)
 
         it("fails if the first argument already has menus", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             assert.has_error(function() Player:withMenu(player) end)
@@ -25,7 +25,7 @@ insulate("Player", function()
 
         it("draws submenus", function()
             -- test setup
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
             })
@@ -56,7 +56,7 @@ insulate("Player", function()
         end)
 
         it("triggers callbacks on click", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             local called, callArg1, callArg2 = 0, nil, nil
@@ -77,7 +77,7 @@ insulate("Player", function()
     end)
     describe("addHelmsMenuItem(), removeHelmsMenuItem(), drawHelmsMenu()", function()
         it("adds and removes menu items", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             player:addHelmsMenuItem("submenu", mockSubmenu("Submenu 1"))
@@ -110,7 +110,7 @@ insulate("Player", function()
     end)
     describe("addMenuItem(), removeMenuItem(), drawMenu()", function()
         it("adds and removes menu items", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             player:addMenuItem("engineering", "submenu", mockSubmenu("Submenu 1"))
@@ -142,7 +142,7 @@ insulate("Player", function()
         end)
 
         it("does not redraw the menu if some submenu is currently opened", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {backLabel = "Back"})
 
             local menu = Menu:new()
@@ -171,7 +171,7 @@ insulate("Player", function()
     end)
     describe("addMenuItem()", function()
         it("fails if an invalid position is given", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             assert.has_error(function()
@@ -187,7 +187,7 @@ insulate("Player", function()
     end)
     describe("removeMenuItem()", function()
         it("fails if an invalid position is given", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             assert.has_error(function()
@@ -203,7 +203,7 @@ insulate("Player", function()
     end)
     describe("drawMenu()", function()
         it("fails if an invalid position is given", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player)
 
             assert.has_error(function()
@@ -219,7 +219,7 @@ insulate("Player", function()
 
         it("can draw an arbitrary menu", function()
             -- test setup
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
             })
@@ -249,7 +249,7 @@ insulate("Player", function()
         end)
 
         it("paginates long main menus", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
                 labelNext = "Next",
@@ -289,7 +289,7 @@ insulate("Player", function()
             assert.is_false(player:hasButton("helms", "Item 8"))
         end)
         it("draws a main menu on one page if it fits", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
                 labelNext = "Next",
@@ -311,7 +311,7 @@ insulate("Player", function()
             assert.is_false(player:hasButton("helms", "Previous"))
         end)
         it("draws the last page of the main menu on one page if it fits", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
                 labelNext = "Next",
@@ -351,7 +351,7 @@ insulate("Player", function()
             assert.is_true(player:hasButton("helms", "Previous"))
         end)
         it("compensates for the back button on submenus", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMenu(player, {
                 backLabel = "Back",
                 labelNext = "Next",

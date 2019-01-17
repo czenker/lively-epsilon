@@ -112,7 +112,7 @@ insulate("Mission", function()
     describe("accept()", function()
         it("can be called if MissionBroker is set", function()
             local mission = missionWithBrokerMock()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             mission:setMissionBroker(station)
 
@@ -125,7 +125,7 @@ insulate("Mission", function()
             local mission = missionMock()
             mission.accept = function() originalCalled = true end
             Mission:withBroker(mission, "Hello World")
-            mission:setMissionBroker(eeStationMock())
+            mission:setMissionBroker(SpaceStation())
 
             mission:accept()
             assert.is_true(originalCalled)
@@ -141,7 +141,7 @@ insulate("Mission", function()
     describe("getMissionBroker()", function()
         it("returns the set MissionBroker", function()
             local mission = missionWithBrokerMock()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             mission:setMissionBroker(station)
 

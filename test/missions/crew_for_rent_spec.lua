@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     describe("crewForRent()", function()
         it("should create a valid Mission with one ship", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             local mission = Missions:crewForRent(ship)
 
             assert.is_true(Mission:isMission(mission))
@@ -17,8 +17,8 @@ insulate("Missions", function()
         describe("sending crew", function()
             it("should only display the button when the player is close enough to the ship", function()
                 local label = "Hello World"
-                local ship = eeCpuShipMock()
-                local player = eePlayerMock()
+                local ship = CpuShip()
+                local player = PlayerSpaceship()
                 local mission = Missions:crewForRent(ship, {
                     distance = 1000,
                     sendCrewLabel = label,
@@ -49,8 +49,8 @@ insulate("Missions", function()
             it("suceeds when crew count is high enough", function()
                 local onCrewArrivedCalled = 0
                 local sendCrewFailedCalled = 0
-                local ship = eeCpuShipMock()
-                local player = eePlayerMock()
+                local ship = CpuShip()
+                local player = PlayerSpaceship()
                 local mission
                 mission = Missions:crewForRent(ship, {
                     distance = 1000,
@@ -90,8 +90,8 @@ insulate("Missions", function()
             it("fails when crew count is too low", function()
                 local onCrewArrivedCalled = 0
                 local sendCrewFailedCalled = 0
-                local ship = eeCpuShipMock()
-                local player = eePlayerMock()
+                local ship = CpuShip()
+                local player = PlayerSpaceship()
                 local mission
                 mission = Missions:crewForRent(ship, {
                     distance = 1000,
@@ -131,9 +131,9 @@ insulate("Missions", function()
         describe("onCrewReady()", function()
             it("is called when the crew can be picked up again", function()
                 local onCrewReadyCalled = 0
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local mission
-                mission = Missions:crewForRent(eeCpuShipMock(), {
+                mission = Missions:crewForRent(CpuShip(), {
                     duration = 3,
                     sendCrewLabel = "Hello World",
                     onCrewReady = function(callMission)
@@ -169,8 +169,8 @@ insulate("Missions", function()
         describe("returning crew", function()
             it("should only display the button when the player is close enough to the ship", function()
                 local label = "Come Back"
-                local ship = eeCpuShipMock()
-                local player = eePlayerMock()
+                local ship = CpuShip()
+                local player = PlayerSpaceship()
                 local mission = Missions:crewForRent(ship, {
                     distance = 1000,
                     crewCount = 4,
@@ -212,8 +212,8 @@ insulate("Missions", function()
             end)
             it("should return the crew", function()
                 local onCrewReturnedCalled = 0
-                local ship = eeCpuShipMock()
-                local player = eePlayerMock()
+                local ship = CpuShip()
+                local player = PlayerSpaceship()
                 local mission
                 mission = Missions:crewForRent(ship, {
                     distance = 1000,
@@ -245,9 +245,9 @@ insulate("Missions", function()
         end)
 
         it("successful mission", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             local mission
-            mission = Missions:crewForRent(eeCpuShipMock(), {
+            mission = Missions:crewForRent(CpuShip(), {
                 distance = 1000,
                 crewCount = 4,
                 duration = 5,

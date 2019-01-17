@@ -14,20 +14,20 @@ insulate("Chatter", function()
 
             assert.is_true(Chatter:isChatFactory(chat))
             assert.is_same(1, chat:getCardinality())
-            assert.is_true(chat:areValidArguments(eeCpuShipMock()))
+            assert.is_true(chat:areValidArguments(CpuShip()))
         end)
         it("fails if first parameter is not a positive integer", function()
             assert.has_error(function() Chatter:newFactory(-1, function() end) end)
             assert.has_error(function() Chatter:newFactory(0, function() end) end)
             assert.has_error(function() Chatter:newFactory(nil, function() end) end)
             assert.has_error(function() Chatter:newFactory("string", function() end) end)
-            assert.has_error(function() Chatter:newFactory(eeStationMock(), function() end) end)
+            assert.has_error(function() Chatter:newFactory(SpaceStation(), function() end) end)
         end)
         it("fails if second parameter is not a function", function()
             assert.has_error(function() Chatter:newFactory(1, 1) end)
             assert.has_error(function() Chatter:newFactory(1, "string") end)
             assert.has_error(function() Chatter:newFactory(1, nil) end)
-            assert.has_error(function() Chatter:newFactory(1, eeStationMock()) end)
+            assert.has_error(function() Chatter:newFactory(1, SpaceStation()) end)
         end)
         it("fails if third parameter is not a table", function()
             assert.has_error(function() Chatter:newFactory(1, function() end, 1) end)
@@ -52,8 +52,8 @@ insulate("Chatter", function()
             it("always returns true if no filter is set", function()
                 local chat = Chatter:newFactory(1, function() end)
 
-                assert.is_true(chat:areValidArguments(eeStationMock()))
-                assert.is_true(chat:areValidArguments(eeCpuShipMock()))
+                assert.is_true(chat:areValidArguments(SpaceStation()))
+                assert.is_true(chat:areValidArguments(CpuShip()))
             end)
             it("returns false if no shipTemplateBased is given", function()
                 local chat = Chatter:newFactory(1, function() end)
@@ -69,8 +69,8 @@ insulate("Chatter", function()
                     }
                 })
 
-                assert.is_true(chat:areValidArguments(eeStationMock()))
-                assert.is_false(chat:areValidArguments(eeCpuShipMock()))
+                assert.is_true(chat:areValidArguments(SpaceStation()))
+                assert.is_false(chat:areValidArguments(CpuShip()))
             end)
 
             it("works with two partners", function()
@@ -81,11 +81,11 @@ insulate("Chatter", function()
                     }
                 })
 
-                assert.is_true(chat:areValidArguments(eeStationMock()))
-                assert.is_false(chat:areValidArguments(eeCpuShipMock()))
+                assert.is_true(chat:areValidArguments(SpaceStation()))
+                assert.is_false(chat:areValidArguments(CpuShip()))
 
-                assert.is_false(chat:areValidArguments(eeCpuShipMock(), eeStationMock()))
-                assert.is_true(chat:areValidArguments(eeStationMock(), eeCpuShipMock()))
+                assert.is_false(chat:areValidArguments(CpuShip(), SpaceStation()))
+                assert.is_true(chat:areValidArguments(SpaceStation(), CpuShip()))
             end)
 
             it("uses filter on all arguments and gives other partners to filter function", function()
@@ -94,7 +94,7 @@ insulate("Chatter", function()
                 local twoArg1, twoArg2
                 local threeArg1, threeArg2, threeArg3
 
-                local one, two, three = eeStationMock(), eeCpuShipMock(), eeCpuShipMock()
+                local one, two, three = SpaceStation(), CpuShip(), CpuShip()
 
                 local chat = Chatter:newFactory(3, function() end, {
                     filters = {
@@ -136,7 +136,7 @@ insulate("Chatter", function()
             it("gives all arguments to the factory", function()
                 local factoryCalled = 0
                 local factoryArg1, factoryArg2
-                local ship1, ship2 = eeCpuShipMock(), eeCpuShipMock()
+                local ship1, ship2 = CpuShip(), CpuShip()
 
                 local chat = Chatter:newFactory(1, function(arg1, arg2)
                     factoryCalled = factoryCalled + 1

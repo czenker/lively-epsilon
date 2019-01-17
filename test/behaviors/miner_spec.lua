@@ -8,7 +8,7 @@ insulate("Ship:behaveAsMiner()", function()
 
     local product = Product:new("Red Herring", {id = "red-herring"})
     local mockValidStation = function()
-        local station = eeStationMock()
+        local station = SpaceStation()
         Station:withStorageRooms(station, {
             [product] = 999,
         })
@@ -17,7 +17,7 @@ insulate("Ship:behaveAsMiner()", function()
     end
 
     local mockValidMiner = function()
-        local miner = eeCpuShipMock()
+        local miner = CpuShip()
         Ship:withStorageRooms(miner, {
             [product] = 999,
         })
@@ -326,7 +326,7 @@ insulate("Ship:behaveAsMiner()", function()
                 finally(universe.destroy)
 
                 local station = mockValidStation()
-                local otherStation = eeStationMock()
+                local otherStation = SpaceStation()
                 local miner = mockValidMiner()
                 local asteroid = Asteroid()
 
@@ -453,7 +453,7 @@ insulate("Ship:behaveAsMiner()", function()
                 Ship:behaveAsMiner(42, station, function() end)
             end, "Expected ship to be a CpuShip, but got number")
             assert.has_error(function()
-                Ship:behaveAsMiner(eeStationMock(), station, function() end)
+                Ship:behaveAsMiner(SpaceStation(), station, function() end)
             end, "Expected ship to be a CpuShip, but got table")
             assert.has_error(function()
                 Ship:behaveAsMiner(SpaceShip(), station, function() end)
@@ -470,7 +470,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
         it("fails if ship does not have storage", function()
             local station = mockValidStation()
-            local miner = eeCpuShipMock():setCallSign("Dummy")
+            local miner = CpuShip():setCallSign("Dummy")
 
             assert.has_error(function()
                 Ship:behaveAsMiner(miner, station, function() end)
@@ -492,7 +492,7 @@ insulate("Ship:behaveAsMiner()", function()
             end, "Expected homeStation to be a Station, but got table")
         end)
         it("fails if station does not have storage", function()
-            local station = eeStationMock():setCallSign("Home")
+            local station = SpaceStation():setCallSign("Home")
             local miner = mockValidMiner()
 
             assert.has_error(function()

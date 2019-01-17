@@ -10,14 +10,14 @@ insulate("Player", function()
 
     describe("withStorage()", function()
         it("creates a valid storage", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
 
             Player:withStorage(player)
             assert.is_true(Player:hasStorage(player))
             assert.is_number(player:getMaxStorageSpace())
         end)
         it("allows to configure the maxStorage", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
 
             Player:withStorage(player, {maxStorage = 1000})
 
@@ -28,13 +28,13 @@ insulate("Player", function()
             assert.has_error(function() Player:withStorage(42) end)
         end)
         it("fails if second argument is a number", function()
-            assert.has_error(function() Player:withStorage(eePlayerMock(), 42) end)
+            assert.has_error(function() Player:withStorage(PlayerSpaceship(), 42) end)
         end)
     end)
 
     describe("getStoredProducts()", function()
         it("returns all the products that are currently stored", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
 
             assert.is_same({}, player:getStoredProducts())
@@ -58,7 +58,7 @@ insulate("Player", function()
         end)
 
         it("does not return rockets, because we might not know the correct object to return", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
 
             player:setWeaponStorageMax("hvli", 5)
@@ -78,7 +78,7 @@ insulate("Player", function()
 
     describe("getProductStorage(), getEmptyProductStorage(), getMaxProductStorage()", function()
         it("returns the correct value", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getProductStorage(product1))
@@ -135,7 +135,7 @@ insulate("Player", function()
             product2.getSize = function() return 2 end
             product3.getSize = function() return 4 end
 
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getProductStorage(product1))
@@ -197,7 +197,7 @@ insulate("Player", function()
             assert.is_same(15, player:getEmptyProductStorage(product3))
         end)
         it("they fail when called without argument", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
 
             assert.has_error(function() player:getProductStorage() end)
@@ -206,7 +206,7 @@ insulate("Player", function()
         end)
         it("works with rockets", function()
             local hvli = Product:new("HVLI", {id = "hvli"})
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
             player:setWeaponStorageMax("hvli", 8)
             player:setWeaponStorage("hvli", 6)
@@ -229,7 +229,7 @@ insulate("Player", function()
 
     describe("getStorageSpace(), getEmptyStorageSpace(), getMaxStorageSpace()", function()
         it("returns the correct value", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getStorageSpace())
@@ -262,7 +262,7 @@ insulate("Player", function()
             product2.getSize = function() return 2 end
             product3.getSize = function() return 4 end
 
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getStorageSpace())
@@ -297,7 +297,7 @@ insulate("Player", function()
 
     describe("modifyProductStorage()", function()
         it("it allows to overload the storage so that important mission items are not lost", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getStorageSpace())
@@ -324,7 +324,7 @@ insulate("Player", function()
         end)
 
         it("it keeps sure the storage level will not be negative", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getStorageSpace())
@@ -351,21 +351,21 @@ insulate("Player", function()
         end)
 
         it("fails if no product is given", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
 
             assert.has_error(function() player:modifyProductStorage(nil, 10) end)
         end)
 
         it("fails if no amount is given", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
 
             assert.has_error(function() player:modifyProductStorage(product1, nil) end)
         end)
 
         it("allows to handle rockets", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player)
             for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
                 local rocket = Product:new(weapon, {id = weapon})
@@ -380,7 +380,7 @@ insulate("Player", function()
 
     describe("setMaxStorageSpace()", function()
         it("allows to set the maximum storage space", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withStorage(player, {maxStorage = 100})
 
             assert.is_same(0, player:getStorageSpace())

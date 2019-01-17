@@ -6,7 +6,7 @@ insulate("ShipTemplateBased", function()
 
     describe("withMissionBroker()", function()
         it("causes hasMissionBroker() to be true", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.is_true(ShipTemplateBased:hasMissionBroker(station))
@@ -17,33 +17,33 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("fails if first argument is already a SpaceObject with broker", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.has_error(function() ShipTemplateBased:withMissionBroker(station) end)
         end)
 
         it("fails if second argument is not a table", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function() ShipTemplateBased:withMissionBroker(station, 42) end)
         end)
 
         it("allows to set missions", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             ShipTemplateBased:withMissionBroker(station, {missions = {missionWithBrokerMock(), missionWithBrokerMock(), missionWithBrokerMock()}})
             assert.is_same(3, Util.size(station:getMissions()))
         end)
 
         it("fails if missions is a number", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = 42}) end)
         end)
 
         it("fails if any of the missions is not a mission with broker", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = {missionMock}}) end)
         end)
@@ -51,7 +51,7 @@ insulate("ShipTemplateBased", function()
 
     describe("addMission()", function()
         it("allows to add missions", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             station:addMission(missionWithBrokerMock())
@@ -63,14 +63,14 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("fails if the mission is not a brokerMission", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.has_error(function() station:addMission(missionMock()) end)
         end)
 
         it("fails if the argument is a number", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.has_error(function() station:addMission(42) end)
@@ -79,7 +79,7 @@ insulate("ShipTemplateBased", function()
 
     describe("removeMission()", function()
         it("allows to remove a mission object", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions = {mission}})
 
@@ -89,7 +89,7 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("allows to remove a mission by its id", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions = {mission}})
 
@@ -99,14 +99,14 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("fails if the argument is a number", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.has_error(function() station:removeMission(42) end)
         end)
 
         it("fails silently if the mission is unknown", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission1 = missionWithBrokerMock()
             local mission2 = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions={mission1}})
@@ -118,14 +118,14 @@ insulate("ShipTemplateBased", function()
 
     describe("getMissions()", function()
         it("returns an empty table if no missions where added", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.is_same(0, Util.size(station:getMissions()))
         end)
 
         it("returns any missions added via withMissionBroker() and addMission()", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission1 = missionWithBrokerMock()
             local mission2 = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions = {mission1}})
@@ -144,7 +144,7 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("should not allow to manipulate the mission table", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission1 = missionWithBrokerMock()
             local mission2 = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions = {mission1}})
@@ -157,14 +157,14 @@ insulate("ShipTemplateBased", function()
 
     describe("hasMissions()", function()
         it("returns false if no missions where added", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withMissionBroker(station)
 
             assert.is_false(station:hasMissions())
         end)
 
         it("returns true if a mission has been added via withMissionBroker()", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station, {missions = {mission}})
 
@@ -172,7 +172,7 @@ insulate("ShipTemplateBased", function()
         end)
 
         it("returns true if a mission has been added via addMission()", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = missionWithBrokerMock()
             ShipTemplateBased:withMissionBroker(station)
             station:addMission(mission)

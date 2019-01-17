@@ -4,7 +4,7 @@ insulate("BrokerUpgrade", function()
     require "test.mocks"
     require "test.asserts"
 
-    local player = eePlayerMock()
+    local player = PlayerSpaceship()
     local function upgradeMock(config)
         return BrokerUpgrade:new(Util.mergeTables({
             name = "Foobar",
@@ -83,7 +83,7 @@ insulate("BrokerUpgrade", function()
             end)
             it("deduces the cost from the players reputation points when installed", function()
                 local upgrade = upgradeMock({price = 42.0})
-                local player = eePlayerMock():setReputationPoints(100)
+                local player = PlayerSpaceship():setReputationPoints(100)
 
                 upgrade:install(player)
 
@@ -93,7 +93,7 @@ insulate("BrokerUpgrade", function()
 
 
         describe("canBeInstalled()", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             canBeInstalledCalled = 0
             local upgrade
             upgrade = upgradeMock({canBeInstalled = function(callBrokerUpgrade, callPlayer)
@@ -110,7 +110,7 @@ insulate("BrokerUpgrade", function()
             end)
 
             it("interprets as true, when callback returns nil", function()
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local upgrade
                 upgrade = upgradeMock({canBeInstalled = function()
                     return nil
@@ -122,7 +122,7 @@ insulate("BrokerUpgrade", function()
             end)
 
             it("removes message if it is attached to a true response", function()
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local upgrade = upgradeMock({canBeInstalled = function()
                     return true, "message"
                 end})
@@ -133,7 +133,7 @@ insulate("BrokerUpgrade", function()
             end)
 
             it("removes non-string message on failure", function()
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local upgrade = upgradeMock({canBeInstalled = function()
                     return false, 42
                 end})
@@ -144,7 +144,7 @@ insulate("BrokerUpgrade", function()
             end)
 
             it("passes through a string on failure", function()
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 local upgrade = upgradeMock({canBeInstalled = function()
                     return false, "foobar"
                 end})
@@ -163,7 +163,7 @@ insulate("BrokerUpgrade", function()
         end)
 
         describe("install()", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             installCalled = 0
             canBeInstalledCalled = 0
             local upgrade
@@ -275,13 +275,13 @@ insulate("BrokerUpgrade", function()
         describe("config.unique", function()
             it("prevents the upgrade from being installed on a ship without Upgrade Tracker", function()
                 local upgrade = upgradeMock({unique = true})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
 
                 assert.is_false(upgrade:canBeInstalled(player))
             end)
             it("prevents the upgrade from being installed more than once on a ship", function()
                 local upgrade = upgradeMock({unique = true})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 Player:withUpgradeTracker(player)
 
                 assert.is_true(upgrade:canBeInstalled(player))
@@ -294,13 +294,13 @@ insulate("BrokerUpgrade", function()
         describe("config.requiredUpgrade", function()
             it("prevents the upgrade from being installed on a ship without Upgrade Tracker", function()
                 local upgrade = upgradeMock({requiredUpgrade = "foobar"})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
 
                 assert.is_false(upgrade:canBeInstalled(player))
             end)
             it("prevents the upgrade to be installed if the required is not installed", function()
                 local upgrade = upgradeMock({requiredUpgrade = "foobar"})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 Player:withUpgradeTracker(player)
                 player:addUpgrade(upgradeMock())
 
@@ -309,7 +309,7 @@ insulate("BrokerUpgrade", function()
             it("allows to install an upgrade if the required is installed", function()
                 local required = upgradeMock({id = "required"})
                 local upgrade = upgradeMock({requiredUpgrade = "required"})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 Player:withUpgradeTracker(player)
                 player:addUpgrade(required)
 
@@ -318,7 +318,7 @@ insulate("BrokerUpgrade", function()
             it("exposes the required upgrade", function()
                 local required = upgradeMock({id = "required"})
                 local upgrade = upgradeMock({requiredUpgrade = "required"})
-                local player = eePlayerMock()
+                local player = PlayerSpaceship()
                 Player:withUpgradeTracker(player)
                 player:addUpgrade(required)
 

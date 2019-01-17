@@ -6,9 +6,9 @@ insulate("Order", function()
     require "test.orders.helper"
 
     describe("defend() target", function()
-        testSignature(Order.defend, {eeStationMock()}, it, assert)
+        testSignature(Order.defend, {SpaceStation()}, it, assert)
         testHappyShipCase(Order.defend, function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             return {
@@ -23,7 +23,7 @@ insulate("Order", function()
             }
         end, it, assert)
         testHappyFleetCase(Order.defend, function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             return {
@@ -38,8 +38,8 @@ insulate("Order", function()
             }
         end, it, assert)
         it("carries out the order for 30 seconds by default (ship)", function()
-            local ship = eeCpuShipMock()
-            local station = eeStationMock()
+            local ship = CpuShip()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             Ship:withOrderQueue(ship)
@@ -67,8 +67,8 @@ insulate("Order", function()
             assert.is_same(1, onCompletionCalled)
         end)
         it("carries out the order until there are no enemies in range for 15 seconds (ship)", function()
-            local ship = eeCpuShipMock()
-            local station = eeStationMock()
+            local ship = CpuShip()
+            local station = SpaceStation()
             local rangeCalled = nil
             station.areEnemiesInRange = function(_, range)
                 rangeCalled = range
@@ -118,11 +118,11 @@ insulate("Order", function()
         end)
         it("carries out the order for 60 seconds by default (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
-            local station = eeStationMock()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             Fleet:withOrderQueue(fleet)
@@ -152,11 +152,11 @@ insulate("Order", function()
 
         it("carries out the order until there are no enemies in range for 15 seconds (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
-            local station = eeStationMock()
+            local station = SpaceStation()
             local rangeCalled = nil
             station.areEnemiesInRange = function(_, range)
                 rangeCalled = range
@@ -206,8 +206,8 @@ insulate("Order", function()
         end)
 
         it("aborts if target is enemy of ship", function()
-            local ship = eeCpuShipMock():setFactionId(1)
-            local station = eeStationMock():setFactionId(2)
+            local ship = CpuShip():setFactionId(1)
+            local station = SpaceStation():setFactionId(2)
             station.areEnemiesInRange = function() return false end
 
             Ship:withOrderQueue(ship)
@@ -230,11 +230,11 @@ insulate("Order", function()
         end)
         it("aborts if target is enemy of fleet", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1)
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1)
             })
-            local station = eeStationMock():setFactionId(2)
+            local station = SpaceStation():setFactionId(2)
             station.areEnemiesInRange = function() return false end
 
             Fleet:withOrderQueue(fleet)
@@ -256,8 +256,8 @@ insulate("Order", function()
             assert.is_same("Idle", fleet:getLeader():getOrder())
         end)
         it("aborts if target is destroyed (ship)", function()
-            local ship = eeCpuShipMock()
-            local station = eeStationMock()
+            local ship = CpuShip()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             Ship:withOrderQueue(ship)
@@ -285,11 +285,11 @@ insulate("Order", function()
         end)
         it("aborts if target is destroyed (fleet)", function()
             local fleet = Fleet:new({
-                eeCpuShipMock(),
-                eeCpuShipMock(),
-                eeCpuShipMock(),
+                CpuShip(),
+                CpuShip(),
+                CpuShip(),
             })
-            local station = eeStationMock()
+            local station = SpaceStation()
             station.areEnemiesInRange = function() return false end
 
             Fleet:withOrderQueue(fleet)
@@ -330,17 +330,17 @@ insulate("Order", function()
 
         it("fails if minDefendTime is not a positive number", function()
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     minDefendTime = "foo",
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
-                    minDefendTime = eeStationMock(),
+                Order:defend(SpaceStation(), {
+                    minDefendTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     minDefendTime = -42,
                 })
             end)
@@ -348,17 +348,17 @@ insulate("Order", function()
 
         it("fails if minClearTime is not a positive number", function()
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     minClearTime = "foo",
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
-                    minClearTime = eeStationMock(),
+                Order:defend(SpaceStation(), {
+                    minClearTime = SpaceStation(),
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     minClearTime = -42,
                 })
             end)
@@ -366,17 +366,17 @@ insulate("Order", function()
 
         it("fails if range is not a positive number", function()
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     range = "foo",
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
-                    range = eeStationMock(),
+                Order:defend(SpaceStation(), {
+                    range = SpaceStation(),
                 })
             end)
             assert.has_error(function()
-                Order:defend(eeStationMock(), {
+                Order:defend(SpaceStation(), {
                     range = -42,
                 })
             end)

@@ -32,9 +32,9 @@ insulate("Chatter", function()
     describe("Noise", function()
         it("works with a chat with filters", function()
             withUniverse(function(universe)
-                local player = eePlayerMock():setCallSign("player"):setPosition(0, 0)
-                local ship = eeCpuShipMock():setCallSign("ship"):setPosition(1000, 0)
-                local station = eeStationMock():setCallSign("station"):setPosition(0, 1000)
+                local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
+                local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
+                local station = SpaceStation():setCallSign("station"):setPosition(0, 1000)
 
                 universe:add(player, ship, station)
 
@@ -64,9 +64,9 @@ insulate("Chatter", function()
         end)
         it("works in a complex scenario", function()
             withUniverse(function(universe)
-                local player = eePlayerMock():setCallSign("player"):setPosition(0, 0)
-                local ship = eeCpuShipMock():setCallSign("ship"):setPosition(1000, 0)
-                local station = eeStationMock():setCallSign("station"):setPosition(0, 1000)
+                local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
+                local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
+                local station = SpaceStation():setCallSign("station"):setPosition(0, 1000)
                 local filterStation = function(thing) return thing == station end
                 local filterShip = function(thing) return thing == ship end
                 local filterShipOrStation = function(thing) return filterStation(thing) or filterShip(thing) end

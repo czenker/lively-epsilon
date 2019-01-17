@@ -6,7 +6,7 @@ insulate("ShipTemplateBased", function()
 
     describe("withStorageRooms()", function()
         local product = Product:new("Power Cells", {id="power"})
-        local station = eeStationMock()
+        local station = SpaceStation()
 
         Station:withStorageRooms(station, {
             [product] = 1000

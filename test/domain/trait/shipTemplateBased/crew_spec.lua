@@ -6,7 +6,7 @@ insulate("ShipTemplateBased", function()
 
     describe("withCrew()", function()
         it("should create a crew", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             ShipTemplateBased:withCrew(station)
 
@@ -15,13 +15,13 @@ insulate("ShipTemplateBased", function()
 
         it("should fail when the position is not a string", function()
             local person = personMock()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function () ShipTemplateBased:withCrew(station, {person}) end)
         end)
 
         it("should fail when the position is not a person", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function () ShipTemplateBased:withCrew(station, {captain = {}}) end)
         end)
@@ -29,7 +29,7 @@ insulate("ShipTemplateBased", function()
         it("can be called multiple times to add different persons", function()
             local person1 = personMock()
             local person2 = personMock()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             ShipTemplateBased:withCrew(station, {commander = person1})
             ShipTemplateBased:withCrew(station, {relay = person2})
@@ -41,7 +41,7 @@ insulate("ShipTemplateBased", function()
         it("can be called multiple times to override a position", function()
             local person1 = personMock()
             local person2 = personMock()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             ShipTemplateBased:withCrew(station, {commander = person1})
             ShipTemplateBased:withCrew(station, {commander = person2})

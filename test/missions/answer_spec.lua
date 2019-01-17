@@ -6,7 +6,7 @@ insulate("Missions:answer", function()
 
     describe("answer()", function()
         it("should create a valid Mission with one station", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withComms(station)
 
             local mission = Missions:answer(

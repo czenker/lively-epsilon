@@ -60,7 +60,7 @@ insulate("Order", function()
         end)
         describe("config.minDistance", function()
             it("allows to set the distance to trigger for ship", function()
-                local ship = eeCpuShipMock()
+                local ship = CpuShip()
                 Ship:withOrderQueue(ship)
 
                 ship:setPosition(1000, 0)
@@ -87,9 +87,9 @@ insulate("Order", function()
             end)
             it("allows to set the distance to trigger for fleet leader", function()
                 local fleet = Fleet:new({
-                    eeCpuShipMock(),
-                    eeCpuShipMock(),
-                    eeCpuShipMock(),
+                    CpuShip(),
+                    CpuShip(),
+                    CpuShip(),
                 })
                 Fleet:withOrderQueue(fleet)
 
@@ -116,7 +116,7 @@ insulate("Order", function()
                 assert.is_true(completed)
             end)
             it("fails if it is not a number or negative", function()
-                local ship = eeCpuShipMock()
+                local ship = CpuShip()
                 Ship:withOrderQueue(ship)
 
                 assert.has_error(function()
@@ -134,9 +134,9 @@ insulate("Order", function()
         describe("config.ignoreEnemies", function()
             it("allows to set the distance to trigger for ship", function()
                 local fleet = Fleet:new({
-                    eeCpuShipMock(),
-                    eeCpuShipMock(),
-                    eeCpuShipMock(),
+                    CpuShip(),
+                    CpuShip(),
+                    CpuShip(),
                 })
                 Fleet:withOrderQueue(fleet)
 
@@ -148,7 +148,7 @@ insulate("Order", function()
                 assert.is_same("Fly towards (ignore all)", fleet:getLeader():getOrder())
             end)
             it("allows to set the distance to trigger for fleet", function()
-                local ship = eeCpuShipMock()
+                local ship = CpuShip()
                 Ship:withOrderQueue(ship)
 
                 ship:setPosition(1000, 0)
@@ -159,7 +159,7 @@ insulate("Order", function()
                 assert.is_same("Fly towards (ignore all)", ship:getOrder())
             end)
             it("fails if it is not a boolean", function()
-                local ship = eeCpuShipMock()
+                local ship = CpuShip()
                 Ship:withOrderQueue(ship)
 
                 assert.has_error(function()

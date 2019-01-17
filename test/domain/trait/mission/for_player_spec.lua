@@ -10,7 +10,7 @@ insulate("Mission", function()
         return mission
     end
 
-    local player = eePlayerMock()
+    local player = PlayerSpaceship()
 
     describe("forPlayer()", function()
         it("should create a valid Mission with player", function()
@@ -37,7 +37,7 @@ insulate("Mission", function()
     describe("accept()", function()
         it("can be called if Player are set", function()
             local mission = missionWithPlayerMock()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
 
             mission:setPlayer(player)
 
@@ -50,7 +50,7 @@ insulate("Mission", function()
             local mission = missionMock()
             mission.accept = function() originalCalled = true end
             Mission:forPlayer(mission, player)
-            mission:setPlayer(eePlayerMock())
+            mission:setPlayer(PlayerSpaceship())
 
             mission:accept()
             assert.is_true(originalCalled)
@@ -74,7 +74,7 @@ insulate("Mission", function()
     describe("getPlayer()", function()
         it("returns the set Player", function()
             local mission = missionWithPlayerMock()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
 
             mission:setPlayer(player)
 

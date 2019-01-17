@@ -6,7 +6,7 @@ insulate("Player", function()
 
     describe("withMissionTracker()", function()
         it("creates a valid mission tracker", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             assert.is_true(Player:hasMissionTracker(player))
@@ -17,7 +17,7 @@ insulate("Player", function()
         end)
 
         it("fails if the first argument is already a mission tracker player", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             assert.has_error(function() Player:withMissionTracker(player) end)
@@ -26,7 +26,7 @@ insulate("Player", function()
 
     describe("addMission()", function()
         it("adds a mission", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             local mission = startedMissionWithBrokerMock()
@@ -37,7 +37,7 @@ insulate("Player", function()
         end)
 
         it("fails if the first parameter is not a mission", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             assert.has_error(function() player:addMission(42) end)
@@ -46,7 +46,7 @@ insulate("Player", function()
 
     describe("getStartedMissions()", function()
         it("returns all started missions", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             player:addMission(startedMissionWithBrokerMock())
@@ -57,7 +57,7 @@ insulate("Player", function()
         end)
 
         it("does not return missions that do not have the state started", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             player:addMission(missionWithBrokerMock())
@@ -70,7 +70,7 @@ insulate("Player", function()
         end)
 
         it("manipulating the result set does not add missions", function()
-            local player = eePlayerMock()
+            local player = PlayerSpaceship()
             Player:withMissionTracker(player)
 
             player:addMission(startedMissionWithBrokerMock())

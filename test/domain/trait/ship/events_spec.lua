@@ -13,7 +13,7 @@ insulate("Ship:withEvents", function()
     it("includes events from ShipTemplateBased", function()
         -- just test onDestruction
         local called = 0
-        local ship = eeCpuShipMock()
+        local ship = CpuShip()
         Ship:withEvents(ship, {
             onDestruction = function()
                 called = called + 1
@@ -31,8 +31,8 @@ insulate("Ship:withEvents", function()
     describe("onDocking", function()
         it("is called when the ship docks a station", function()
             local called = 0
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             Ship:withEvents(ship, {
                 onDocking = function()
                     called = called + 1
@@ -71,9 +71,9 @@ insulate("Ship:withEvents", function()
 
         it("is called when ship docks multiple stations", function()
             local called = 0
-            local station1 = eeStationMock()
-            local station2 = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station1 = SpaceStation()
+            local station2 = SpaceStation()
+            local ship = CpuShip()
             local calledArg1, calledArg2
             Ship:withEvents(ship, {
                 onDocking = function(arg1, arg2)
@@ -117,8 +117,8 @@ insulate("Ship:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             Ship:withEvents(ship, {
                 onDocking = function()
                     error("Boom")
@@ -134,7 +134,7 @@ insulate("Ship:withEvents", function()
         end)
 
         it("fails if onDocking is not a callback", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
 
             assert.has_error(function()
                 Ship:withEvents(ship, { onDocking = 42})
@@ -145,8 +145,8 @@ insulate("Ship:withEvents", function()
     describe("onUndocking", function()
         it("is called when the ship undocks a station", function()
             local called = 0
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             Ship:withEvents(ship, {
                 onUndocking = function()
                     called = called + 1
@@ -184,9 +184,9 @@ insulate("Ship:withEvents", function()
 
         it("is called when ship undocks multiple stations", function()
             local called = 0
-            local station1 = eeStationMock()
-            local station2 = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station1 = SpaceStation()
+            local station2 = SpaceStation()
+            local ship = CpuShip()
             local calledArg1, calledArg2
             Ship:withEvents(ship, {
                 onUndocking = function(arg1, arg2)
@@ -237,8 +237,8 @@ insulate("Ship:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             Ship:withEvents(ship, {
                 onUndocking = function()
                     error("Boom")
@@ -257,7 +257,7 @@ insulate("Ship:withEvents", function()
         end)
 
         it("fails if onUndocking is not a callback", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
 
             assert.has_error(function()
                 Ship:withEvents(ship, { onUndocking = 42})
@@ -269,8 +269,8 @@ insulate("Ship:withEvents", function()
     describe("onDockInitiation", function()
         it("is called when the ship approaches a station with the intention of docking", function()
             local called = 0
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             local calledArg1, calledArg2
             Ship:withEvents(ship, {
                 onDockInitiation = function(arg1, arg2)
@@ -313,8 +313,8 @@ insulate("Ship:withEvents", function()
 
         it("resets when ship changes orders", function()
             local called = 0
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             local calledArg1, calledArg2
             Ship:withEvents(ship, {
                 onDockInitiation = function(arg1, arg2)
@@ -345,9 +345,9 @@ insulate("Ship:withEvents", function()
 
         it("is called when ship can not decide between two stations", function()
             local called = 0
-            local station1 = eeStationMock()
-            local station2 = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station1 = SpaceStation()
+            local station2 = SpaceStation()
+            local ship = CpuShip()
             local calledArg1, calledArg2
             Ship:withEvents(ship, {
                 onDockInitiation = function(arg1, arg2)
@@ -380,8 +380,8 @@ insulate("Ship:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local ship = eeCpuShipMock()
+            local station = SpaceStation()
+            local ship = CpuShip()
             Ship:withEvents(ship, {
                 onDockInitiation = function()
                     error("Boom")
@@ -397,7 +397,7 @@ insulate("Ship:withEvents", function()
         end)
 
         it("fails if onDockInitiation is not a callback", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
 
             assert.has_error(function()
                 Ship:withEvents(ship, { onDockInitiation = 42})

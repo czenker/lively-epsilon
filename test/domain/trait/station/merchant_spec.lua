@@ -8,7 +8,7 @@ insulate("Station", function()
         local product = Product:new("Power Cells", {id="power"})
 
         describe("when configuring a bought product", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -61,7 +61,7 @@ insulate("Station", function()
         end)
 
         it("does not buy above the buyingLimit", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -83,7 +83,7 @@ insulate("Station", function()
         end)
 
         it("can use a function for the buying price", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -98,7 +98,7 @@ insulate("Station", function()
         -- selling
         -- ----------
         describe("when configuring a sold product", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -151,7 +151,7 @@ insulate("Station", function()
         end)
 
         it("does not sell below the sellingLimit", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -173,7 +173,7 @@ insulate("Station", function()
         end)
 
         it("can use a function for the selling price", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             Station:withStorageRooms(station, {
                 [product] = 1000
             })
@@ -187,10 +187,10 @@ insulate("Station", function()
     describe("player-dependent offers", function()
         local productForFriends = Product:new("Friendly Item")
 
-        local stationSelling = eeStationMock()
-        local stationBuying = eeStationMock()
-        local friendlyPlayer = eePlayerMock()
-        local neutralPlayer = eePlayerMock()
+        local stationSelling = SpaceStation()
+        local stationBuying = SpaceStation()
+        local friendlyPlayer = PlayerSpaceship()
+        local neutralPlayer = PlayerSpaceship()
 
         Station:withStorageRooms(stationSelling, {
             [productForFriends] = 1000,

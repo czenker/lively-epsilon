@@ -6,9 +6,9 @@ insulate("Order", function()
     require "test.orders.helper"
 
     describe("dock()", function()
-        testSignature(Order.dock, {eeStationMock()}, it, assert)
+        testSignature(Order.dock, {SpaceStation()}, it, assert)
         testHappyShipCase(Order.dock, function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             return {
                 args = { station },
                 setUp = function() end,
@@ -21,7 +21,7 @@ insulate("Order", function()
             }
         end, it, assert)
         testHappyFleetCase(Order.dock, function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             return {
                 args = { station },
                 setUp = function() end,
@@ -35,8 +35,8 @@ insulate("Order", function()
         end, it, assert)
 
         it("fails if station is an enemy for ship", function()
-            local ship = eeCpuShipMock():setFactionId(1)
-            local station = eeStationMock():setFactionId(2)
+            local ship = CpuShip():setFactionId(1)
+            local station = SpaceStation():setFactionId(2)
 
             Ship:withOrderQueue(ship)
 
@@ -59,11 +59,11 @@ insulate("Order", function()
         end)
         it("fails if station is an enemy for fleet", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
             })
-            local station = eeStationMock():setFactionId(2)
+            local station = SpaceStation():setFactionId(2)
 
             Fleet:withOrderQueue(fleet)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -84,8 +84,8 @@ insulate("Order", function()
             assert.is_same("Idle", fleet:getLeader():getOrder())
         end)
         it("fails if station turns into an enemy for ship", function()
-            local ship = eeCpuShipMock():setFactionId(1)
-            local station = eeStationMock():setFactionId(0)
+            local ship = CpuShip():setFactionId(1)
+            local station = SpaceStation():setFactionId(0)
 
             Ship:withOrderQueue(ship)
 
@@ -113,11 +113,11 @@ insulate("Order", function()
         end)
         it("fails if station turns into an enemy for fleet", function()
             local fleet = Fleet:new({
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
-                eeCpuShipMock():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
+                CpuShip():setFactionId(1),
             })
-            local station = eeStationMock():setFactionId(0)
+            local station = SpaceStation():setFactionId(0)
 
             Fleet:withOrderQueue(fleet)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -143,8 +143,8 @@ insulate("Order", function()
             assert.is_same("Idle", fleet:getLeader():getOrder())
         end)
         it("fails if station is destroyed for ship", function()
-            local ship = eeCpuShipMock()
-            local station = eeStationMock()
+            local ship = CpuShip()
+            local station = SpaceStation()
 
             Ship:withOrderQueue(ship)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -171,8 +171,8 @@ insulate("Order", function()
             assert.is_same("Idle", ship:getOrder())
         end)
         it("fails if station is destroyed for fleet", function()
-            local fleet = Fleet:new({eeCpuShipMock(), eeCpuShipMock(), eeCpuShipMock()})
-            local station = eeStationMock()
+            local fleet = Fleet:new({CpuShip(), CpuShip(), CpuShip()})
+            local station = SpaceStation()
 
             Fleet:withOrderQueue(fleet)
             local onAbortCalled, abortArg1, abortArg2, abortArg3 = 0, nil, nil, nil
@@ -199,9 +199,9 @@ insulate("Order", function()
             assert.is_same("Idle", fleet:getLeader():getOrder())
         end)
         it("repairs a docked ship if the station is friendly and supports it", function()
-            local ship = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship = CpuShip():setHullMax(100):setHull(50)
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             station:setRepairDocked(true)
 
             Ship:withOrderQueue(ship)
@@ -226,9 +226,9 @@ insulate("Order", function()
         end)
 
         it("waits for missiles to be refilled", function()
-            local ship = eeCpuShipMock():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0)
+            local ship = CpuShip():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0)
 
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             Ship:withOrderQueue(ship)
             local completed = false
@@ -252,9 +252,9 @@ insulate("Order", function()
         end)
 
         it("waits for shields to recharge", function()
-            local ship = eeCpuShipMock():setShieldsMax(100, 50, 10):setShields(20, 50, 0)
+            local ship = CpuShip():setShieldsMax(100, 50, 10):setShields(20, 50, 0)
 
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             Ship:withOrderQueue(ship)
             local completed = false
@@ -277,12 +277,12 @@ insulate("Order", function()
             assert.is_true(completed)
         end)
         it("repairs a docked fleet if the station is friendly and supports it", function()
-            local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)
-            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50)
-            local ship3 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship1 = CpuShip():setHullMax(100):setHull(50)
+            local ship2 = CpuShip():setHullMax(100):setHull(50)
+            local ship3 = CpuShip():setHullMax(100):setHull(50)
             local fleet = Fleet:new({ship1, ship2, ship3})
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             station:setRepairDocked(true)
 
             Fleet:withOrderQueue(fleet)
@@ -339,13 +339,13 @@ insulate("Order", function()
             assert.is_same("Fly in formation", ship3:getOrder())
         end)
         it("waits for all ships to be repaired, refilled and recharged", function()
-            local ship1 = eeCpuShipMock()
-            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50) -- damaged
-            local ship3 = eeCpuShipMock():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0) -- weapons
-            local ship4 = eeCpuShipMock():setShieldsMax(100, 50, 10):setShields(20, 50, 0) -- broken shields
+            local ship1 = CpuShip()
+            local ship2 = CpuShip():setHullMax(100):setHull(50) -- damaged
+            local ship3 = CpuShip():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0) -- weapons
+            local ship4 = CpuShip():setShieldsMax(100, 50, 10):setShields(20, 50, 0) -- broken shields
             local fleet = Fleet:new({ship1, ship2, ship3, ship4})
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             station:setRepairDocked(true)
 
             Fleet:withOrderQueue(fleet)
@@ -384,12 +384,12 @@ insulate("Order", function()
             assert.is_same("Fly in formation", ship4:getOrder())
         end)
         it("undocks all fleet ships if the order is aborted", function()
-            local ship1 = eeCpuShipMock():setHullMax(100):setHull(50)
-            local ship2 = eeCpuShipMock():setHullMax(100):setHull(50)
-            local ship3 = eeCpuShipMock():setHullMax(100):setHull(50)
+            local ship1 = CpuShip():setHullMax(100):setHull(50)
+            local ship2 = CpuShip():setHullMax(100):setHull(50)
+            local ship3 = CpuShip():setHullMax(100):setHull(50)
             local fleet = Fleet:new({ship1, ship2, ship3})
 
-            local station = eeStationMock()
+            local station = SpaceStation()
             station:setRepairDocked(true)
 
             Fleet:withOrderQueue(fleet)
@@ -418,7 +418,7 @@ insulate("Order", function()
                 Order:dock("foo")
             end)
             assert.has_error(function()
-                Order:dock(eeCpuShipMock())
+                Order:dock(CpuShip())
             end)
         end)
     end)

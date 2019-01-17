@@ -13,7 +13,7 @@ insulate("ShipTemplateBased:withEvents", function()
     describe("onDestruction", function()
         it("is called when the shipTemplateBased is destroyed", function()
             local called = 0
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withEvents(station, {
                 onDestruction = function()
                     called = called + 1
@@ -33,7 +33,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("is called with the destroyed shipTemplateBased", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local calledArg
 
             ShipTemplateBased:withEvents(station, {
@@ -48,7 +48,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             ShipTemplateBased:withEvents(station, {
                 onDestruction = function()
                     error("Boom")
@@ -62,7 +62,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("fails if onDestruction is not a callback", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function()
                 ShipTemplateBased:withEvents(station, { onDestruction = 42})
@@ -73,8 +73,8 @@ insulate("ShipTemplateBased:withEvents", function()
     describe("onEnemyDetection", function()
         it("does only trigger when an enemy moves into range", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -112,9 +112,9 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("does not trigger multiple times when multiple enemies enter and leave", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy1 = eeCpuShipMock()
-            local enemy2 = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy1 = CpuShip()
+            local enemy2 = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy1) < range or distance(self, enemy2) < range
             end
@@ -159,8 +159,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("is called with the shipTemplateBased", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -179,8 +179,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -198,7 +198,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("fails if onDestruction is not a callback", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function()
                 ShipTemplateBased:withEvents(station, { onEnemyDetection = 42})
@@ -209,8 +209,8 @@ insulate("ShipTemplateBased:withEvents", function()
     describe("onEnemyClear", function()
         it("does only trigger when an enemy moves out of range", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -255,9 +255,9 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("does not trigger multiple times when multiple enemies enter and leave", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy1 = eeCpuShipMock()
-            local enemy2 = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy1 = CpuShip()
+            local enemy2 = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy1) < range or distance(self, enemy2) < range
             end
@@ -292,8 +292,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("is called with the shipTemplateBased", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -314,8 +314,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -333,7 +333,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("fails if onDestruction is not a callback", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function()
                 ShipTemplateBased:withEvents(station, { onEnemyClear = 42})
@@ -345,8 +345,8 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("is called when the shipTemplateBased looses shield and enemy is close", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -377,8 +377,8 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("is called when the shipTemplateBased looses hull and enemy is close", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -409,8 +409,8 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("is not called when hull or shield are damaged, but there is no enemy close", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -441,8 +441,8 @@ insulate("ShipTemplateBased:withEvents", function()
 
         it("is called after it has not received damage for 2 minutes", function()
             local called = 0
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -474,8 +474,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("is called with the shipTemplateBased", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             local calledArg
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
@@ -500,8 +500,8 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("does not fail if the callback errors", function()
-            local station = eeStationMock()
-            local enemy = eeCpuShipMock()
+            local station = SpaceStation()
+            local enemy = CpuShip()
             station.areEnemiesInRange = function(self, range)
                 return distance(self, enemy) < range
             end
@@ -526,7 +526,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
 
         it("fails if onBeingAttacked is not a callback", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
 
             assert.has_error(function()
                 ShipTemplateBased:withEvents(station, { onBeingAttacked = 42})

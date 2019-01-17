@@ -4,7 +4,7 @@ insulate("Missions:pickUp", function()
     require "test.mocks"
     require "test.asserts"
 
-    local player = eePlayerMock()
+    local player = PlayerSpaceship()
 
     describe("pickUp()", function()
         it("should create a valid Mission with an artifact", function()
@@ -99,13 +99,13 @@ insulate("Missions:pickUp", function()
             assert.is_same(2, mission:countPickUps())
         end)
         it("fails if first argument is invalid", function()
-            assert.has_error(function() Mission:pickUp(eeStationMock()) end)
+            assert.has_error(function() Mission:pickUp(SpaceStation()) end)
             assert.has_error(function() Mission:pickUp(nil) end)
             assert.has_error(function() Mission:pickUp(42) end)
-            assert.has_error(function() Mission:pickUp({eeStationMock(), SupplyDrop()}) end)
+            assert.has_error(function() Mission:pickUp({SpaceStation(), SupplyDrop()}) end)
 
             assert.has_error(function() Mission:pickUp(function()
-                return eeStationMock()
+                return SpaceStation()
             end) end)
             assert.has_error(function() Mission:pickUp(function()
                 return nil
@@ -114,7 +114,7 @@ insulate("Missions:pickUp", function()
                 return 42
             end) end)
             assert.has_error(function() Mission:pickUp(function()
-                return {eeStationMock(), SupplyDrop()}
+                return {SpaceStation(), SupplyDrop()}
             end) end)
         end)
     end)
@@ -122,7 +122,7 @@ insulate("Missions:pickUp", function()
     describe("happy scenario without return to station", function()
         local artifact = Artifact()
         local supplyDrop = SupplyDrop()
-        local player = eePlayerMock()
+        local player = PlayerSpaceship()
 
         local onStartCalled, onSuccessCalled, onEndCalled = 0, 0, 0
         local onPickUpCalled, onPickUpArg1, onPickUpArg2 = 0, nil, nil
@@ -177,8 +177,8 @@ insulate("Missions:pickUp", function()
     describe("fails if a pickup is picked up by a different player", function()
         local artifact = Artifact()
         local supplyDrop = SupplyDrop()
-        local player = eePlayerMock()
-        local evilPlayer = eePlayerMock()
+        local player = PlayerSpaceship()
+        local evilPlayer = PlayerSpaceship()
 
         local onPickUpCalled, onFailureCalled, onEndCalled = 0, 0, 0
         local mission = Missions:pickUp({artifact, supplyDrop}, {
@@ -199,7 +199,7 @@ insulate("Missions:pickUp", function()
     describe("fails if a pickup disappears", function()
         local artifact = Artifact()
         local supplyDrop = SupplyDrop()
-        local player = eePlayerMock()
+        local player = PlayerSpaceship()
 
         local mission = Missions:pickUp({artifact, supplyDrop})
 
@@ -216,8 +216,8 @@ insulate("Missions:pickUp", function()
     describe("happy scenario with return to station", function()
         local artifact = Artifact()
         local supplyDrop = SupplyDrop()
-        local station = eeStationMock()
-        local player = eePlayerMock()
+        local station = SpaceStation()
+        local player = PlayerSpaceship()
 
         local onStartCalled, onSuccessCalled, onEndCalled = 0, 0, 0
         local onPickUpCalled, onPickUpArg1, onPickUpArg2 = 0, nil, nil
@@ -280,8 +280,8 @@ insulate("Missions:pickUp", function()
     describe("fails if deliveryStation disappears", function()
         local artifact = Artifact()
         local supplyDrop = SupplyDrop()
-        local station = eeStationMock()
-        local player = eePlayerMock()
+        local station = SpaceStation()
+        local player = PlayerSpaceship()
 
         local mission = Missions:pickUp({artifact, supplyDrop}, station)
 

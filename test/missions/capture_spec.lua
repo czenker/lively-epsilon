@@ -4,11 +4,11 @@ insulate("Missions", function()
     require "test.mocks"
     require "test.asserts"
 
-    local player = eePlayerMock()
+    local player = PlayerSpaceship()
 
     describe("capture()", function()
         it("should create a valid Mission with one ship", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             local mission = Missions:capture(ship)
 
             assert.is_true(Mission:isMission(mission))
@@ -16,7 +16,7 @@ insulate("Missions", function()
             assert.is_nil(mission:getItemObject())
         end)
         it("should create a valid Mission with one station", function()
-            local station = eeStationMock()
+            local station = SpaceStation()
             local mission = Missions:capture(station)
 
             assert.is_true(Mission:isMission(mission))
@@ -31,7 +31,7 @@ insulate("Missions", function()
         end)
 
         it("should create a valid Mission if a callback function is given that returns one ship", function()
-            local ship = eeCpuShipMock()
+            local ship = CpuShip()
             local mission = Missions:capture(function() return ship end)
             assert.is_true(Mission:isMission(mission))
             mission:setPlayer(player)
@@ -59,14 +59,14 @@ insulate("Missions", function()
         end)
 
         it("fails if second parameter is a number", function()
-            assert.has_error(function() Missions:capture(eeCpuShipMock(), 3) end)
+            assert.has_error(function() Missions:capture(CpuShip(), 3) end)
         end)
     end)
 
     describe("onApproach()", function()
         it("is called when the player first enters around the bearer", function()
             local onApproachCalled = 0
-            local bearer = eeStationMock()
+            local bearer = SpaceStation()
             local mission
             mission = Missions:capture(bearer, {
                 approachDistance = 10000,
@@ -115,7 +115,7 @@ insulate("Missions", function()
     describe("onBearerDestruction()", function()
         it("is called when the bearer is destroyed", function()
             local onBearerDestructionCalled = 0
-            local bearer = eeStationMock()
+            local bearer = SpaceStation()
             local mission
             mission = Missions:capture(bearer, {
                 onBearerDestruction = function(callMission, lastX, lastY)
@@ -147,8 +147,8 @@ insulate("Missions", function()
             assert.is_true(isEeObject(mission:getItemObject()))
         end)
         it("allows to return a custom itemObject", function()
-            local bearer = eeStationMock()
-            local itemObject = eeCpuShipMock()
+            local bearer = SpaceStation()
+            local itemObject = CpuShip()
             local mission
             mission = Missions:capture(bearer, {
                 onBearerDestruction = function(callMission, lastX, lastY)
@@ -180,7 +180,7 @@ insulate("Missions", function()
         it("is called when the item is destroyed and the player is too far", function()
             local onItemDestructionCalled = 0
             local mission
-            mission = Missions:capture(eeStationMock(), {
+            mission = Missions:capture(SpaceStation(), {
                 onItemDestruction = function(callMission, lastX, lastY)
                     onItemDestructionCalled = onItemDestructionCalled + 1
                     assert.is_same(mission, callMission)
@@ -217,7 +217,7 @@ insulate("Missions", function()
         it("is called when the item is destroyed and the player is close enough", function()
             local onPickupCalled = 0
             local mission
-            mission = Missions:capture(eeStationMock(), {
+            mission = Missions:capture(SpaceStation(), {
                 onPickup = function(callMission)
                     onPickupCalled = onPickupCalled + 1
                     assert.is_same(mission, callMission)
@@ -252,8 +252,8 @@ insulate("Missions", function()
         it("is called when the player returns the collected item", function()
             local onDropOffCalled = 0
             local mission
-            mission = Missions:capture(eeStationMock(), {
-                dropOffTarget = eeStationMock(),
+            mission = Missions:capture(SpaceStation(), {
+                dropOffTarget = SpaceStation(),
                 onDropOff = function(callMission)
                     onDropOffCalled = onDropOffCalled + 1
                     assert.is_same(mission, callMission)
@@ -296,8 +296,8 @@ insulate("Missions", function()
         it("is called", function()
             local onDropOffTargetDestroyedCalled = 0
             local mission
-            mission = Missions:capture(eeStationMock(), {
-                dropOffTarget = eeStationMock(),
+            mission = Missions:capture(SpaceStation(), {
+                dropOffTarget = SpaceStation(),
                 onDropOffTargetDestroyed = function(callMission)
                     onDropOffTargetDestroyedCalled = onDropOffTargetDestroyedCalled + 1
                     assert.is_same(mission, callMission)
@@ -331,7 +331,7 @@ insulate("Missions", function()
 
 
     it("successful mission without drop off point", function()
-        local mission = Missions:capture(eeStationMock())
+        local mission = Missions:capture(SpaceStation())
 
         mission:getBearer():setPosition(0,0)
         player:setPosition(0,0)
@@ -349,8 +349,8 @@ insulate("Missions", function()
     end)
 
     it("successful mission with drop off point", function()
-        local mission = Missions:capture(eeStationMock(), {
-            dropOffTarget = eeStationMock()
+        local mission = Missions:capture(SpaceStation(), {
+            dropOffTarget = SpaceStation()
         })
 
         mission:getBearer():setPosition(0,0)
@@ -375,7 +375,7 @@ insulate("Missions", function()
     end)
 
     it("fails when itemObject is destroyed when the player is too far away", function()
-        local mission = Missions:capture(eeStationMock())
+        local mission = Missions:capture(SpaceStation())
 
         mission:getBearer():setPosition(0,0)
         player:setPosition(4200,4200)
