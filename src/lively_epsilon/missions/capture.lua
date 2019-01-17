@@ -13,7 +13,7 @@ Missions = Missions or {}
 -- onDropOff
 -- onDropOffTargetDestroyed
 Missions.capture = function(self, bearer, config)
-    if not isEeShipTemplateBased(bearer) and not isFunction(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. type(bearer), 2) end
+    if not isEeShipTemplateBased(bearer) and not isFunction(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. typeInspect(bearer), 2) end
 
     local cronId = Util.randomUuid()
 
@@ -28,7 +28,7 @@ Missions.capture = function(self, bearer, config)
 
     local itemObject
     local dropOffTarget = config.dropOffTarget
-    if not isNil(dropOffTarget) and not isEeStation(dropOffTarget) then error("Expected dropOffTarget to be a station, but got " .. type(dropOffTarget), 2) end
+    if not isNil(dropOffTarget) and not isEeStation(dropOffTarget) then error("Expected dropOffTarget to be a station, but got " .. typeInspect(dropOffTarget), 2) end
 
     local mission
     mission = Mission:new({
@@ -38,7 +38,7 @@ Missions.capture = function(self, bearer, config)
         onStart = function(self)
             if isFunction(bearer) then
                 bearer = bearer()
-                if not isEeShipTemplateBased(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. type(bearer), 2) end
+                if not isEeShipTemplateBased(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. typeInspect(bearer), 2) end
             end
 
             if isFunction(config.onStart) then config.onStart(self) end

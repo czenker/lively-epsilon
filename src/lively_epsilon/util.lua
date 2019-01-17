@@ -58,7 +58,7 @@ Util = {
     end,
 
     randomSort = function(input)
-        if not isTable(input) then error("Expected a table, but got " .. type(input), 2) end
+        if not isTable(input) then error("Expected a table, but got " .. typeInspect(input), 2) end
         local copy = {}
         local idx = 1
         for _, v in pairs(input) do
@@ -156,8 +156,8 @@ Util = {
     end,
 
     map = function(table, mappingFunc)
-        if not isTable(table) then error("expected first argument to be a table, but got " .. type(table), 2) end
-        if not isFunction(mappingFunc) then error("expected second argument to be a function, but got " .. type(mappingFunc), 2) end
+        if not isTable(table) then error("expected first argument to be a table, but got " .. typeInspect(table), 2) end
+        if not isFunction(mappingFunc) then error("expected second argument to be a function, but got " .. typeInspect(mappingFunc), 2) end
 
         local ret = {}
         for k,v in pairs(table) do
@@ -208,7 +208,7 @@ Util = {
     end,
 
     totalLaserDps = function(ship)
-        if not isEeShip(ship) and not isEePlayer(ship) then error("Expected ship to be a Ship or player, but got " .. type(ship), 2) end
+        if not isEeShip(ship) and not isEePlayer(ship) then error("Expected ship to be a Ship or player, but got " .. typeInspect(ship), 2) end
         local total = 0
         for i=1,16 do
             local cycleTime = ship:getBeamWeaponCycleTime(i)
@@ -222,7 +222,7 @@ Util = {
     end,
 
     totalShieldLevel = function(ship)
-        if not isEeShipTemplateBased(ship) then error("Expected ship to be a ShipTemplateBased, but got " .. type(ship), 2) end
+        if not isEeShipTemplateBased(ship) then error("Expected ship to be a ShipTemplateBased, but got " .. typeInspect(ship), 2) end
         local total = 0
         for i=0,ship:getShieldCount()-1 do
             total = total + ship:getShieldLevel(i)

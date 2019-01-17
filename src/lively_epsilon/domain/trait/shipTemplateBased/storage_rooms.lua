@@ -3,7 +3,7 @@ ShipTemplateBased = ShipTemplateBased or {}
 -- a storage system where one room exists for each product stored
 ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     if not isEeShipTemplateBased(spaceObject) then
-        error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2)
+        error ("Expected a shipTemplateBased object but got " .. typeInspect(spaceObject), 2)
     end
 
     if ShipTemplateBased:hasStorage(spaceObject) then
@@ -12,7 +12,7 @@ ShipTemplateBased.withStorageRooms = function (self, spaceObject, storages)
     end
 
     if type(storages) ~= "table" then
-        error("Expected a table with storage configuration, but got " .. type(storages), 2)
+        error("Expected a table with storage configuration, but got " .. typeInspect(storages), 2)
     end
 
     local storage = {}

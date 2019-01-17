@@ -3,7 +3,7 @@ Fleet = Fleet or {}
 
 local createOrderQueue = function(label, validator, cronIdFunc)
     return function(self, object)
-        if not validator(object) then error("Expected " .. label .. ", but got " .. type(object), 2) end
+        if not validator(object) then error("Expected " .. label .. ", but got " .. typeInspect(object), 2) end
 
         local currentOrder = nil
         local currentOrderExecutor = nil
@@ -47,7 +47,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                     tick()
                 elseif result == false then
                     if not isString(errorCode) then
-                        logWarning("Expected errorCode when tick() of an order fails, but got " .. type(errorCode))
+                        logWarning("Expected errorCode when tick() of an order fails, but got " .. typeInspect(errorCode))
                         errorCode = "unknown"
                     else
                         logDebug("Executing order for " .. cronId .. " failed with error code " .. errorCode)
@@ -58,7 +58,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
         end
 
         object.addOrder = function(self, order)
-            if not Order:isOrder(order) then error("Expected an order, but got " .. type(order), 2) end
+            if not Order:isOrder(order) then error("Expected an order, but got " .. typeInspect(order), 2) end
             table.insert(orderQueue, order)
 
             if currentOrder == nil then
@@ -81,7 +81,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
         end
 
         object.forceOrderNow = function(self, order)
-            if not Order:isOrder(order) then error("Expected an order, but got " .. type(order), 2) end
+            if not Order:isOrder(order) then error("Expected an order, but got " .. typeInspect(order), 2) end
 
             self:flushOrders()
             self:abortCurrentOrder()

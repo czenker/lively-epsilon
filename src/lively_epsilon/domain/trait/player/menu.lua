@@ -13,15 +13,15 @@ local positions = {"helms", "relay", "science", "weapons", "engineering"}
 -- - itemsPerPage
 Player.withMenu = function(self, player, config)
     config = config or {}
-    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
+    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasMenu(player) then error("Player already has menus", 2) end
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     config.backLabel = config.backLabel or "||<<"
-    if not isString(config.backLabel) then error("Expected backLabel to be a string, but got " .. type(config.backLabel), 2) end
+    if not isString(config.backLabel) then error("Expected backLabel to be a string, but got " .. typeInspect(config.backLabel), 2) end
     config.labelNext = config.labelNext or "=>"
-    if not isString(config.labelNext) then error("Expected labelNext to be a string, but got " .. type(config.labelNext), 2) end
+    if not isString(config.labelNext) then error("Expected labelNext to be a string, but got " .. typeInspect(config.labelNext), 2) end
     config.labelPrevious = config.labelPrevious or "<="
-    if not isString(config.labelPrevious) then error("Expected labelPrevious to be a string, but got " .. type(config.labelPrevious), 2) end
+    if not isString(config.labelPrevious) then error("Expected labelPrevious to be a string, but got " .. typeInspect(config.labelPrevious), 2) end
     config.itemsPerPage = config.itemsPerPage or 12
     if isNumber(config.itemsPerPage) then
         local itemsPerPosition = {}
@@ -30,10 +30,10 @@ Player.withMenu = function(self, player, config)
         end
         config.itemsPerPage = itemsPerPosition
     end
-    if not isTable(config.itemsPerPage) then error("Expected itemsPerPage to be a table, but got " .. type(config.itemsPerPage), 2) end
+    if not isTable(config.itemsPerPage) then error("Expected itemsPerPage to be a table, but got " .. typeInspect(config.itemsPerPage), 2) end
     for _,position in pairs(positions) do
         if config.itemsPerPage[position] == nil then error("Expected itemsPerPage to be set for " .. position, 3) end
-        if not isNumber(config.itemsPerPage[position]) then error("Expected itemsPerPage to be a positive number for " .. position .. ", but got " .. type(config.itemsPerPage[position]), 3) end
+        if not isNumber(config.itemsPerPage[position]) then error("Expected itemsPerPage to be a positive number for " .. position .. ", but got " .. typeInspect(config.itemsPerPage[position]), 3) end
         if config.itemsPerPage[position] < 4 then error("Expected itemsPerPage for " .. position .. " to be larger than 4, but got " .. config.itemsPerPage[position], 3) end
     end
 
@@ -138,7 +138,7 @@ Player.withMenu = function(self, player, config)
                         elseif isNil(err) then
                             -- OK: function had side-effects
                         else
-                            logError("Expected onClick to return nil, a string or a menu for menuItem " .. id .. ", but got " .. type(err), 2)
+                            logError("Expected onClick to return nil, a string or a menu for menuItem " .. id .. ", but got " .. typeInspect(err), 2)
                         end
                     end)
                 else
@@ -200,7 +200,7 @@ Player.withMenu = function(self, player, config)
     end
 
     player.addMenuItem = function(self, position, id, menuItem)
-        if not isString(position) then error("Expected position to be string, but got " .. type(position), 2) end
+        if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local adderName = "add" .. upperFirst(position) .. "MenuItem"
         if not isFunction(self[adderName]) then error("Invalid position " .. position, 2) end
 
@@ -208,7 +208,7 @@ Player.withMenu = function(self, player, config)
         return self
     end
     player.removeMenuItem = function(self, position, id)
-        if not isString(position) then error("Expected position to be string, but got " .. type(position), 2) end
+        if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local removerName = "remove" .. upperFirst(position) .. "MenuItem"
         if not isFunction(self[removerName]) then error("Invalid position " .. position, 2) end
 
@@ -216,7 +216,7 @@ Player.withMenu = function(self, player, config)
         return self
     end
     player.drawMenu = function(self, position, menu)
-        if not isString(position) then error("Expected position to be string, but got " .. type(position), 2) end
+        if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local drawName = "draw" .. upperFirst(position) .. "Menu"
         if not isFunction(self[drawName]) then error("Invalid position " .. position, 2) end
 

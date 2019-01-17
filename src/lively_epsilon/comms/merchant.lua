@@ -1,15 +1,15 @@
 Comms = Comms or {}
 
 Comms.merchantFactory = function(self, config)
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. type(config.label), 2) end
-    if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. type(config.mainScreen), 2) end
-    if not isFunction(config.buyScreen) then error("expected buyScreen to be a function, but got " .. type(config.buyScreen), 2) end
-    if not isFunction(config.buyProductScreen) then error("expected buyProductScreen to be a function, but got " .. type(config.buyProductScreen), 2) end
-    if not isFunction(config.buyProductConfirmScreen) then error("expected buyProductConfirmScreen to be a function, but got " .. type(config.buyProductConfirmScreen), 2) end
-    if not isFunction(config.sellScreen) then error("expected sellScreen to be a function, but got " .. type(config.sellScreen), 2) end
-    if not isFunction(config.sellProductScreen) then error("expected sellProductScreen to be a function, but got " .. type(config.sellProductScreen), 2) end
-    if not isFunction(config.sellProductConfirmScreen) then error("expected sellProductConfirmScreen to be a function, but got " .. type(config.sellProductConfirmScreen), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
+    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. typeInspect(config.label), 2) end
+    if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. typeInspect(config.mainScreen), 2) end
+    if not isFunction(config.buyScreen) then error("expected buyScreen to be a function, but got " .. typeInspect(config.buyScreen), 2) end
+    if not isFunction(config.buyProductScreen) then error("expected buyProductScreen to be a function, but got " .. typeInspect(config.buyProductScreen), 2) end
+    if not isFunction(config.buyProductConfirmScreen) then error("expected buyProductConfirmScreen to be a function, but got " .. typeInspect(config.buyProductConfirmScreen), 2) end
+    if not isFunction(config.sellScreen) then error("expected sellScreen to be a function, but got " .. typeInspect(config.sellScreen), 2) end
+    if not isFunction(config.sellProductScreen) then error("expected sellProductScreen to be a function, but got " .. typeInspect(config.sellProductScreen), 2) end
+    if not isFunction(config.sellProductConfirmScreen) then error("expected sellProductConfirmScreen to be a function, but got " .. typeInspect(config.sellProductConfirmScreen), 2) end
 
     local mainMenu
     local buyMenu

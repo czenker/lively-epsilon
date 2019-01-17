@@ -2,7 +2,7 @@ ShipTemplateBased = ShipTemplateBased or {}
 
 ShipTemplateBased.withComms = function (self, spaceObject, config)
     if not isEeShipTemplateBased(spaceObject) then
-        error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2)
+        error ("Expected a shipTemplateBased object but got " .. typeInspect(spaceObject), 2)
     end
     if ShipTemplateBased:hasComms(spaceObject) then
         error("Object with call sign " .. spaceObject:getCallSign() .. " already has comms configured.", 2)
@@ -26,9 +26,9 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
     end
 
     spaceObject.addComms = function(self, reply, id)
-        if not Comms.isReply(reply) then error("Expected reply to be a reply, but got " .. type(reply), 2) end
+        if not Comms.isReply(reply) then error("Expected reply to be a reply, but got " .. typeInspect(reply), 2) end
         id = id or Util.randomUuid()
-        if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+        if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
 
         comms[id] = reply
 
@@ -36,12 +36,12 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
     end
 
     spaceObject.removeComms = function(self, id)
-        if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+        if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
         comms[id] = nil
     end
 
     spaceObject.getComms = function(self, player)
-        if not isEePlayer(player) then error("Expected a Player, but got " .. type(player), 2) end
+        if not isEePlayer(player) then error("Expected a Player, but got " .. typeInspect(player), 2) end
         if overriddenComms ~= nil then
             if overriddenCommsOnce == true then
                 local tmp = overriddenComms
@@ -63,7 +63,7 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
             elseif isFunction(theHailText) then
                 hailText = theHailText(self, player)
                 if not isString(hailText) and not isNil(hailText) then
-                    logWarning("Expected hail text function to return a string or nil, but got " .. type(hailText), 2)
+                    logWarning("Expected hail text function to return a string or nil, but got " .. typeInspect(hailText), 2)
                     hailText = nil
                 end
             end
@@ -72,9 +72,9 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
     end
 
     spaceObject.overrideComms = function(self, screen, once)
-        if not Comms.isScreen(screen) and not isNil(screen) then error("Expected a screen, but got " .. type(screen), 2) end
+        if not Comms.isScreen(screen) and not isNil(screen) then error("Expected a screen, but got " .. typeInspect(screen), 2) end
         once = once or false
-        if not isBoolean(once) then error("Expected a boolean, but got " .. type(once), 2) end
+        if not isBoolean(once) then error("Expected a boolean, but got " .. typeInspect(once), 2) end
 
         overriddenComms = screen
         overriddenCommsOnce = once
@@ -92,7 +92,7 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
             spaceObject:addComms(comms, id)
         end
     elseif not isNil(config.comms) then
-        error("Expected comms to be a table of comms, but got " .. type(config.comms), 2)
+        error("Expected comms to be a table of comms, but got " .. typeInspect(config.comms), 2)
     end
 end
 

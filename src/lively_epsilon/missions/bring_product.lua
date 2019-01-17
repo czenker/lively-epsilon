@@ -11,17 +11,17 @@ Missions = Missions or {}
 -- successScreen
 -- onDelivery
 Missions.bringProduct = function(self, station, config)
-    if not isEeStation(station) then error("Expected a station, but got " .. type(station), 2) end
+    if not isEeStation(station) then error("Expected a station, but got " .. typeInspect(station), 2) end
     if not Station:hasComms(station) then error("Expected station to have comms, but it does not.", 2) end
 
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
     local product = config.product
-    if not Product:isProduct(product) then error("Expected a product, but got " .. type(product), 2) end
+    if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product), 2) end
 
     local totalAmount = config.amount or 1
     local broughtAmount = 0
-    if not isNumber(totalAmount) then error("Expected a number as amount, but got " .. type(totalAmount), 2) end
+    if not isNumber(totalAmount) then error("Expected a number as amount, but got " .. typeInspect(totalAmount), 2) end
     local commsId = "bring_product_" .. Util.randomUuid()
 
     local mission

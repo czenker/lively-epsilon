@@ -2,7 +2,7 @@ Station = Station or {}
 -- enhances a station with the possibility to buy and sell products
 Station.withMerchant = function (self, station, configuration)
     if not isEeStation(station) then
-        error ("Expected a station but got " .. type(station), 2)
+        error ("Expected a station but got " .. typeInspect(station), 2)
     end
     if not Station:hasStorage(station) then
         error ("station " .. station:getCallSign() .. " needs to have a storage configured", 2)
@@ -14,7 +14,7 @@ Station.withMerchant = function (self, station, configuration)
     end
 
     if type(configuration) ~= "table" then
-        error("Expected a table with configuration, but got " .. type(configuration), 2)
+        error("Expected a table with configuration, but got " .. typeInspect(configuration), 2)
     end
 
     local merchant = {}

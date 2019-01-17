@@ -1,7 +1,7 @@
 Order = Order or {}
 
 Order.dock = function(self, station, config)
-    if not isEeStation(station) then error("Expected to get a station, but got " .. type(station), 2) end
+    if not isEeStation(station) then error("Expected to get a station, but got " .. typeInspect(station), 2) end
     config = config or {}
     local order = Order:_generic(config)
 

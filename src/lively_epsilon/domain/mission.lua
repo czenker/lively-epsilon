@@ -54,7 +54,7 @@ Mission.new = function(self, config)
                     return false
                 else
                     if msg ~= true and not isNil(msg) then
-                        logWarning("Expected acceptCondition callback to return a string or boolean, but got " .. type(msg) .. ". Assuming true.")
+                        logWarning("Expected acceptCondition callback to return a string or boolean, but got " .. typeInspect(msg) .. ". Assuming true.")
                     end
                 end
             end

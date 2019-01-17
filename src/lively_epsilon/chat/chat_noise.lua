@@ -54,7 +54,7 @@ end
 
 -- a randomizer that generates chats between ships and stations
 Chatter.newNoise = function(self, chatter, config)
-    if not Chatter:isChatter(chatter) then error("Expected chatter to be a Chatter, but got " .. type(chatter), 2) end
+    if not Chatter:isChatter(chatter) then error("Expected chatter to be a Chatter, but got " .. typeInspect(chatter), 2) end
 
     config = config or {}
     if not isTable(config) then error("Config needs to be a table, but " .. type(config) .. " given", 2) end
@@ -113,9 +113,9 @@ Chatter.newNoise = function(self, chatter, config)
 
     return {
         addChatFactory = function(_, chatFactory, id)
-            if not Chatter:isChatFactory(chatFactory) then error("Expected chatFactory, but got " .. type(chatFactory)) end
+            if not Chatter:isChatFactory(chatFactory) then error("Expected chatFactory, but got " .. typeInspect(chatFactory)) end
             id = id or Util.randomUuid()
-            if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. type(id)) end
+            if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. typeInspect(id)) end
 
             factoryKeys[id] = id
             factories[id] = chatFactory
@@ -123,7 +123,7 @@ Chatter.newNoise = function(self, chatter, config)
             return id
         end,
         removeChatFactory = function(_, id)
-            if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. type(id)) end
+            if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. typeInspect(id)) end
             factories[id] = nil
             factoryKeys[id] = nil
         end,

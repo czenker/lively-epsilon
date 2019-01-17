@@ -4,7 +4,7 @@ local formationDistance = 700
 
 -- translate the result of getOrder into a method call to set the exact same order
 local getOrderToSetOrder = function(ship)
-    if not isEeShip(ship) then error("Expected a ship, but got " .. type(ship), 2) end
+    if not isEeShip(ship) then error("Expected a ship, but got " .. typeInspect(ship), 2) end
 
     local order = ship:getOrder()
 
@@ -38,9 +38,9 @@ local getOrderToSetOrder = function(ship)
 end
 
 Fleet.new = function(self, ships, config)
-    if not isTable(ships) then error("Exptected ships to be a table, but got " .. type(ships), 2) end
+    if not isTable(ships) then error("Exptected ships to be a table, but got " .. typeInspect(ships), 2) end
     for _, ship in pairs(ships) do
-        if not isEeShip(ship) then error("Expected all ships to be Ships, but got " .. type(ship), 2) end
+        if not isEeShip(ship) then error("Expected all ships to be Ships, but got " .. typeInspect(ship), 2) end
     end
 
     config = config or {}

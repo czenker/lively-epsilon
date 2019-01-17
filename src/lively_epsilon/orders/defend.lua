@@ -1,8 +1,8 @@
 Order = Order or {}
 
 local orderDefendLocation = function(order, x, y, config)
-    if not isNumber(x) then error("Expected x to be a number, but got " .. type(x), 3) end
-    if not isNumber(y) then error("Expected y to be a number, but got " .. type(y), 3) end
+    if not isNumber(x) then error("Expected x to be a number, but got " .. typeInspect(x), 3) end
+    if not isNumber(y) then error("Expected y to be a number, but got " .. typeInspect(y), 3) end
     local areEnemiesInRange = function(ship, range)
         for _,thing in pairs(getObjectsInRadius(x, y, range)) do
             if isEeShipTemplateBased(thing) and ship:isEnemy(thing) then return true end
@@ -45,7 +45,7 @@ local orderDefendLocation = function(order, x, y, config)
 end
 
 local orderDefendTarget = function(order, target, config)
-    if not isEeShipTemplateBased(target) then error("Expected target to be a shipTemplateBased, but got " .. type(target), 3) end
+    if not isEeShipTemplateBased(target) then error("Expected target to be a shipTemplateBased, but got " .. typeInspect(target), 3) end
     order.getShipExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -141,13 +141,13 @@ Order.defend = function(self, arg1, arg2, config)
     end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     config.minDefendTime = config.minDefendTime or 60
-    if not isNumber(config.minDefendTime) or config.minDefendTime < 0 then error("Expected minDefendTime to be a positive number, but got " .. type(config.minDefendTime), 2) end
+    if not isNumber(config.minDefendTime) or config.minDefendTime < 0 then error("Expected minDefendTime to be a positive number, but got " .. typeInspect(config.minDefendTime), 2) end
     config.minClearTime = config.minClearTime or 10
-    if not isNumber(config.minClearTime) or config.minClearTime < 0 then error("Expected minClearTime to be a positive number, but got " .. type(config.minClearTime), 2) end
+    if not isNumber(config.minClearTime) or config.minClearTime < 0 then error("Expected minClearTime to be a positive number, but got " .. typeInspect(config.minClearTime), 2) end
     config.range = config.range or getLongRangeRadarRange()
-    if not isNumber(config.range) or config.range < 0 then error("Expected range to be a positive number, but got " .. type(config.range), 2) end
+    if not isNumber(config.range) or config.range < 0 then error("Expected range to be a positive number, but got " .. typeInspect(config.range), 2) end
     local order = Order:_generic(config)
 
     if version == "location" then

@@ -1,7 +1,7 @@
 Order = Order or {}
 
 Order.attack = function(self, enemy, config)
-    if not isEeShipTemplateBased(enemy) then error("Expected to get a shipTemplateBased, but got " .. type(enemy), 2) end
+    if not isEeShipTemplateBased(enemy) then error("Expected to get a shipTemplateBased, but got " .. typeInspect(enemy), 2) end
     config = config or {}
     local order = Order:_generic(config)
 

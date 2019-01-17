@@ -1,21 +1,21 @@
 EventHandler = {
     new = function(self, config)
         config = config or {}
-        if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+        if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
         local failIfEventNameNotAllowed = function(eventName)
-            if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 3) end
+            if not isString(eventName) then error("Expected eventName to be a string, but got " .. typeInspect(eventName), 3) end
         end
         if config.allowedEvents ~= nil then
             local allowedEvents = {}
-            if not isTable(config.allowedEvents) then error("Expected config.allowedEvents to be a table, but got " .. type(config.allowedEvents), 3) end
+            if not isTable(config.allowedEvents) then error("Expected config.allowedEvents to be a table, but got " .. typeInspect(config.allowedEvents), 3) end
             for _, value in pairs(config.allowedEvents) do
-                if not isString(value) then error("Expected all values in config.allowedEvents to be strings, but got " .. type(value), 4) end
+                if not isString(value) then error("Expected all values in config.allowedEvents to be strings, but got " .. typeInspect(value), 4) end
 
                 allowedEvents[value] = value
             end
 
             failIfEventNameNotAllowed = function(eventName)
-                if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 3) end
+                if not isString(eventName) then error("Expected eventName to be a string, but got " .. typeInspect(eventName), 3) end
 
                 if allowedEvents[eventName] == nil then error("The eventName " .. eventName .. " is not valid. Most likely you misstyped the eventName.", 3) end
             end
@@ -26,9 +26,9 @@ EventHandler = {
         return {
             register = function(self, eventName, handler, priority)
                 failIfEventNameNotAllowed(eventName)
-                if not isFunction(handler) then error("Expected handler to be a function, but got " .. type(handler), 2) end
+                if not isFunction(handler) then error("Expected handler to be a function, but got " .. typeInspect(handler), 2) end
                 priority = priority or 0
-                if not isNumber(priority) then error("Expected prioritiy to be a number, but got " .. type(priority), 2) end
+                if not isNumber(priority) then error("Expected prioritiy to be a number, but got " .. typeInspect(priority), 2) end
 
                 events[eventName] = events[eventName] or {}
                 events[eventName][priority] = events[eventName][priority] or {}
@@ -36,7 +36,7 @@ EventHandler = {
             end,
             fire = function(self, eventName, arg)
                 failIfEventNameNotAllowed(eventName)
-                if not isString(eventName) then error("Expected eventName to be a string, but got " .. type(eventName), 2) end
+                if not isString(eventName) then error("Expected eventName to be a string, but got " .. typeInspect(eventName), 2) end
 
                 logDebug("Event " .. eventName .. " fired")
 

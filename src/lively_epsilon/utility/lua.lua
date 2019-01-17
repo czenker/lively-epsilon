@@ -24,7 +24,7 @@ function userCallback(func, ...)
         end
     else
         if not isNil(func) then
-            logError("Expected a function as callback, but got " .. type(func))
+            logError("Expected a function as callback, but got " .. typeInspect(func))
         end
         return nil
     end

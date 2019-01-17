@@ -15,20 +15,20 @@ local systems = {"reactor", "beamweapons", "missilesystem", "maneuver", "impulse
 
 Player.withPowerPresets = function(self, player, config)
     config = config or {}
-    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
+    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasPowerPresets(player) then error("Player " .. player:getCallSign() .. " already has power presets enabled", 2) end
     if not Player:hasMenu(player) then error("Expected player " .. player:getCallSign() .. " to have menus enabled, but it does not", 2) end
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     config.slots = config.slots or 8
-    if not isNumber(config.slots) or config.slots < 1 then error("Expected slots to be a positive number, but got " .. type(config.slots), 2) end
-    if not isString(config.label) then error("Expected label to be a string, but got " .. type(config.label), 2) end
-    if not isString(config.labelLoad) then error("Expected labelLoad to be a string, but got " .. type(config.labelLoad), 2) end
-    if not isString(config.labelStore) then error("Expected labelStore to be a string, but got " .. type(config.labelStore), 2) end
-    if not isString(config.labelLoadItem) then error("Expected labelLoadItem to be a string, but got " .. type(config.labelLoadItem), 2) end
-    if not isString(config.labelStoreItem) then error("Expected labelStoreItem to be a string, but got " .. type(config.labelStoreItem), 2) end
-    if not isNil(config.labelReset) and not isString(config.labelReset) then error("Expected labelReset to be nil or a string, but got " .. type(config.labelReset), 2) end
-    if not isNil(config.labelInfo) and not isString(config.labelInfo) then error("Expected labelInfo to be nil or a string, but got " .. type(config.labelInfo), 2) end
-    if not isNil(config.infoText) and not isString(config.infoText) then error("Expected infoText to be a string, but got " .. type(config.infoText), 2) end
+    if not isNumber(config.slots) or config.slots < 1 then error("Expected slots to be a positive number, but got " .. typeInspect(config.slots), 2) end
+    if not isString(config.label) then error("Expected label to be a string, but got " .. typeInspect(config.label), 2) end
+    if not isString(config.labelLoad) then error("Expected labelLoad to be a string, but got " .. typeInspect(config.labelLoad), 2) end
+    if not isString(config.labelStore) then error("Expected labelStore to be a string, but got " .. typeInspect(config.labelStore), 2) end
+    if not isString(config.labelLoadItem) then error("Expected labelLoadItem to be a string, but got " .. typeInspect(config.labelLoadItem), 2) end
+    if not isString(config.labelStoreItem) then error("Expected labelStoreItem to be a string, but got " .. typeInspect(config.labelStoreItem), 2) end
+    if not isNil(config.labelReset) and not isString(config.labelReset) then error("Expected labelReset to be nil or a string, but got " .. typeInspect(config.labelReset), 2) end
+    if not isNil(config.labelInfo) and not isString(config.labelInfo) then error("Expected labelInfo to be nil or a string, but got " .. typeInspect(config.labelInfo), 2) end
+    if not isNil(config.infoText) and not isString(config.infoText) then error("Expected infoText to be a string, but got " .. typeInspect(config.infoText), 2) end
 
     local loadMenu = Menu:new()
     loadMenu:addItem("heading", Menu:newItem(config.labelLoad, 0))

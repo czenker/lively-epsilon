@@ -31,7 +31,7 @@ local tick = 1
 
 Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     if not isEeShip(ship) then
-        error("Expected ship to be a CpuShip, but got " .. type(ship), 2)
+        error("Expected ship to be a CpuShip, but got " .. typeInspect(ship), 2)
     end
     if not ship:isValid() then
         error("Expected ship to be a valid CpuShip, but got a destroyed one", 2)
@@ -41,7 +41,7 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     end
 
     if not isEeStation(homeStation) then
-        error("Expected homeStation to be a Station, but got " .. type(homeStation), 2)
+        error("Expected homeStation to be a Station, but got " .. typeInspect(homeStation), 2)
     end
     if not Ship:hasStorage(homeStation) then
         error ("Station " .. homeStation:getCallSign() .. " needs to have storage configured", 2)
@@ -58,25 +58,25 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
     config.timeToUnload = config.timeToUnload or 15
-    if not isNumber(config.timeToUnload) then error("Expected timeToUnload to be a number, but got " .. type(config.timeToUnload), 2) end
+    if not isNumber(config.timeToUnload) then error("Expected timeToUnload to be a number, but got " .. typeInspect(config.timeToUnload), 2) end
     config.timeToMine = config.timeToMine or 15
-    if not isNumber(config.timeToMine) then error("Expected timeToMine to be a number, but got " .. type(config.timeToMine), 2) end
+    if not isNumber(config.timeToMine) then error("Expected timeToMine to be a number, but got " .. typeInspect(config.timeToMine), 2) end
     config.timeToGoHome = config.timeToGoHome or 900
-    if not isNumber(config.timeToGoHome) then error("Expected timeToGoHome to be a number, but got " .. type(config.timeToGoHome), 2) end
+    if not isNumber(config.timeToGoHome) then error("Expected timeToGoHome to be a number, but got " .. typeInspect(config.timeToGoHome), 2) end
     config.mineDistance = config.mineDistance or ship:getBeamWeaponRange(0)
-    if not isNumber(config.mineDistance) then error("Expected mineDistance to be a number, but got " .. type(config.mineDistance), 2) end
+    if not isNumber(config.mineDistance) then error("Expected mineDistance to be a number, but got " .. typeInspect(config.mineDistance), 2) end
     config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
-    if not isNumber(config.maxDistanceFromHome) then error("Expected maxDistanceFromHome to be a number, but got " .. type(config.maxDistanceFromHome), 2) end
+    if not isNumber(config.maxDistanceFromHome) then error("Expected maxDistanceFromHome to be a number, but got " .. typeInspect(config.maxDistanceFromHome), 2) end
     config.maxDistanceToNext = config.maxDistanceToNext or (getLongRangeRadarRange() / 2)
-    if not isNumber(config.maxDistanceToNext) then error("Expected maxDistanceToNext to be a number, but got " .. type(config.maxDistanceToNext), 2) end
+    if not isNumber(config.maxDistanceToNext) then error("Expected maxDistanceToNext to be a number, but got " .. typeInspect(config.maxDistanceToNext), 2) end
     config.onHeadingAsteroid = config.onHeadingAsteroid or function() end
-    if not isFunction(config.onHeadingAsteroid) then error("Expected onHeadingAsteroid to be a function, but got " .. type(config.onHeadingAsteroid), 2) end
+    if not isFunction(config.onHeadingAsteroid) then error("Expected onHeadingAsteroid to be a function, but got " .. typeInspect(config.onHeadingAsteroid), 2) end
     config.onAsteroidMined = config.onAsteroidMined or function() end
-    if not isFunction(config.onAsteroidMined) then error("Expected onAsteroidMined to be a function, but got " .. type(config.onAsteroidMined), 2) end
+    if not isFunction(config.onAsteroidMined) then error("Expected onAsteroidMined to be a function, but got " .. typeInspect(config.onAsteroidMined), 2) end
     config.onHeadingHome = config.onHeadingHome or function() end
-    if not isFunction(config.onHeadingHome) then error("Expected onHeadingHome to be a function, but got " .. type(config.onHeadingHome), 2) end
+    if not isFunction(config.onHeadingHome) then error("Expected onHeadingHome to be a function, but got " .. typeInspect(config.onHeadingHome), 2) end
     config.onUnloaded = config.onUnloaded or function() end
-    if not isFunction(config.onUnloaded) then error("Expected onUnloaded to be a function, but got " .. type(config.onUnloaded), 2) end
+    if not isFunction(config.onUnloaded) then error("Expected onUnloaded to be a function, but got " .. typeInspect(config.onUnloaded), 2) end
 
     local cronId = "miner_" .. ship:getCallSign()
     local timeToGoHome = config.timeToGoHome -- when counter falls lower than 0 the ship will stop gathering and fly home

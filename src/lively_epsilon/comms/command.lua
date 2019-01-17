@@ -2,15 +2,15 @@ Comms = Comms or {}
 
 --- Generates a comms
 Comms.commandFactory = function(self, config)
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. type(config.label), 2) end
-    if not isFunction(config.commandScreen) then error("expected commandScreen to be a function, but got " .. type(config.commandScreen), 2) end
-    if not isFunction(config.defendScreen) then error("expected defendScreen to be a function, but got " .. type(config.defendScreen), 2) end
-    if not isFunction(config.defendConfirmScreen) then error("expected defendConfirmScreen to be a function, but got " .. type(config.defendConfirmScreen), 2) end
-    if not isFunction(config.attackScreen) then error("expected attackScreen to be a function, but got " .. type(config.attackScreen), 2) end
-    if not isFunction(config.attackConfirmScreen) then error("expected attackConfirmScreen to be a function, but got " .. type(config.attackConfirmScreen), 2) end
-    if not isFunction(config.navigationScreen) then error("expected navigationScreen to be a function, but got " .. type(config.navigationScreen), 2) end
-    if not isFunction(config.navigationConfirmScreen) then error("expected navigationConfirmScreen to be a function, but got " .. type(config.navigationConfirmScreen), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
+    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. typeInspect(config.label), 2) end
+    if not isFunction(config.commandScreen) then error("expected commandScreen to be a function, but got " .. typeInspect(config.commandScreen), 2) end
+    if not isFunction(config.defendScreen) then error("expected defendScreen to be a function, but got " .. typeInspect(config.defendScreen), 2) end
+    if not isFunction(config.defendConfirmScreen) then error("expected defendConfirmScreen to be a function, but got " .. typeInspect(config.defendConfirmScreen), 2) end
+    if not isFunction(config.attackScreen) then error("expected attackScreen to be a function, but got " .. typeInspect(config.attackScreen), 2) end
+    if not isFunction(config.attackConfirmScreen) then error("expected attackConfirmScreen to be a function, but got " .. typeInspect(config.attackConfirmScreen), 2) end
+    if not isFunction(config.navigationScreen) then error("expected navigationScreen to be a function, but got " .. typeInspect(config.navigationScreen), 2) end
+    if not isFunction(config.navigationConfirmScreen) then error("expected navigationConfirmScreen to be a function, but got " .. typeInspect(config.navigationConfirmScreen), 2) end
 
     local commandMenu
     local defendMenu

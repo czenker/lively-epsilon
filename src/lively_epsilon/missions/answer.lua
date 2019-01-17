@@ -9,42 +9,42 @@ Missions = Missions or {}
 -- - correctAnswerResponse
 -- - wrongAnswerResponse
 Missions.answer = function(self, commable, question, playerSays, config)
-    if not isEeShipTemplateBased(commable) then error("Expected commable to be a ship or station, but got " .. type(commable), 2) end
+    if not isEeShipTemplateBased(commable) then error("Expected commable to be a ship or station, but got " .. typeInspect(commable), 2) end
     if not ShipTemplateBased:hasComms(commable) then error("Expected commable to have comms, but it does not.", 2) end
 
     if not isString(question) and not isFunction(question) then
-        error("Expected question to be a string or function, but got " .. type(question), 2)
+        error("Expected question to be a string or function, but got " .. typeInspect(question), 2)
     end
     if not isString(playerSays) and not isFunction(playerSays) then
-        error("Expected playerSays to be a string or function, but got " .. type(playerSays), 2)
+        error("Expected playerSays to be a string or function, but got " .. typeInspect(playerSays), 2)
     end
 
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
     if not isNil(config.correctAnswer) and not isFunction(config.correctAnswer) and not isString(config.correctAnswer) then
-        error("Expected correctAnswer to be nil, a string or function, but got " .. type(config.correctAnswer), 2)
+        error("Expected correctAnswer to be nil, a string or function, but got " .. typeInspect(config.correctAnswer), 2)
     end
     if isTable(config.wrongAnswers) then
         for i,answer in pairs(config.wrongAnswers) do
-            if not isString(answer) then error("Expected wrong answer " .. i .. " to be a string, but got " .. type(answer), 4) end
+            if not isString(answer) then error("Expected wrong answer " .. i .. " to be a string, but got " .. typeInspect(answer), 4) end
         end
     elseif not isFunction(config.wrongAnswers) then
-        error("Expected wrongAnswers to be a table or function, but got " .. type(config.wrongAnswers), 2)
+        error("Expected wrongAnswers to be a table or function, but got " .. typeInspect(config.wrongAnswers), 2)
     end
     --if not isNil(config.abortAnswer) and not isString(config.abortAnswer) and not isFunction(config.abortAnswer) then
-    --    error("Expected abortAnswer to be nil, a string or function, but got " .. type(config.abortAnswer), 2)
+    --    error("Expected abortAnswer to be nil, a string or function, but got " .. typeInspect(config.abortAnswer), 2)
     --end
     if not isNil(config.backLabel) and not isString(config.backLabel) and not isFunction(config.backLabel) then
-        error("Expected backLabel to be nil, a string or function, but got " .. type(config.backLabel), 2)
+        error("Expected backLabel to be nil, a string or function, but got " .. typeInspect(config.backLabel), 2)
     end
     if not isString(config.correctAnswerResponse) and not isFunction(config.correctAnswerResponse) then
-        error("Expected correctAnswerResponse to be a string or function, but got " .. type(config.correctAnswerResponse), 2)
+        error("Expected correctAnswerResponse to be a string or function, but got " .. typeInspect(config.correctAnswerResponse), 2)
     end
     if not isString(config.wrongAnswerResponse) and not isFunction(config.wrongAnswerResponse) then
-        error("Expected wrongAnswerResponse to be a string or function, but got " .. type(config.wrongAnswerResponse), 2)
+        error("Expected wrongAnswerResponse to be a string or function, but got " .. typeInspect(config.wrongAnswerResponse), 2)
     end
     --if not isNil(config.abortAnswerResponse) and not isString(config.abortAnswerResponse) and not isFunction(config.abortAnswerResponse) then
-    --    error("Expected abortAnswerResponse to be nil, a string or function, but got " .. type(config.abortAnswerResponse), 2)
+    --    error("Expected abortAnswerResponse to be nil, a string or function, but got " .. typeInspect(config.abortAnswerResponse), 2)
     --end
 
     local commsId = "mission_answer_" .. Util.randomUuid()
@@ -91,7 +91,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         elseif isFunction(config.wrongAnswers) then
             wrongAnswers = config.wrongAnswers(mission)
             if not isTable(wrongAnswers) then
-                logError("Expected answers to be a table, but got " .. type(wrongAnswers) .. ". Assuming nil.")
+                logError("Expected answers to be a table, but got " .. typeInspect(wrongAnswers) .. ". Assuming nil.")
                 wrongAnswers = {}
             end
         end
@@ -101,7 +101,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
             if isString(answer) then
                 table.insert(replies, Comms.reply(answer, wrongScreen(answer)))
             else
-                logError("Ignoring answer " .. i .. ", because it was expected to be a string, but got " .. type(answer))
+                logError("Ignoring answer " .. i .. ", because it was expected to be a string, but got " .. typeInspect(answer))
             end
         end
 
@@ -112,7 +112,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         elseif isFunction(config.correctAnswer) then
             correctAnswer = config.correctAnswer(mission)
             if not isNil(correctAnswer) and not isString(correctAnswer) then
-                logError("Expected correct answer to be nil or string, but got " .. type(correctAnswer) .. ". Assuming nil.")
+                logError("Expected correct answer to be nil or string, but got " .. typeInspect(correctAnswer) .. ". Assuming nil.")
                 correctAnswer = nil
             end
         end
@@ -130,7 +130,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         elseif isFunction(config.backLabel) then
             backLabel = config.backLabel(mission)
             if not isNil(backLabel) and not isString(backLabel) then
-                logError("Expected backLabel to be nil or string, but got " .. type(backLabel) .. ". Assuming nil.")
+                logError("Expected backLabel to be nil or string, but got " .. typeInspect(backLabel) .. ". Assuming nil.")
                 backLabel = nil
             end
         end
@@ -155,7 +155,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
             local playerText
             if isFunction(playerSays) then
                 playerText = playerSays(self)
-                if not isString(playerText) then logError("Expected playerSays to return a string, but got " .. type(playerText)) end
+                if not isString(playerText) then logError("Expected playerSays to return a string, but got " .. typeInspect(playerText)) end
             elseif isString(playerSays) then
                 playerText = playerSays
             end

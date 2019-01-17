@@ -19,11 +19,11 @@ Chatter.newFactory = function(self, cardinality, factory, config)
             return false
         end
         if config.filters[n] ~= nil then
-            if not isFunction(config.filters[n]) then error("Expected config.filter to be a function at position " .. n .. ", but got " .. type(config.filters[n])) end
+            if not isFunction(config.filters[n]) then error("Expected config.filter to be a function at position " .. n .. ", but got " .. typeInspect(config.filters[n])) end
 
             -- @TODO: error handling
             local ret = config.filters[n](table.unpack(args))
-            if not isBoolean(ret) then logWarning("Expected filter to return a boolean at position " .. n .. ", but got " .. type(ret) .. ". Assuming true.") end
+            if not isBoolean(ret) then logWarning("Expected filter to return a boolean at position " .. n .. ", but got " .. typeInspect(ret) .. ". Assuming true.") end
             if not ret then return false end
         end
         return true

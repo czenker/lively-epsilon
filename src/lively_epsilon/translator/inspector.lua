@@ -12,7 +12,7 @@ end
 
 -- inspects for missing or excessive translations
 Translator.inspect = function(self, translator)
-    if not Translator:isTranslator(translator) then error("Expected translator to be a Translator, but got " .. type(translator), 2) end
+    if not Translator:isTranslator(translator) then error("Expected translator to be a Translator, but got " .. typeInspect(translator), 2) end
     local locale1 = translator:getDefaultLocale()
     local locale2 = translator:getLocales()[1]
     if locale1 == locale2 then

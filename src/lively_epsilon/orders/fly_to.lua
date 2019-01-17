@@ -1,14 +1,14 @@
 Order = Order or {}
 
 Order.flyTo = function(self, x, y, config)
-    if not isNumber(x) then error("Expected x to be a number, but got " .. type(x), 2) end
-    if not isNumber(y) then error("Expected y to be a number, but got " .. type(y), 2) end
+    if not isNumber(x) then error("Expected x to be a number, but got " .. typeInspect(x), 2) end
+    if not isNumber(y) then error("Expected y to be a number, but got " .. typeInspect(y), 2) end
     config = config or {}
     local order = Order:_generic(config)
     config.minDistance = config.minDistance or 500
-    if not isNumber(config.minDistance) or config.minDistance < 0 then error("Expected minDistance to be a positive number, but got " .. type(config.minDistance), 2) end
+    if not isNumber(config.minDistance) or config.minDistance < 0 then error("Expected minDistance to be a positive number, but got " .. typeInspect(config.minDistance), 2) end
     config.ignoreEnemies = config.ignoreEnemies or false
-    if not isBoolean(config.ignoreEnemies) then error("Expected ignoreEnemies to be a boolean, but got " .. type(config.ignoreEnemies), 2) end
+    if not isBoolean(config.ignoreEnemies) then error("Expected ignoreEnemies to be a boolean, but got " .. typeInspect(config.ignoreEnemies), 2) end
 
     order.getLocation = function()
         return x, y

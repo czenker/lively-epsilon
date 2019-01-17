@@ -9,13 +9,13 @@ Menu.new = function(self)
                 menuItem = id
                 id = Util.randomUuid()
             end
-            if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
-            if not Menu:isMenuItem(menuItem) then error("Expected menuItem to be a MenuItem, but got " .. type(menuItem), 2) end
+            if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
+            if not Menu:isMenuItem(menuItem) then error("Expected menuItem to be a MenuItem, but got " .. typeInspect(menuItem), 2) end
 
             items[id] = menuItem
         end,
         removeItem = function(self, id)
-            if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+            if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
             items[id] = nil
         end,
         getItems = function()

@@ -4,12 +4,12 @@ Ship = Ship or {}
 -- onUndocking
 -- onDockInitiation
 Ship.withEvents  = function(self, ship, config)
-    if not isEeShip(ship) then error("Expected a ship, but got " .. type(ship), 2) end
+    if not isEeShip(ship) then error("Expected a ship, but got " .. typeInspect(ship), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if config.onDocking ~= nil and not isFunction(config.onDocking) then error("Expected onDocking to be a function, but got " .. type(config.onDocking), 2) end
-    if config.onUndocking ~= nil and not isFunction(config.onUndocking) then error("Expected onUndocking to be a function, but got " .. type(config.onUndocking), 2) end
-    if config.onDockInitiation ~= nil and not isFunction(config.onDockInitiation) then error("Expected onDockInitiation to be a function, but got " .. type(config.onDockInitiation), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
+    if config.onDocking ~= nil and not isFunction(config.onDocking) then error("Expected onDocking to be a function, but got " .. typeInspect(config.onDocking), 2) end
+    if config.onUndocking ~= nil and not isFunction(config.onUndocking) then error("Expected onUndocking to be a function, but got " .. typeInspect(config.onUndocking), 2) end
+    if config.onDockInitiation ~= nil and not isFunction(config.onDockInitiation) then error("Expected onDockInitiation to be a function, but got " .. typeInspect(config.onDockInitiation), 2) end
 
     local parentConfig = {
         onDestruction = config.onDestruction,

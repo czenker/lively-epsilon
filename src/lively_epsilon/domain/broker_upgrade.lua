@@ -12,29 +12,29 @@ BrokerUpgrade = BrokerUpgrade or {}
 BrokerUpgrade = {
     new = function(self, config)
         config = config or {}
-        if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+        if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
         local name = config.name
-        if not isString(name) then error("Expected name to be a string, but got " .. type(name), 2) end
+        if not isString(name) then error("Expected name to be a string, but got " .. typeInspect(name), 2) end
         local onInstall = config.onInstall or (function() end)
-        if not isFunction(onInstall) then error("Expected onInstall routine to be a function, but got " .. type(onInstall), 2) end
+        if not isFunction(onInstall) then error("Expected onInstall routine to be a function, but got " .. typeInspect(onInstall), 2) end
         local id = config.id or Util.randomUuid()
-        if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+        if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
         local description = config.description
-        if not isNil(description) and not isString(description) and not isFunction(description) then error("Expected description to be string or function, but got " .. type(description), 2) end
+        if not isNil(description) and not isString(description) and not isFunction(description) then error("Expected description to be string or function, but got " .. typeInspect(description), 2) end
         local installMessage = config.installMessage
-        if not isNil(installMessage) and not isString(installMessage) and not isFunction(installMessage) then error("Expected installMessage to be string or function, but got " .. type(installMessage), 2) end
+        if not isNil(installMessage) and not isString(installMessage) and not isFunction(installMessage) then error("Expected installMessage to be string or function, but got " .. typeInspect(installMessage), 2) end
         local price = config.price or 0
-        if not isNumber(price) then error("Expected price to be numeric, but got " .. type(price), 2) end
+        if not isNumber(price) then error("Expected price to be numeric, but got " .. typeInspect(price), 2) end
         local unique = config.unique or false
-        if not isBoolean(unique) then error("Expected unique to be boolean, but got " .. type(unique), 2) end
+        if not isBoolean(unique) then error("Expected unique to be boolean, but got " .. typeInspect(unique), 2) end
         local requiredUpgrade = config.requiredUpgrade
-        if not isNil(requiredUpgrade) and not isString(requiredUpgrade) and not BrokerUpgrade:isUpgrade(requiredUpgrade) then error("Expected requiredUpgrade to be an Upgrade or id, but got " .. type(requiredUpgrade), 2) end
+        if not isNil(requiredUpgrade) and not isString(requiredUpgrade) and not BrokerUpgrade:isUpgrade(requiredUpgrade) then error("Expected requiredUpgrade to be an Upgrade or id, but got " .. typeInspect(requiredUpgrade), 2) end
 
         return {
             getId = function() return id end,
             getName = function() return name end,
             install = function(self, player)
-                if not isEePlayer(player) then error("Expected player, but got " .. type(player), 2) end
+                if not isEePlayer(player) then error("Expected player, but got " .. typeInspect(player), 2) end
                 local success, msg = self:canBeInstalled(player)
                 if not success then error("Upgrade " .. id .. " can not be installed, because requirement is not fulfilled: " .. (msg or "")) end
 
@@ -46,7 +46,7 @@ BrokerUpgrade = {
             end,
             getPrice = function(self, player) return price end,
             canBeInstalled = function(self, player)
-                if not isEePlayer(player) then error("Expected player, but got " .. type(player), 2) end
+                if not isEePlayer(player) then error("Expected player, but got " .. typeInspect(player), 2) end
                 local success, msg = true, nil
                 if isFunction(config.canBeInstalled) then
                     success, msg = config.canBeInstalled(self, player)
@@ -61,7 +61,7 @@ BrokerUpgrade = {
                         logWarning("ignoring message on success in canBeInstalled")
                         msg = nil
                     elseif not isNil(msg) and not isString(msg) then
-                        logWarning("expected message to be a string, but got " .. type(msg) .. ", asuming nil.")
+                        logWarning("expected message to be a string, but got " .. typeInspect(msg) .. ", asuming nil.")
                         msg = nil
                     end
                 end
@@ -83,7 +83,7 @@ BrokerUpgrade = {
                 return success, msg
             end,
             getDescription = function(self, player)
-                if not isEePlayer(player) then error("Expected player to be a player object, but got " .. type(player), 2) end
+                if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(description) then
                     return description(self)
                 else
@@ -91,7 +91,7 @@ BrokerUpgrade = {
                 end
             end,
             getInstallMessage = function(self, player)
-                if not isEePlayer(player) then error("Expected player to be a player object, but got " .. type(player), 2) end
+                if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(installMessage) then
                     return installMessage(self)
                 else

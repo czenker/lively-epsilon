@@ -41,7 +41,7 @@ Missions.pickUp = function(self, things, deliveryStation, config)
     end
     if not isFunction(deliveryStation) then
         station = deliveryStation
-        if not isNil(station) and not isEeStation(station) then error("expected station to be a station or nil, but got " .. type(station), 3) end
+        if not isNil(station) and not isEeStation(station) then error("expected station to be a station or nil, but got " .. typeInspect(station), 3) end
     end
 
     config = config or {}
@@ -79,7 +79,7 @@ Missions.pickUp = function(self, things, deliveryStation, config)
             end
             if isFunction(deliveryStation) then
                 station = deliveryStation(self)
-                if not isEeStation(station) then error("expected station to be a station, but got " .. type(station), 2) end
+                if not isEeStation(station) then error("expected station to be a station, but got " .. typeInspect(station), 2) end
             end
 
             if isFunction(config.onStart) then config.onStart(self) end

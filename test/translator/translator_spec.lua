@@ -236,10 +236,10 @@ insulate("Translator:new()", function()
 
             assert.has_error(function()
                 translator:translate(42)
-            end, "Expected key to be a string, but got number")
+            end, "Expected key to be a string, but got <number>42")
             assert.has_error(function()
                 translator:translate({})
-            end, "Expected key to be a string, but got table")
+            end, "Expected key to be a string, but got <table>(size: 0)")
         end)
 
     end)

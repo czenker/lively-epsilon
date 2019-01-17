@@ -49,7 +49,7 @@ Mission.withBroker = function(self, mission, title, config)
     end
 
     mission.setHint = function(self, thing)
-        if not isNil(thing) and not isString(thing) and not isFunction(thing) then error("Expected nil, a function or string, but got " .. type(thing), 2) end
+        if not isNil(thing) and not isString(thing) and not isFunction(thing) then error("Expected nil, a function or string, but got " .. typeInspect(thing), 2) end
         hint = thing
     end
 
@@ -57,7 +57,7 @@ Mission.withBroker = function(self, mission, title, config)
         if isFunction(hint) then
             local ret = hint(self)
             if not isNil(ret) and not isString(ret) then
-                logError("Expected hint callback to return a string or nil, but got " .. type(ret))
+                logError("Expected hint callback to return a string or nil, but got " .. typeInspect(ret))
                 return nil
             else return ret end
         else

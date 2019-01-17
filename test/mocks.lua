@@ -112,6 +112,7 @@ function SpaceShip()
     local hasJumpDrive, hasWarpDrive = false, false
 
     return Util.mergeTables(ShipTemplateBasedObject(), {
+        typeName = "SpaceShip",
         getWeaponStorageMax = function(self, weapon)
             if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
             return weaponStorageMax[weapon]

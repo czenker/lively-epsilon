@@ -13,7 +13,7 @@ Missions = Missions or {}
 -- onCrewReturned
 -- onDestruction
 Missions.crewForRent = function(self, needy, config)
-    if not isEeShipTemplateBased(needy) and not isFunction(needy) then error("Expected needy to be a shipTemplateBased, but got " .. type(needy), 2) end
+    if not isEeShipTemplateBased(needy) and not isFunction(needy) then error("Expected needy to be a shipTemplateBased, but got " .. typeInspect(needy), 2) end
 
     local cronId = Util.randomUuid()
     local buttonId = Util.randomUuid()
@@ -24,9 +24,9 @@ Missions.crewForRent = function(self, needy, config)
     local maxDistance = config.distance or 1000
     local inRange = false
     local sendCrewLabel = config.sendCrewLabel or "Send Crew"
-    if not isString(sendCrewLabel) then error("Expected sendCrewLabel to be a string, but got " .. type(sendCrewLabel), 2) end
+    if not isString(sendCrewLabel) then error("Expected sendCrewLabel to be a string, but got " .. typeInspect(sendCrewLabel), 2) end
     local returnCrewLabel = config.returnCrewLabel or "Return Crew"
-    if not isString(returnCrewLabel) then error("Expected returnCrewLabel to be a string, but got " .. type(returnCrewLabel), 2) end
+    if not isString(returnCrewLabel) then error("Expected returnCrewLabel to be a string, but got " .. typeInspect(returnCrewLabel), 2) end
     local crewCount = config.crewCount or 1
     local duration = config.duration or 60
     local currentRepairCrewCount = 0
@@ -40,7 +40,7 @@ Missions.crewForRent = function(self, needy, config)
         onStart = function(self)
             if isFunction(needy) then
                 needy = needy()
-                if not isEeShipTemplateBased(needy) then error("Expected needy to be a shipTemplateBased, but got " .. type(needy), 2) end
+                if not isEeShipTemplateBased(needy) then error("Expected needy to be a shipTemplateBased, but got " .. typeInspect(needy), 2) end
             end
 
             if isFunction(config.onStart) then config.onStart(self) end

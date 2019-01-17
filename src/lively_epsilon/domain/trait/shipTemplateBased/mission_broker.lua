@@ -1,14 +1,14 @@
 ShipTemplateBased = ShipTemplateBased or {}
 
 ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
-    if not isEeShipTemplateBased(spaceObject) then error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2) end
+    if not isEeShipTemplateBased(spaceObject) then error ("Expected a shipTemplateBased object but got " .. typeInspect(spaceObject), 2) end
     if ShipTemplateBased:hasMissionBroker(spaceObject) then error ("Object with call sign " .. spaceObject:getCallSign() .. " already has a mission broker.", 2) end
 
     config = config or {}
     if not isTable(config) then
         error("Expected config to be a table, but " .. type(config) .. " given.", 2)
     end
-    if not isNil(config.missions) and not isTable(config.missions) then error("Missions need to be a table, but got " .. type(config.missions)) end
+    if not isNil(config.missions) and not isTable(config.missions) then error("Missions need to be a table, but got " .. typeInspect(config.missions)) end
 
     local missions = {}
 

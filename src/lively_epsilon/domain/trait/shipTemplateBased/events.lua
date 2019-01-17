@@ -5,13 +5,13 @@ ShipTemplateBased = ShipTemplateBased or {}
 -- onEnemyClear
 -- onBeingAttacked
 ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
-    if not isEeShipTemplateBased(shipTemplateBased) then error("Expected a shipTemplateBased, but got " .. type(shipTemplateBased), 2) end
+    if not isEeShipTemplateBased(shipTemplateBased) then error("Expected a shipTemplateBased, but got " .. typeInspect(shipTemplateBased), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if config.onDestruction ~= nil and not isFunction(config.onDestruction) then error("Expected onDestruction to be a function, but got " .. type(config.onDestruction), 2) end
-    if config.onEnemyDetection ~= nil and not isFunction(config.onEnemyDetection) then error("Expected onEnemyDetection to be a function, but got " .. type(config.onEnemyDetection), 2) end
-    if config.onEnemyClear ~= nil and not isFunction(config.onEnemyClear) then error("Expected onEnemyClear to be a function, but got " .. type(config.onEnemyClear), 2) end
-    if config.onBeingAttacked ~= nil and not isFunction(config.onBeingAttacked) then error("Expected onBeingAttacked to be a function, but got " .. type(config.onBeingAttacked), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
+    if config.onDestruction ~= nil and not isFunction(config.onDestruction) then error("Expected onDestruction to be a function, but got " .. typeInspect(config.onDestruction), 2) end
+    if config.onEnemyDetection ~= nil and not isFunction(config.onEnemyDetection) then error("Expected onEnemyDetection to be a function, but got " .. typeInspect(config.onEnemyDetection), 2) end
+    if config.onEnemyClear ~= nil and not isFunction(config.onEnemyClear) then error("Expected onEnemyClear to be a function, but got " .. typeInspect(config.onEnemyClear), 2) end
+    if config.onBeingAttacked ~= nil and not isFunction(config.onBeingAttacked) then error("Expected onBeingAttacked to be a function, but got " .. typeInspect(config.onBeingAttacked), 2) end
 
     if isFunction(config.onDestruction) then
         local tick = 0.1

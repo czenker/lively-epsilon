@@ -1,11 +1,11 @@
 Comms = Comms or {}
 
 Comms.upgradeBrokerFactory = function(self, config)
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
-    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. type(config.label), 2) end
-    if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. type(config.mainScreen), 2) end
-    if not isFunction(config.detailScreen) then error("expected detailScreen to be a function, but got " .. type(config.detailScreen), 2) end
-    if not isFunction(config.installScreen) then error("expected installScreen to be a function, but got " .. type(config.installScreen), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
+    if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. typeInspect(config.label), 2) end
+    if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. typeInspect(config.mainScreen), 2) end
+    if not isFunction(config.detailScreen) then error("expected detailScreen to be a function, but got " .. typeInspect(config.detailScreen), 2) end
+    if not isFunction(config.installScreen) then error("expected installScreen to be a function, but got " .. typeInspect(config.installScreen), 2) end
 
     local mainMenu
     local detailMenu

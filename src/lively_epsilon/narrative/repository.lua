@@ -52,7 +52,7 @@ Narrative.newRepository = function(self)
     return {
         addNarrative = function(self, config, id)
             config = config or {}
-            if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+            if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
             config = Util.deepCopy(config)
 
             -- @TODO: validation
@@ -63,7 +63,7 @@ Narrative.newRepository = function(self)
             if isString(config.to.tags) then config.to.tags = {config.to.tags} end
 
             id = id or Util.randomUuid()
-            if not isString(id) then error("Expected id to be a string, but got " .. type(id), 2) end
+            if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
 
             narratives[id] = config
 
@@ -73,7 +73,7 @@ Narrative.newRepository = function(self)
             return Util.size(narratives)
         end,
         addStation = function(self, station)
-            if not isEeStation(station) then error("Expected a Station, but got " .. type(station)) end
+            if not isEeStation(station) then error("Expected a Station, but got " .. typeInspect(station)) end
             stations[station] = station
         end,
         countStations = function(self)

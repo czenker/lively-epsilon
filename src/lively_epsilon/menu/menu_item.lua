@@ -1,7 +1,7 @@
 Menu = Menu or {}
 
 Menu.newItem = function(self, label, onClick, priority)
-    if not isString(label) then error("Expected label to be a string, but got " .. type(label), 2) end
+    if not isString(label) then error("Expected label to be a string, but got " .. typeInspect(label), 2) end
     if isNumber(onClick) then
         priority = onClick
         onClick = nil
@@ -10,9 +10,9 @@ Menu.newItem = function(self, label, onClick, priority)
         local backupOnClick = onClick
         onClick = function() return backupOnClick end
     end
-    if not isNil(onClick) and not isFunction(onClick) then error("Expected onClick to be nil or a function, but got " .. type(onClick), 2) end
+    if not isNil(onClick) and not isFunction(onClick) then error("Expected onClick to be nil or a function, but got " .. typeInspect(onClick), 2) end
     priority = priority or 0
-    if not isNumber(priority) then error("Expected priority to be a number, but got " .. type(priority), 2) end
+    if not isNumber(priority) then error("Expected priority to be a number, but got " .. typeInspect(priority), 2) end
 
     return {
         getLabel = function()

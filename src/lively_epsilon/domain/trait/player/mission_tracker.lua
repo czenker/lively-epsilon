@@ -1,12 +1,12 @@
 Player = Player or {}
 
 Player.withMissionTracker = function(self, player)
-    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
+    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasMissionTracker(player) then error("Player already has a mission tracker" .. type(player), 2) end
     local missions = {}
 
     player.addMission = function(self, mission)
-        if not Mission:isMission(mission) then error("Expected mission to be a Mission, but got " .. type(mission)) end
+        if not Mission:isMission(mission) then error("Expected mission to be a Mission, but got " .. typeInspect(mission)) end
         missions[mission:getId()] = mission
     end
 

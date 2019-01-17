@@ -3,7 +3,7 @@ Generic = Generic or {}
 -- allows to tag the object
 Generic.withTags = function (self, thing, ...)
     if not isTable(thing) then
-        error ("Expected an object but got " .. type(thing), 2)
+        error ("Expected an object but got " .. typeInspect(thing), 2)
     end
 
     local tags = {}
@@ -16,11 +16,11 @@ Generic.withTags = function (self, thing, ...)
         return ret
     end
     thing.hasTag = function(self, tag)
-        if not isString(tag) then error("a tag needs to be a string, but got " .. type(tag), 2) end
+        if not isString(tag) then error("a tag needs to be a string, but got " .. typeInspect(tag), 2) end
         return tags[tag] ~= nil
     end
     thing.addTag = function(self, tag)
-        if not isString(tag) then error("a tag needs to be a string, but got " .. type(tag), 2) end
+        if not isString(tag) then error("a tag needs to be a string, but got " .. typeInspect(tag), 2) end
         tags[tag] = true
     end
     thing.addTags = function(self, ...)
@@ -29,7 +29,7 @@ Generic.withTags = function (self, thing, ...)
         end
     end
     thing.removeTag = function(self, tag)
-        if not isString(tag) then error("a tag needs to be a string, but got " .. type(tag), 2) end
+        if not isString(tag) then error("a tag needs to be a string, but got " .. typeInspect(tag), 2) end
         tags[tag] = nil
     end
     thing.removeTags = function(self, ...)

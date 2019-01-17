@@ -5,10 +5,10 @@ local function isWeapon(product)
 end
 
 Player.withStorage = function(self, player, config)
-    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. type(player), 2) end
+    if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasStorage(player) then error("Player already has a storage" .. type(player), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but got " .. type(config), 2) end
+    if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     config.maxStorage = config.maxStorage or 100
 
     local maxStorage = config.maxStorage
@@ -27,7 +27,7 @@ Player.withStorage = function(self, player, config)
     end
 
     player.getProductStorage = function(self, product)
-        if not Product:isProduct(product) then error("Expected a product, but got " .. type(product)) end
+        if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
         if isWeapon(product) then
             return player:getWeaponStorage(product:getId())
         elseif storage[product] == nil then
@@ -38,7 +38,7 @@ Player.withStorage = function(self, player, config)
     end
 
     player.getMaxProductStorage = function(self, product)
-        if not Product:isProduct(product) then error("Expected a product, but got " .. type(product)) end
+        if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
 
         if isWeapon(product) then
             return player:getWeaponStorageMax(product:getId())
@@ -48,7 +48,7 @@ Player.withStorage = function(self, player, config)
     end
 
     player.getEmptyProductStorage = function(self, product)
-        if not Product:isProduct(product) then error("Expected a product, but got " .. type(product)) end
+        if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
 
         if isWeapon(product) then
             return player:getWeaponStorageMax(product:getId()) - player:getWeaponStorage(product:getId())
@@ -58,8 +58,8 @@ Player.withStorage = function(self, player, config)
     end
 
     player.modifyProductStorage = function(self, product, amount)
-        if not Product:isProduct(product) then error("Expected a product, but got " .. type(product)) end
-        if not isNumber(amount) then error("Expected a number, but got " .. type(amount)) end
+        if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
+        if not isNumber(amount) then error("Expected a number, but got " .. typeInspect(amount)) end
 
         if isWeapon(product) then
             player:setWeaponStorage(product:getId(), player:getWeaponStorage(product:getId()) + amount)

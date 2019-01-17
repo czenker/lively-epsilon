@@ -1,14 +1,14 @@
 ShipTemplateBased = ShipTemplateBased or {}
 
 ShipTemplateBased.withUpgradeBroker = function (self, spaceObject, config)
-    if not isEeShipTemplateBased(spaceObject) then error ("Expected a shipTemplateBased object but got " .. type(spaceObject), 2) end
+    if not isEeShipTemplateBased(spaceObject) then error ("Expected a shipTemplateBased object but got " .. typeInspect(spaceObject), 2) end
     if ShipTemplateBased:hasUpgradeBroker(spaceObject) then error ("Object with call sign " .. spaceObject:getCallSign() .. " already has an upgrade broker.", 2) end
 
     config = config or {}
     if not isTable(config) then
         error("Expected config to be a table, but " .. type(config) .. " given.", 2)
     end
-    if not isNil(config.upgrades) and not isTable(config.upgrades) then error("Upgrades need to be a table, but got " .. type(config.upgrades)) end
+    if not isNil(config.upgrades) and not isTable(config.upgrades) then error("Upgrades need to be a table, but got " .. typeInspect(config.upgrades)) end
 
     local upgrades = {}
 
