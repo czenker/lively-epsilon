@@ -107,6 +107,9 @@ function SpaceShip()
 
     local systemPower = {}
     local systemCoolant = {}
+    local systemHealth = {}
+
+    local hasJumpDrive, hasWarpDrive = false, false
 
     return Util.mergeTables(eeShipTemplateBasedMock(), {
         getWeaponStorageMax = function(self, weapon)
@@ -141,8 +144,13 @@ function SpaceShip()
         fullScannedByPlayer = function(self) scannedState = "full"; return self end,
         setDockedAt = function(self, station) docked = station end,
         isDocked = function(self, station) return station == docked end,
-        setSystemHealth = noop,
-        getSystemHealth = function() return 1 end,
+        setSystemHealth = function(self, system, health)
+            systemHealth[system] = math.min(math.max(health, -1), 1)
+            return self
+        end,
+        getSystemHealth = function(self, system)
+            return systemHealth[system] or 1
+        end,
         setSystemPower = function(self, system, power)
             systemPower[system] = power
             return self
@@ -156,6 +164,20 @@ function SpaceShip()
         end,
         getSystemCoolant = function(self, system)
             return systemCoolant[system] or 0
+        end,
+        hasJumpDrive = function(self)
+            return hasJumpDrive
+        end,
+        setJumpDrive = function(self, has)
+            hasJumpDrive = has
+            return self
+        end,
+        hasWarpDrive = function(self)
+            return hasWarpDrive
+        end,
+        setWarpDrive = function(self, has)
+            hasWarpDrive = has
+            return self
         end,
     })
 end
