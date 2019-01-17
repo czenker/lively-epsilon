@@ -98,6 +98,9 @@ BrokerUpgrade = {
                     return installMessage
                 end
             end,
+            getRequiredUpgradeString = function(self)
+                return config.requiredUpgrade
+            end,
         }
     end,
     isUpgrade = function(self, thing)
@@ -108,7 +111,8 @@ BrokerUpgrade = {
                 isFunction(thing.getName) and
                 isFunction(thing.getPrice) and
                 isFunction(thing.getDescription) and
-                isFunction(thing.getInstallMessage)
+                isFunction(thing.getInstallMessage) and
+                isFunction(thing.getRequiredUpgradeString)
     end
 }
 

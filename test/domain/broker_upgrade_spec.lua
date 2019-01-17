@@ -315,6 +315,15 @@ insulate("BrokerUpgrade", function()
 
                 assert.is_true(upgrade:canBeInstalled(player))
             end)
+            it("exposes the required upgrade", function()
+                local required = upgradeMock({id = "required"})
+                local upgrade = upgradeMock({requiredUpgrade = "required"})
+                local player = eePlayerMock()
+                Player:withUpgradeTracker(player)
+                player:addUpgrade(required)
+
+                assert.is_same("required", upgrade:getRequiredUpgradeString())
+            end)
         end)
 
     end)
