@@ -30,9 +30,14 @@ function isEeSupplyDrop(thing)
     return isEeObject(thing) and thing.typeName == "SupplyDrop"
 end
 
+-- check if the given variable is a SpaceShip object from EmptyEpsilon
+function isEeSpaceShip(thing)
+    return isEeShip(thing) or isEePlayer(thing)
+end
+
 -- check if the given variable is a ShipTemplateBased object from EmptyEpsilon
 function isEeShipTemplateBased(thing)
-    return isEeShip(thing) or isEePlayer(thing) or isEeStation(thing)
+    return isEeSpaceShip(thing) or isEeStation(thing)
 end
 
 -- check if the given variable is an Asteroid object from EmptyEpsilon
