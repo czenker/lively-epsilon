@@ -21,7 +21,10 @@ local createOrderQueue = function(label, validator, cronIdFunc)
             tick()
         end
         tick = function()
-            if not object:isValid() then logInfo("aborting order queue " .. cronId .. " because " .. label .. " is no longer valid") end
+            if not object:isValid() then
+                logInfo("aborting order queue " .. cronId .. " because " .. label .. " is no longer valid")
+                Cron.abort(cronId)
+            end
             if currentOrder == nil and (delayUntil == nil or delayUntil <= Cron.now()) then
                 delayUntil = nil
                 currentOrder = table.remove(orderQueue, 1)
