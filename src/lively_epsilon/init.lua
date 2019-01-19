@@ -11,6 +11,7 @@ local myPackages = {
     "src/lively_epsilon/utility/ee.lua",
     "src/lively_epsilon/utility/log.lua",
     "src/lively_epsilon/utility/lua.lua",
+    "src/lively_epsilon/utility/type_inspect.lua",
     "src/lively_epsilon/utility/comms.lua",
 
     "src/lively_epsilon/chat/chatter.lua",
