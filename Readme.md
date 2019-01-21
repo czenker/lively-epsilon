@@ -36,7 +36,7 @@ The boilerplate code for activating the framework is pretty simple:
 -- Description: Testing Lively Epsilon
 -- Type: Mission
 
-require "src/lively_epsilon/init.lua"
+require "lively_epsilon/init.lua"
 
 function init()
     -- add your code here

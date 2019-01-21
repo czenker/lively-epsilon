@@ -1,15 +1,9 @@
 .*
-!.git*
 *~
-
-*.lua
+!.git*
 !.busted
 !.luacov
 !.travis.yml
 
 luacov.*.out
-!scenario_00_aaa.lua
-!/src/**/*.lua
-!/example/**/*.lua
-!/test/**/*.lua
-!/resources/**/*.lua
+utils.lua

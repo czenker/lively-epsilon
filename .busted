@@ -2,7 +2,7 @@ return {
     default = {
         verbose = true,
         ROOT = {
-            "test/",
+            "spec/",
         },
     }
 }

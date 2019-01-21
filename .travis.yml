@@ -19,7 +19,7 @@ install:
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
 #  - busted --verbose --coverage test/
-  - busted --verbose --coverage test/
+  - busted --verbose --coverage
 
 after_success:
 #  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
