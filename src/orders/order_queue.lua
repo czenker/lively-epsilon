@@ -24,6 +24,7 @@ local createOrderQueue = function(label, validator, cronIdFunc)
             if not object:isValid() then
                 logInfo("aborting order queue " .. cronId .. " because " .. label .. " is no longer valid")
                 Cron.abort(cronId)
+                return
             end
             if currentOrder == nil and (delayUntil == nil or delayUntil <= Cron.now()) then
                 delayUntil = nil
@@ -43,12 +44,14 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                 end
                 local result, errorCode = currentOrderExecutor:tick(object)
                 if result == true then
+                    -- if the order was successfully executed
                     userCallback(currentOrder.onCompletion, currentOrder, object)
                     delayUntil = Cron.now() + currentOrder:getDelayAfter()
 
                     currentOrder, currentOrderExecutor = nil, nil
                     tick()
                 elseif result == false then
+                    -- if the order can no longer be executed
                     if not isString(errorCode) then
                         logWarning("Expected errorCode when tick() of an order fails, but got " .. typeInspect(errorCode))
                         errorCode = "unknown"

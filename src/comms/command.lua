@@ -46,7 +46,7 @@ Comms.commandFactory = function(self, config)
         end
 
         for _,obj in pairs(comms_target:getObjectsInRange(getLongRangeRadarRange())) do
-            if isEeStation(obj) and not comms_target:isEnemy(obj) then
+            if isEeStation(obj) and obj:isValid() and not comms_target:isEnemy(obj) then
                 table.insert(targets, {
                     target = obj,
                     link = defendConfirmMenu({target = obj}),
@@ -85,7 +85,7 @@ Comms.commandFactory = function(self, config)
         local targets = {}
 
         for _,obj in pairs(comms_target:getObjectsInRange(getLongRangeRadarRange())) do
-            if isEeShipTemplateBased(obj) and comms_target:isEnemy(obj) then
+            if isEeShipTemplateBased(obj) and obj:isValid() and comms_target:isEnemy(obj) then
                 table.insert(targets, {
                     target = obj,
                     link = attackConfirmMenu({target = obj}),
@@ -134,7 +134,7 @@ Comms.commandFactory = function(self, config)
         end
 
         for _,obj in pairs(comms_target:getObjectsInRange(getLongRangeRadarRange())) do
-            if isEeStation(obj) and not comms_target:isEnemy(obj) then
+            if isEeStation(obj) and obj:isValid() and not comms_target:isEnemy(obj) then
                 table.insert(targets, {
                     target = obj,
                     link = navigationConfirmMenu({target = obj}),

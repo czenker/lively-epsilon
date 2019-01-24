@@ -5,7 +5,7 @@ local orderDefendLocation = function(order, x, y, config)
     if not isNumber(y) then error("Expected y to be a number, but got " .. typeInspect(y), 3) end
     local areEnemiesInRange = function(ship, range)
         for _,thing in pairs(getObjectsInRadius(x, y, range)) do
-            if isEeShipTemplateBased(thing) and ship:isEnemy(thing) then return true end
+            if isEeShipTemplateBased(thing) and thing:isValid() and ship:isEnemy(thing) then return true end
         end
         return false
     end

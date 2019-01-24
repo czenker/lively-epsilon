@@ -65,7 +65,7 @@ Order.dock = function(self, station, config)
                 if not station:isValid() then
                     return false, "invalid_station"
                 end
-                if station:isEnemy(ship) then
+                if ship:isEnemy(station) then
                     return false, "enemy_station"
                 end
                 if ship:isDocked(station) and isReady(ship) then
@@ -84,7 +84,7 @@ Order.dock = function(self, station, config)
                 if not station:isValid() then
                     return false, "invalid_station"
                 end
-                if station:isEnemy(fleet:getLeader()) then
+                if fleet:getLeader():isEnemy(station) then
                     return false, "enemy_station"
                 end
                 if fleet:getLeader():isDocked(station) then
