@@ -16,7 +16,7 @@ Player.withMenu = function(self, player, config)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasMenu(player) then error("Player already has menus", 2) end
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
-    config.backLabel = config.backLabel or "||<<"
+    config.backLabel = config.backLabel or "|<<"
     if not isString(config.backLabel) then error("Expected backLabel to be a string, but got " .. typeInspect(config.backLabel), 2) end
     config.labelNext = config.labelNext or "=>"
     if not isString(config.labelNext) then error("Expected labelNext to be a string, but got " .. typeInspect(config.labelNext), 2) end
