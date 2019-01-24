@@ -3,6 +3,7 @@ insulate("EventHandler", function()
     require "init"
     require "spec.mocks"
     require "spec.asserts"
+    require "spec.log_catcher"
 
     it("allow to register a listener", function()
         local called = 0
@@ -151,6 +152,36 @@ insulate("EventHandler", function()
         eh:fire("test")
 
         assert.is_true(called)
+    end)
+
+    it("does not call an event twice if \"unique\" is set", function()
+        local called = 0
+        local eh = EventHandler:new({
+            unique = true,
+        })
+
+        eh:register("test", function() called = called + 1 end)
+
+        eh:fire("test")
+        assert.is_same(1, called)
+        eh:fire("test")
+        assert.is_same(1, called)
+    end)
+
+    it("issues a warning if an event listener is added for an event that has already been fired", function()
+        withLogCatcher(function(logs)
+            local eh = EventHandler:new({
+                unique = true,
+            })
+
+            eh:register("test", function() end)
+
+            eh:fire("test")
+            assert.is_nil(logs:popLastWarning())
+
+            eh:register("test", function() end)
+            assert.is_not_nil(logs:popLastWarning())
+        end)
     end)
 
 

@@ -20,7 +20,10 @@ EventHandler = {
                 if allowedEvents[eventName] == nil then error("The eventName " .. eventName .. " is not valid. Most likely you misstyped the eventName.", 3) end
             end
         end
+        config.unique = config.unique or false
+        if not isBoolean(config.unique) then error("Expected unique to be a boolean, but got " .. typeInspect(config.unique), 2) end
 
+        local calledEvents = {} -- key = eventName, value = number of count
         local events = {}
 
         return {
@@ -29,6 +32,9 @@ EventHandler = {
                 if not isFunction(handler) then error("Expected handler to be a function, but got " .. typeInspect(handler), 2) end
                 priority = priority or 0
                 if not isNumber(priority) then error("Expected prioritiy to be a number, but got " .. typeInspect(priority), 2) end
+                if config.unique and calledEvents[eventName] ~= nil then
+                    logWarning("It does not make sense to register an event handler for " .. eventName .. " because it was already called and will not be called again.")
+                end
 
                 events[eventName] = events[eventName] or {}
                 events[eventName][priority] = events[eventName][priority] or {}
@@ -38,7 +44,12 @@ EventHandler = {
                 failIfEventNameNotAllowed(eventName)
                 if not isString(eventName) then error("Expected eventName to be a string, but got " .. typeInspect(eventName), 2) end
 
-                logDebug("Event " .. eventName .. " fired")
+                if config.unique and calledEvents[eventName] ~= nil then
+                    logWarning("The event " .. eventName .. " will not be fired a second time.")
+                    return
+                end
+
+                calledEvents[eventName] = (calledEvents[eventName] or 0) + 1
 
                 if events[eventName] ~= nil then
                     local priorities = {}
@@ -60,6 +71,8 @@ EventHandler = {
                         end
                     end
                 end
+
+                logDebug("Event " .. eventName .. " fired")
             end
         }
     end
