@@ -24,14 +24,14 @@ end
 logWarning = function (message)
     local logLvl = logLevel()
     if logLvl == nil or logLvl == "DEBUG" or logLvl == "INFO" or logLvl == "WARNING" then
-        print((useAnsi() and yellow or "") .. "[WARN] " .. message .. (useAnsi() and reset or ""))
+        print((useAnsi() and yellow or "") .. "[WARN]  " .. message .. (useAnsi() and reset or ""))
     end
 end
 
 logInfo = function (message)
     local logLvl = logLevel()
     if logLvl == nil or logLvl == "DEBUG" or logLvl == "INFO" then
-        print((useAnsi() and cyan or "") .. "[INFO] " .. message .. (useAnsi() and reset or ""))
+        print((useAnsi() and cyan or "") .. "[INFO]  " .. message .. (useAnsi() and reset or ""))
     end
 end
 
