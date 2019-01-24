@@ -246,6 +246,43 @@ insulate("Ship:behaveAsMiner()", function()
                 assert.is_same("asteroid", miner:getMinerState())
             end) end)
         end)
+
+        it("idles when home base is destroyed", function()
+            withUniverse(function(universe) withLogCatcher(function(logs)
+                finally(universe.destroy)
+
+                local station = mockValidStation():setCallSign("Home")
+                local miner = mockValidMiner():setCallSign("Dummy")
+                local asteroid = Asteroid()
+
+                station:setPosition(0, 0)
+                miner:setPosition(0, 0)
+                miner:setDockedAt(station)
+                asteroid:setPosition(1000, 0)
+
+                universe:add(station, miner, asteroid)
+
+                Ship:behaveAsMiner(miner, station, function()
+                    return {
+                        [product] = 42,
+                    }
+                end)
+
+                Cron.tick(1)
+                assert.is_same("asteroid", miner:getMinerState())
+
+                station:destroy()
+                Cron.tick(1)
+                assert.is_same(1, logs:countWarnings())
+                assert.is_same("unknown", miner:getMinerState())
+                assert.is_same("Dummy has lost its home base. :(", logs:popLastWarning())
+                assert.is_same(nil, logs:popLastWarning()) -- no further errors
+
+                Cron.tick(1)
+                assert.is_same(nil, logs:popLastWarning()) -- it does not spam
+
+            end) end)
+        end)
     end)
     describe("GM interaction", function()
         it("can change the mined asteroid", function()

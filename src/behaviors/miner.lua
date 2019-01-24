@@ -114,7 +114,8 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     local onHomeStationDestroyed = function()
         logWarning(ship:getCallSign() .. " has lost its home base. :(")
         state = stateUnknown
-        Cron.regular(cronId, stepMain, tick, tick)
+        -- @TODO: GM or script should be able to set a new home base
+        Cron.abort(cronId)
     end
 
     local orderMine = function(asteroid)
@@ -137,8 +138,7 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
             timeToGoHome = timeToGoHome - tick
             if not homeStation:isValid() then
                 onHomeStationDestroyed()
-            end
-            if ship:getOrder() == "Dock" and ship:getOrderTarget() == homeStation then
+            elseif ship:getOrder() == "Dock" and ship:getOrderTarget() == homeStation then
                 if not hasCalledHeadingHome then
                     orderGoHome()
                 end
