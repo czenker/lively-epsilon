@@ -138,7 +138,7 @@ Player.withMenu = function(self, player, config)
                         elseif isNil(err) then
                             -- OK: function had side-effects
                         else
-                            logError("Expected onClick to return nil, a string or a menu for menuItem " .. id .. ", but got " .. typeInspect(err), 2)
+                            logError("Expected onClick to return nil, a string or a menu for menuItem " .. id .. ", but got " .. typeInspect(err))
                         end
                     end)
                 else
