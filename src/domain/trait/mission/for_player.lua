@@ -2,6 +2,7 @@ Mission = Mission or {}
 
 Mission.forPlayer = function(self, mission, initPlayer)
     if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. typeInspect(mission) .. " given.", 2) end
+    if mission:getState() ~= "new" then error("The mission must not be started yet, but got " .. typeInspect(mission:getState()), 2) end
     if Mission:isPlayerMission(mission) then error("The given mission is already a PlayerMission.", 2) end
 
     -- the player who has accepted or wants to accept the mission
@@ -13,6 +14,22 @@ Mission.forPlayer = function(self, mission, initPlayer)
     mission.accept = function(self)
         if player == nil then error("The player needs to be set before calling accept", 2) end
         return parentAccept(self)
+    end
+
+    local parentStart = mission.start
+    ---mark the mission as started
+    ---@param self
+    mission.start = function(self)
+        parentStart(self)
+
+        Cron.regular(function(self)
+            if mission:getState() ~= "started" then
+                Cron.abort(self)
+            elseif not mission:getPlayer() or not mission:getPlayer():isValid() then
+                mission:fail()
+                Cron.abort(self)
+            end
+        end, 0.1)
     end
 
     ---Set the player that does the mission

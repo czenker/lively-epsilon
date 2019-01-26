@@ -6,6 +6,7 @@ Mission = Mission or {}
 
 Mission.withBroker = function(self, mission, title, config)
     if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. typeInspect(mission) .. " given.", 2) end
+    if mission:getState() ~= "new" then error("The mission must not be started yet, but got " .. typeInspect(mission:getState()), 2) end
     if Mission:isBrokerMission(mission) then error("The given mission is already a StoryMission.", 2) end
     if not isString(title) and not isFunction(title) then error("Title needs to be a string or function, but " .. typeInspect(title) .. " given.", 2) end
 
@@ -54,6 +55,22 @@ Mission.withBroker = function(self, mission, title, config)
     mission.accept = function(self)
         if missionBroker == nil then error("The missionBroker needs to be set before calling accept", 2) end
         return parentAccept(self)
+    end
+
+    local parentStart = mission.start
+    ---mark the mission as started
+    ---@param self
+    mission.start = function(self)
+        parentStart(self)
+
+        Cron.regular(function(self)
+            if mission:getState() ~= "started" then
+                Cron.abort(self)
+            elseif not mission:getMissionBroker() or not mission:getMissionBroker():isValid() then
+                mission:fail()
+                Cron.abort(self)
+            end
+        end, 0.1)
     end
 
     ---set a printable hint that can be displayed in the Mission Tracker

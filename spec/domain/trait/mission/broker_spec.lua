@@ -46,6 +46,13 @@ insulate("Mission", function()
         it("fails if the description is a number", function()
             assert.has_error(function() missionWithBrokerMock({description = 42}) end)
         end)
+
+        it("fails if the mission has been accepted already", function()
+            local mission = missionMock()
+            mission:accept()
+
+            assert.has_error(function() Mission:withBroker(mission, "Hello World") end)
+        end)
     end)
 
     describe("getTitle", function()
@@ -185,6 +192,30 @@ insulate("Mission", function()
             local mission = missionWithBrokerMock()
             assert.has_error(function() mission:setHint(42) end)
         end)
+    end)
+
+    it("fails automatically if the broker is destroyed", function()
+        local onStartCalled = 0
+        local station = SpaceStation()
+        local mission = Mission:new({
+            onStart = function(self)
+                onStartCalled = onStartCalled + 1
+            end,
+        })
+        Mission:withBroker(mission, "Hello World")
+
+        mission:setMissionBroker(station)
+        mission:accept()
+        mission:start()
+
+        assert.is_same(1, onStartCalled)
+
+        Cron.tick(1)
+        assert.is_same("started", mission:getState())
+
+        station:destroy()
+        Cron.tick(1)
+        assert.is_same("failed", mission:getState())
     end)
 
 end)

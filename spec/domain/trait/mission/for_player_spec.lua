@@ -32,6 +32,13 @@ insulate("Mission", function()
 
             assert.has_error(function() Mission:forPlayer(mission, player) end)
         end)
+
+        it("fails if the mission has been accepted already", function()
+            local mission = missionMock()
+            mission:accept()
+
+            assert.has_error(function() Mission:forPlayer(mission, player) end)
+        end)
     end)
 
     describe("accept()", function()
@@ -80,5 +87,29 @@ insulate("Mission", function()
 
             assert.is_same(player, mission:getPlayer())
         end)
+    end)
+
+    it("fails if the player is destroyed", function()
+        local player = PlayerSpaceship()
+
+        local onStartCalled = 0
+        local mission = Mission:new({
+            onStart = function(self)
+                onStartCalled = onStartCalled + 1
+            end,
+        })
+        Mission:forPlayer(mission, player)
+
+        mission:setPlayer(player)
+        mission:accept()
+        mission:start()
+        assert.is_same(1, onStartCalled)
+
+        Cron.tick(1)
+        assert.is_same("started", mission:getState())
+
+        player:destroy()
+        Cron.tick(1)
+        assert.is_same("failed", mission:getState())
     end)
 end)
