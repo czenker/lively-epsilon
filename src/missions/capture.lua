@@ -110,7 +110,7 @@ Missions.capture = function(self, bearer, config)
         onEnd = function(self)
             Cron.abort(cronId)
 
-            if isFunction(config.onEnd) then config.onEnd() end
+            if isFunction(config.onEnd) then config.onEnd(self) end
         end,
     })
 
