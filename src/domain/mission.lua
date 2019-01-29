@@ -12,15 +12,15 @@ Mission = Mission or {}
 Mission.new = function(self, config)
     config = config or {}
     if not isTable(config) then
-        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+        error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2)
     end
-    if not isNil(config.acceptCondition) and not isFunction(config.acceptCondition) then error("Expected config.acceptCondition to be a function, but " .. type(config.acceptCondition) .. " given.", 2) end
-    if not isNil(config.onAccept) and not isFunction(config.onAccept) then error("Expected config.onAccept to be a function, but " .. type(config.onAccept) .. " given.", 2) end
-    if not isNil(config.onDecline) and not isFunction(config.onDecline) then error("Expected config.onDecline to be a function, but " .. type(config.onDecline) .. " given.", 2) end
-    if not isNil(config.onStart) and not isFunction(config.onStart) then error("Expected config.onStart to be a function, but " .. type(config.onStart) .. " given.", 2) end
-    if not isNil(config.onSuccess) and not isFunction(config.onSuccess) then error("Expected config.onSuccess to be a function, but " .. type(config.onSuccess) .. " given.", 2) end
-    if not isNil(config.onFailure) and not isFunction(config.onFailure) then error("Expected config.onFailure to be a function, but " .. type(config.onFailure) .. " given.", 2) end
-    if not isNil(config.onEnd) and not isFunction(config.onEnd) then error("Expected config.onEnd to be a function, but " .. type(config.onEnd) .. " given.", 2) end
+    if not isNil(config.acceptCondition) and not isFunction(config.acceptCondition) then error("Expected config.acceptCondition to be a function, but " .. typeInspect(config.acceptCondition) .. " given.", 2) end
+    if not isNil(config.onAccept) and not isFunction(config.onAccept) then error("Expected config.onAccept to be a function, but " .. typeInspect(config.onAccept) .. " given.", 2) end
+    if not isNil(config.onDecline) and not isFunction(config.onDecline) then error("Expected config.onDecline to be a function, but " .. typeInspect(config.onDecline) .. " given.", 2) end
+    if not isNil(config.onStart) and not isFunction(config.onStart) then error("Expected config.onStart to be a function, but " .. typeInspect(config.onStart) .. " given.", 2) end
+    if not isNil(config.onSuccess) and not isFunction(config.onSuccess) then error("Expected config.onSuccess to be a function, but " .. typeInspect(config.onSuccess) .. " given.", 2) end
+    if not isNil(config.onFailure) and not isFunction(config.onFailure) then error("Expected config.onFailure to be a function, but " .. typeInspect(config.onFailure) .. " given.", 2) end
+    if not isNil(config.onEnd) and not isFunction(config.onEnd) then error("Expected config.onEnd to be a function, but " .. typeInspect(config.onEnd) .. " given.", 2) end
 
     local id = config.id or Util.randomUuid()
 

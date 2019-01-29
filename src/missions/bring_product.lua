@@ -15,7 +15,7 @@ Missions.bringProduct = function(self, station, config)
     if not Station:hasComms(station) then error("Expected station to have comms, but it does not.", 2) end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
     local product = config.product
     if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product), 2) end
 

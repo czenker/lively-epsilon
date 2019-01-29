@@ -19,7 +19,7 @@ ShipTemplateBased.withCrew = function (self, ship, positions)
     end
     for position, person in pairs(positions) do
         if not isString(position) then
-            error("Position has to be a string. " .. type(position) .. " given.")
+            error("Position has to be a string, but got " .. typeInspect(position), 3)
         end
         if not Person:isPerson(person) then
             error("Thing given for position " .. position .. " is not a Person object.")

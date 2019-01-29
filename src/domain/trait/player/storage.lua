@@ -6,7 +6,7 @@ end
 
 Player.withStorage = function(self, player, config)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
-    if Player:hasStorage(player) then error("Player already has a storage" .. type(player), 2) end
+    if Player:hasStorage(player) then error("Player " .. player:getCallSign() .. " already has a storage", 2) end
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     config.maxStorage = config.maxStorage or 100

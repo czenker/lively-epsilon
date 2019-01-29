@@ -20,7 +20,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
     end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
     if not isNil(config.correctAnswer) and not isFunction(config.correctAnswer) and not isString(config.correctAnswer) then
         error("Expected correctAnswer to be nil, a string or function, but got " .. typeInspect(config.correctAnswer), 2)
     end

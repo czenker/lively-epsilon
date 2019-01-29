@@ -6,7 +6,7 @@ ShipTemplateBased.withUpgradeBroker = function (self, spaceObject, config)
 
     config = config or {}
     if not isTable(config) then
-        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+        error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2)
     end
     if not isNil(config.upgrades) and not isTable(config.upgrades) then error("Upgrades need to be a table, but got " .. typeInspect(config.upgrades)) end
 
@@ -14,7 +14,7 @@ ShipTemplateBased.withUpgradeBroker = function (self, spaceObject, config)
 
     spaceObject.addUpgrade = function(self, upgrade)
         if not BrokerUpgrade:isUpgrade(upgrade) then
-            error("Expected upgrade to be a broker upgrade, but " .. type(upgrade) .. " given.", 2)
+            error("Expected upgrade to be a broker upgrade, but " .. typeInspect(upgrade) .. " given.", 2)
         end
 
         upgrades[upgrade:getId()] = upgrade
@@ -26,7 +26,7 @@ ShipTemplateBased.withUpgradeBroker = function (self, spaceObject, config)
         elseif BrokerUpgrade:isUpgrade(upgrade) then
             upgrades[upgrade:getId()] = nil
         else
-            error("Expected upgrade to be a upgrade or upgrade id, but " .. type(upgrade) .. " given.", 2)
+            error("Expected upgrade to be a upgrade or upgrade id, but " .. typeInspect(upgrade) .. " given.", 2)
         end
     end
 

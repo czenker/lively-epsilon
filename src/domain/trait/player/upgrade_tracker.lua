@@ -2,7 +2,7 @@ Player = Player or {}
 
 Player.withUpgradeTracker = function(self, player)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
-    if Player:hasUpgradeTracker(player) then error("Player already has a upgrade tracker" .. type(player), 2) end
+    if Player:hasUpgradeTracker(player) then error("Player " .. player:getCallSign() .. " already has a upgrade tracker", 2) end
     local upgrades = {}
 
     player.addUpgrade = function(self, upgrade)

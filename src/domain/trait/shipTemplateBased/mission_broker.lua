@@ -6,7 +6,7 @@ ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
 
     config = config or {}
     if not isTable(config) then
-        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+        error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2)
     end
     if not isNil(config.missions) and not isTable(config.missions) then error("Missions need to be a table, but got " .. typeInspect(config.missions)) end
 
@@ -15,7 +15,7 @@ ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
     spaceObject.addMission = function(self, mission)
 
         if not Mission:isBrokerMission(mission) then
-            error("Expected mission to be a broker mission, but " .. type(mission) .. " given.", 2)
+            error("Expected mission to be a broker mission, but " .. typeInspect(mission) .. " given.", 2)
         end
 
         missions[mission:getId()] = mission
@@ -27,7 +27,7 @@ ShipTemplateBased.withMissionBroker = function (self, spaceObject, config)
         elseif Mission:isMission(mission) then
             missions[mission:getId()] = nil
         else
-            error("Expected mission to be a mission or mission id, but " .. type(mission) .. " given.", 2)
+            error("Expected mission to be a mission or mission id, but " .. typeInspect(mission) .. " given.", 2)
         end
     end
 

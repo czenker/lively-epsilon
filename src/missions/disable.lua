@@ -12,7 +12,7 @@ Missions.disable = function(self, target, config)
 
     if not isEeShip(target) and not isFunction(target) then error("Expected target to be a ship or a funcition, but got " .. typeInspect(target), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local approachDistance = config.approachDistance or 10000
     if not isNumber(approachDistance) or approachDistance < 0 then error("Eypected approachDistance to be a positive number, but got " .. typeInspect(approachDistance), 2) end

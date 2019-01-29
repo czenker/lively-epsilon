@@ -2,10 +2,10 @@ Missions = Missions or {}
 
 local function validateThings(things)
     if isEeShip(things) then things = {things} end
-    if not isTable(things) then error("things needs to be a table of space ships, but " .. type(things) .. " given", 3) end
+    if not isTable(things) then error("things needs to be a table of space ships, but " .. typeInspect(things) .. " given", 3) end
 
     for _,v in pairs(things) do
-        if not isEeShip(v) then error("all things need to be space ships, but " .. type(v) .. " given", 3) end
+        if not isEeShip(v) then error("all things need to be space ships, but " .. typeInspect(v) .. " given", 3) end
     end
 
     return things
@@ -42,7 +42,7 @@ Missions.scan = function(self, things, config)
     end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
     local isTargetScannedBy = function(target, player) return target:isFriendOrFoeIdentifiedBy(player) end
     if config.scan == "full" then isTargetScannedBy = function(target, player) return target:isFullyScannedBy(player) end end
 

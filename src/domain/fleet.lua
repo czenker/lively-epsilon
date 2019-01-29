@@ -45,11 +45,11 @@ Fleet.new = function(self, ships, config)
 
     config = config or {}
     if not isTable(config) then
-        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+        error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2)
     end
     local id = config.id or Util.randomUuid()
     if not isString(id) then
-        error("Expected id to be a string, but " .. type(id) .. " given.", 2)
+        error("Expected id to be a string, but " .. typeInspect(id) .. " given.", 2)
     end
 
     local currentShips = {}

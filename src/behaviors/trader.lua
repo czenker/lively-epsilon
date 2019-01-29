@@ -34,7 +34,7 @@ Ship.behaveAsBuyer = function (self, ship, homeStation, product, config)
     ship:setFactionId(homeStation:getFactionId())
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
     config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
 
     local cronId = "trader" .. ship:getCallSign()

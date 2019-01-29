@@ -10,7 +10,7 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
 
     config = config or {}
     if not isTable(config) then
-        error("Expected config to be a table, but " .. type(config) .. " given.", 2)
+        error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2)
     end
 
     local comms = {}

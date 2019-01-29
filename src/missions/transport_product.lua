@@ -10,12 +10,12 @@ Missions = Missions or {}
 --   * onProductLost
 
 Missions.transportProduct = function(self, from, to, product, config)
-    if not isEeStation(from) then error("from needs to be a Station, " .. type(from) .. " given.", 2) end
-    if not isEeStation(to) then error("to needs to be a Station, " .. type(to) .. " given.", 2) end
-    if not Product:isProduct(product) then error("product needs to be a Product, " .. type(product) .. " given.", 2) end
+    if not isEeStation(from) then error("from needs to be a Station, but got " .. typeInspect(from), 2) end
+    if not isEeStation(to) then error("to needs to be a Station, but got " .. typeInspect(to), 2) end
+    if not Product:isProduct(product) then error("product needs to be a Product, but got " .. typeInspect(product), 2) end
     config = config or {}
     config.amount = config.amount or 1
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local isLoaded = false
     local cronId = Util.randomUuid()

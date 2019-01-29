@@ -56,7 +56,7 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     ship:setFactionId(homeStation:getFactionId())
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
     config.timeToUnload = config.timeToUnload or 15
     if not isNumber(config.timeToUnload) then error("Expected timeToUnload to be a number, but got " .. typeInspect(config.timeToUnload), 2) end
     config.timeToMine = config.timeToMine or 15

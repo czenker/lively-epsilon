@@ -19,7 +19,7 @@ Missions.crewForRent = function(self, needy, config)
     local buttonId = Util.randomUuid()
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local maxDistance = config.distance or 1000
     local inRange = false

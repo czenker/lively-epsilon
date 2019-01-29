@@ -5,14 +5,14 @@ Mission = Mission or {}
 -- It is supposed to be used for side missions that ships can give you.
 
 Mission.withBroker = function(self, mission, title, config)
-    if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. type(mission) .. " given.", 2) end
+    if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. typeInspect(mission) .. " given.", 2) end
     if Mission:isBrokerMission(mission) then error("The given mission is already a StoryMission.", 2) end
-    if not isString(title) and not isFunction(title) then error("Title needs to be a string or function, but " .. type(title) .. " given.", 2) end
+    if not isString(title) and not isFunction(title) then error("Title needs to be a string or function, but " .. typeInspect(title) .. " given.", 2) end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
-    if not isNil(config.description) and not isString(config.description) and not isFunction(config.description) then error("Description needs to be a string or function, but " .. type(config.description) .. " given.", 2) end
-    if not isNil(config.acceptMessage) and not isString(config.acceptMessage) and not isFunction(config.acceptMessage) then error("AcceptMission needs to be a string or function, but " .. type(config.acceptMessage) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
+    if not isNil(config.description) and not isString(config.description) and not isFunction(config.description) then error("Description needs to be a string or function, but " .. typeInspect(config.description) .. " given.", 2) end
+    if not isNil(config.acceptMessage) and not isString(config.acceptMessage) and not isFunction(config.acceptMessage) then error("AcceptMission needs to be a string or function, but " .. typeInspect(config.acceptMessage) .. " given.", 2) end
 
     -- the entity (station, ship, person, etc) who has given the mission to the player
     local missionBroker

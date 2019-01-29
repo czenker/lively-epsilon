@@ -22,7 +22,7 @@ Missions.destroyRagingMiner = function(self, things, config)
     local cronId = "raging_miner_" .. Util.randomUuid()
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local explosionSize = 2000
     local shieldDropAfterEmp = 0.5

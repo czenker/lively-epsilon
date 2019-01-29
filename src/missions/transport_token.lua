@@ -7,10 +7,10 @@ Missions = Missions or {}
 --   * onLoad
 --   * onUnload
 Missions.transportToken = function(self, from, to, config)
-    if not isEeStation(from) then error("from needs to be a Station, " .. type(from) .. " given.", 2) end
-    if not isEeStation(to) then error("to needs to be a Station, " .. type(to) .. " given.", 2) end
+    if not isEeStation(from) then error("from needs to be a Station, but got " .. typeInspect(from), 2) end
+    if not isEeStation(to) then error("to needs to be a Station, but got " .. typeInspect(to), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local isLoaded = false
     local cronId = Util.randomUuid()

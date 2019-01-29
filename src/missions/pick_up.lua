@@ -6,7 +6,7 @@ end
 
 local function validateAndInitPickUps(things)
     if isValid(things) then things = {things} end
-    if not isTable(things) then error("things needs to be a table of space objects, but " .. type(things) .. " given", 2) end
+    if not isTable(things) then error("things needs to be a table of space objects, but " .. typeInspect(things) .. " given", 2) end
 
     local pickUps = {}
 
@@ -14,7 +14,7 @@ local function validateAndInitPickUps(things)
         if isValid(v) and v:isValid() then
             pickUps[v] = v
         else
-            error("all things need to be artifacts or supply drops, but " .. type(v) .. " given", 2)
+            error("all things need to be artifacts or supply drops, but " .. typeInspect(v) .. " given", 2)
         end
     end
     return pickUps
@@ -45,7 +45,7 @@ Missions.pickUp = function(self, things, deliveryStation, config)
     end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local mission
 

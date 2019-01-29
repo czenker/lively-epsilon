@@ -57,7 +57,7 @@ Chatter.newNoise = function(self, chatter, config)
     if not Chatter:isChatter(chatter) then error("Expected chatter to be a Chatter, but got " .. typeInspect(chatter), 2) end
 
     config = config or {}
-    if not isTable(config) then error("Config needs to be a table, but " .. type(config) .. " given", 2) end
+    if not isTable(config) then error("Config needs to be a table, but " .. typeInspect(config) .. " given", 2) end
 
     local cronId = "chatter-" .. Util.randomUuid()
     local delay = 60

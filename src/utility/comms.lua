@@ -20,10 +20,10 @@ Comms.screen = function(npcSays, howPlayerCanReact)
     howPlayerCanReact = howPlayerCanReact or {}
 
     if not isString(npcSays) then
-        error("First parameter of newScreen has to be a string. " .. type(npcSays) .. " given.", 2)
+        error("First parameter of newScreen has to be a string, but got " .. typeInspect(npcSays), 2)
     end
     if not isTable(howPlayerCanReact) then
-        error("Second parameter of newScreen has to be a table. " .. type(howPlayerCanReact) .. " given.", 2)
+        error("Second parameter of newScreen has to be a table, but got " .. typeInspect(howPlayerCanReact), 2)
     end
 
     for k, v in ipairs(howPlayerCanReact) do
@@ -51,14 +51,14 @@ end
 Comms.reply = function(playerSays, nextScreen, condition)
 
     if not isFunction(playerSays) and not isString(playerSays) then
-        error("First parameter of newReply has to be a string of function. " .. type(playerSays) .. " given.", 2)
+        error("First parameter of newReply has to be a string of function, but got " .. typeInspect(playerSays), 2)
     end
     if not isFunction(nextScreen) and not isNil(nextScreen) then
-        error("Second parameter of newReply has to be a function. " .. type(nextScreen) .. " given.", 2)
+        error("Second parameter of newReply has to be a function, but got " .. typeInspect(nextScreen), 2)
     end
     condition = condition or function() return true end
     if not isFunction(condition) then
-        error("Third parameter of newReply has to be a function. " .. type(condition) .. " given.", 2)
+        error("Third parameter of newReply has to be a function, but got " .. typeInspect(condition), 2)
     end
 
     local pSays

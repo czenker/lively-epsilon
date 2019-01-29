@@ -18,7 +18,7 @@ Missions.capture = function(self, bearer, config)
     local cronId = Util.randomUuid()
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local approachDistance = config.approachDistance or 10000
     local onApproachTriggered = false

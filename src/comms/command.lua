@@ -179,7 +179,7 @@ Comms.commandFactory = function(self, config)
 
     return Comms.reply(config.label, commandMenu, function(comms_target, comms_source)
         if not isEeShip(comms_target) then
-            logInfo("not displaying command in Comms, because target is not a ship. Got " .. type(comms_target))
+            logInfo("not displaying command in Comms, because target is not a ship. Got " .. typeInspect(comms_target))
             return false
         end
         return true

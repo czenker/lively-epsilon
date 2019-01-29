@@ -5,9 +5,9 @@ Missions = Missions or {}
 -- config:
 --   * onVisit
 Missions.visit = function(self, station, config)
-    if not isEeStation(station) then error("from needs to be a Station, " .. type(station) .. " given.", 2) end
+    if not isEeStation(station) then error("from needs to be a Station, but got " .. typeInspect(station), 2) end
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local cronId = Util.randomUuid()
 

@@ -6,7 +6,7 @@ end
 
 local function validateAndInitEnemies(things)
     if isValid(things) then things = {things} end
-    if not isTable(things) then error("things needs to be a table of space objects, but " .. type(things) .. " given", 2) end
+    if not isTable(things) then error("things needs to be a table of space objects, but " .. typeInspect(things) .. " given", 2) end
 
     local enemies = {}
     local knownValidEnemies = {}
@@ -18,7 +18,7 @@ local function validateAndInitEnemies(things)
                 knownValidEnemies[v] = true
             end
         else
-            error("all things need to be space objects, but " .. type(v) .. " given", 2)
+            error("all things need to be space objects, but " .. typeInspect(v) .. " given", 2)
         end
     end
     return enemies, knownValidEnemies
@@ -40,7 +40,7 @@ Missions.destroy = function(self, things, config)
     end
 
     config = config or {}
-    if not isTable(config) then error("Expected config to be a table, but " .. type(config) .. " given.", 2) end
+    if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
 
     local approachDistance = config.approachDistance or 10000
     local onApproachTriggered = false

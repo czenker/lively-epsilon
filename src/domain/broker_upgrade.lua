@@ -54,7 +54,7 @@ BrokerUpgrade = {
                         logInfo("canBeInstalled returned nil as state, so true is assumed")
                         success = true
                     elseif not isBoolean(success) then
-                        logWarning("canBeInstalled returned " .. type(success) .. "as success state, so true is assumed")
+                        logWarning("canBeInstalled returned " .. typeInspect(success) .. "as success state, so true is assumed")
                         success = true
                     end
                     if success == true and not isNil(msg) then
