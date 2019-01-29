@@ -66,7 +66,7 @@ Ship.withEvents  = function(self, ship, config)
                 Cron.abort(cronId)
             elseif ship:getOrder() == "Dock" then
                 local station = ship:getOrderTarget()
-                if distance(ship, station) < 5000 then
+                if station:isValid() and distance(ship, station) < 5000 then
                     targetStation = station
                     Cron.regular(cronId, waitForOrderChange, tick, tick)
                     userCallback(config.onDockInitiation, ship, targetStation)
