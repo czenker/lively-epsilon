@@ -23,16 +23,26 @@ Tools.storyComms = function(self, shipTemplateBased, player, screen)
 
     Cron.regular(cronId, function()
         if player:isCommsInactive() then
-            shipTemplateBased:openCommsTo(player)
-            player:commandMainScreenOverlay("showcomms")
+            if not shipTemplateBased:isValid() then
+                Tools:endStoryComms()
+            else
+                shipTemplateBased:openCommsTo(player)
+                player:commandMainScreenOverlay("showcomms")
+            end
         end
     end, 0.1, 0)
 end
 
 Tools.endStoryComms = function()
     if cronId ~= nil then
+
         Cron.abort(cronId)
         cronId = nil
-        currentShipTemplateBased:overrideComms(nil)
+        if currentPlayer:isValid() then
+            currentPlayer:commandMainScreenOverlay("hidecomms")
+        end
+        if currentShipTemplateBased:isValid() then
+            currentShipTemplateBased:overrideComms(nil)
+        end
     end
 end
