@@ -457,6 +457,15 @@ insulate("Util", function()
         end)
     end)
 
+    describe("angleDiff()", function()
+        it("returns correct results", function()
+            assert.is_same(20, Util.angleDiff(10, 30))
+            assert.is_same(-20, Util.angleDiff(30, 10))
+            assert.is_same(20, Util.angleDiff(350, 10))
+            assert.is_same(-20, Util.angleDiff(10, 350))
+        end)
+    end)
+
     describe("map()", function()
         it("maps values and retains keys", function()
             local input = {a=1, b=2, c=3}

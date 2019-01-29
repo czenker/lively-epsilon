@@ -112,6 +112,15 @@ Util = {
         return (Util.angleFromVector(s2x - s1x, s2y - s1y) + 90) % 360
     end,
 
+    angleDiff = function(angle1, angle2)
+        local diff = (angle2 - angle1) % 360
+        if math.abs(diff) > 180 then
+            return diff - 360
+        else
+            return diff
+        end
+    end,
+
     spawnAtStation = function(station, obj, distance)
         distance = distance or 500
         local x, y = station:getPosition()
