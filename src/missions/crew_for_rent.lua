@@ -49,7 +49,9 @@ Missions.crewForRent = function(self, needy, config)
                 if not needy:isValid() then
                     if isFunction(config.onDestruction) then config.onDestruction(mission) end
                     mission:fail()
+                    return true
                 end
+                return false
             end
 
             local step1SendCrew
@@ -57,8 +59,9 @@ Missions.crewForRent = function(self, needy, config)
             local step3ReturnCrew
 
             step1SendCrew = function()
-                failOnDestruction()
-                if not inRange and distance(self:getPlayer(), needy) <= maxDistance then
+                if failOnDestruction() then
+                    return
+                elseif not inRange and distance(self:getPlayer(), needy) <= maxDistance then
                     self:getPlayer():addCustomButton("engineering", buttonId, sendCrewLabel, function()
                         if self:getPlayer():getRepairCrewCount() >= crewCount then
                             self:getPlayer():setRepairCrewCount(self:getPlayer():getRepairCrewCount() - crewCount)
@@ -78,17 +81,20 @@ Missions.crewForRent = function(self, needy, config)
             end
 
             step2WaitForCrewReady = function()
-                failOnDestruction()
-
-                inRange = false
-                crewReady = true
-                Cron.regular(cronId, step3ReturnCrew, 1)
-                if isFunction(config.onCrewReady) then config.onCrewReady(mission) end
+                if failOnDestruction() then
+                    return
+                else
+                    inRange = false
+                    crewReady = true
+                    Cron.regular(cronId, step3ReturnCrew, 1)
+                    if isFunction(config.onCrewReady) then config.onCrewReady(mission) end
+                end
             end
 
             step3ReturnCrew = function()
-                failOnDestruction()
-                if not inRange and distance(self:getPlayer(), needy) <= maxDistance then
+                if failOnDestruction() then
+                    return
+                elseif not inRange and distance(self:getPlayer(), needy) <= maxDistance then
                     self:getPlayer():addCustomButton("engineering", buttonId, returnCrewLabel, function()
                         self:getPlayer():setRepairCrewCount(self:getPlayer():getRepairCrewCount() + currentRepairCrewCount)
                         currentRepairCrewCount = 0
