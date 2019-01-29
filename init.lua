@@ -20,6 +20,7 @@ local myPackages = {
 
     "lively_epsilon/src/menu/menu.lua",
     "lively_epsilon/src/menu/menu_item.lua",
+    "lively_epsilon/src/menu/gm_menu.lua",
 
     "lively_epsilon/src/domain/trait/generic/tags.lua",
 
