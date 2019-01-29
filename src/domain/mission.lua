@@ -28,8 +28,11 @@ Mission.new = function(self, config)
 
     local mission = {
 
-        -- !!! internal - please do not manipulate !!!
+        ---The unique id of the mission
+        ---@param self
         getId = function(self) return id end,
+        ---Get the state of the mission.
+        ---@param self
         getState = function(self)
             if state == 0 then
                 return "new"
@@ -45,6 +48,8 @@ Mission.new = function(self, config)
                 return "successful"
             end
         end,
+        ---checks if the mission can be accepted
+        ---@param self
         canBeAccepted = function(self)
             if isFunction(config.acceptCondition) then
                 local msg = config.acceptCondition(self)
@@ -60,6 +65,8 @@ Mission.new = function(self, config)
             end
             return true
         end,
+        --- mark the mission as accepted
+        ---@param self
         accept = function(self)
             if state ~= 0 then
                 error("Mission \"" .. self:getId() .. "\" can not be accepted, because it was already started.", 2)
@@ -77,6 +84,8 @@ Mission.new = function(self, config)
 
             state = 5
         end,
+        ---mark the mission as declined
+        ---@param self
         decline = function(self)
             if state ~= 0 then
                 error("Mission \"" .. self:getId() .. "\" can not be declined, because it was already started.", 2)
@@ -84,6 +93,8 @@ Mission.new = function(self, config)
             if isFunction(config.onDecline) then config.onDecline(self) end
             state = 98
         end,
+        ---mark the mission as started
+        ---@param self
         start = function(self)
             if state ~= 5 then
                 error("Mission \"" .. self:getId() .. "\" can not be started, because it was not accepted.", 2)
@@ -91,6 +102,8 @@ Mission.new = function(self, config)
             if isFunction(config.onStart) then config.onStart(self) end
             state = 10
         end,
+        ---mark the mission as failed
+        ---@param self
         fail = function(self)
             if state ~= 10 then
                 error("Mission \"" .. self:getId() .. "\" can not fail, because it is not currently running.", 2)
@@ -100,6 +113,8 @@ Mission.new = function(self, config)
             if isFunction(config.onEnd) then config.onEnd(self) end
             state = 99
         end,
+        ---mark the mission as successful
+        ---@param self
         success = function(self)
             if state ~= 10 then
                 error("Mission \"" .. self:getId() .. "\" can not succeed, because it is not currently running.", 2)

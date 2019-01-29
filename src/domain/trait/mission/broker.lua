@@ -19,6 +19,8 @@ Mission.withBroker = function(self, mission, title, config)
     local parentAccept = mission.accept
     local hint
 
+    ---get the printable title of this mission
+    ---@param self
     mission.getTitle = function(self)
         if isFunction(title) then
             return title(self)
@@ -27,6 +29,8 @@ Mission.withBroker = function(self, mission, title, config)
         end
     end
 
+    ---get the printable description of this mission
+    ---@param self
     mission.getDescription = function(self)
         if isFunction(config.description) then
             return config.description(self)
@@ -35,6 +39,8 @@ Mission.withBroker = function(self, mission, title, config)
         end
     end
 
+    ---get the printable response when the mission has been accepted
+    ---@param self
     mission.getAcceptMessage = function(self)
         if isFunction(config.acceptMessage) then
             return config.acceptMessage(self)
@@ -43,16 +49,23 @@ Mission.withBroker = function(self, mission, title, config)
         end
     end
 
+    ---mark the mission as accepted. `setMissionBroker` needs to have been called beforehand.
+    ---@param self
     mission.accept = function(self)
         if missionBroker == nil then error("The missionBroker needs to be set before calling accept", 2) end
         return parentAccept(self)
     end
 
+    ---set a printable hint that can be displayed in the Mission Tracker
+    ---@param self
+    ---@param thing string|function
     mission.setHint = function(self, thing)
         if not isNil(thing) and not isString(thing) and not isFunction(thing) then error("Expected nil, a function or string, but got " .. typeInspect(thing), 2) end
         hint = thing
     end
 
+    ---get a printable hint for the current state of the mission
+    ---@param self
     mission.getHint = function(self)
         if isFunction(hint) then
             local ret = hint(self)
@@ -65,10 +78,15 @@ Mission.withBroker = function(self, mission, title, config)
         end
     end
 
+    ---set the broker that has offered this mission
+    ---@param self
+    ---@param thing SpaceShip
     mission.setMissionBroker = function(self, thing)
         missionBroker = thing
     end
 
+    ---get the broker that has offered this mission
+    ---@param self
     mission.getMissionBroker = function(self)
         return missionBroker
     end

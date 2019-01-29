@@ -8,16 +8,23 @@ Mission.forPlayer = function(self, mission, initPlayer)
     local player
     local parentAccept = mission.accept
 
+    ---mark the mission as accepted. `setPlayer` needs to have been called beforehand.
+    ---@param self
     mission.accept = function(self)
         if player == nil then error("The player needs to be set before calling accept", 2) end
         return parentAccept(self)
     end
 
+    ---Set the player that does the mission
+    ---@param self
+    ---@param thing PlayerSpaceship
     mission.setPlayer = function(self, thing)
         if not isEePlayer(thing) then error("Expected player to be a Player, but " .. typeInspect(thing) .. " given.", 2) end
         player = thing
     end
 
+    ---get the player that does the mission
+    ---@param self
     mission.getPlayer = function(self)
         return player
     end

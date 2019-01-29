@@ -1,15 +1,26 @@
 Missions = Missions or {}
 
--- The players need to bring a certain amount of products to the station.
---
--- It does not matter how they are achieved (mining, piracy, trading) for this mission.
---
--- product
--- amount
--- commsLabel
--- sellProductScreen
--- successScreen
--- onDelivery
+--- The players need to bring a certain amount of products to the station.
+---
+--- It does not matter how they are achieved (mining, piracy, trading) for this mission.
+---
+--- @param self
+--- @param station SpaceStation
+--- @param config table
+---   @subparam product Product the product the players have to bring
+---   @subparam amount number number of units the player have to bring
+---   @subparam acceptCondition function
+---   @subparam onAccept function
+---   @subparam onDecline function
+---   @subparam onStart function
+---   @subparam onDelivery function
+---   @subparam successScreen function
+---   @subparam sellProductScreen function
+---   @subparam commsLabel string
+---   @subparam sellProductScreen function
+---   @subparam onSuccess function
+---   @subparam onFailure function
+---   @subparam onEnd function
 Missions.bringProduct = function(self, station, config)
     if not isEeStation(station) then error("Expected a station, but got " .. typeInspect(station), 2) end
     if not Station:hasComms(station) then error("Expected station to have comms, but it does not.", 2) end

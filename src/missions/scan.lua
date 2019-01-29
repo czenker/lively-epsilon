@@ -28,9 +28,11 @@ local function initThings(things, player, isTargetScannedBy)
     return targets, knownValidTargets, knownScannedTargets
 end
 
--- Scan stuff
--- onScan
--- onDestruction
+--- The players have to scan some ``SpaceShip``s. The mission is successful when all valid targets are scanned.
+---
+--- @param self
+--- @param things function|table|SpaceShip a SpaceShip, a table of ``SpaceShip``s or a function returning a table of ``SpaceShip``s
+--- @param config table TODO
 Missions.scan = function(self, things, config)
     local cronId = Util.randomUuid()
     local targets
@@ -87,6 +89,7 @@ Missions.scan = function(self, things, config)
 
     Mission:forPlayer(mission)
 
+    ---@param self
     mission.getTargets = function(self)
         if isNil(targets) then return nil end
 
@@ -94,10 +97,12 @@ Missions.scan = function(self, things, config)
         for _, target in pairs(targets) do table.insert(ret, target) end
         return ret
     end
+    ---@param self
     mission.countTargets = function(self)
         if isNil(targets) then return nil end
         return Util.size(targets)
     end
+    ---@param self
     mission.getScannedTargets = function(self)
         if isNil(knownScannedTargets) then return nil end
 
@@ -105,10 +110,12 @@ Missions.scan = function(self, things, config)
         for target, _ in pairs(knownScannedTargets) do table.insert(ret, target) end
         return ret
     end
+    ---@param self
     mission.countScannedTargets = function(self)
         if isNil(knownScannedTargets) then return nil end
         return Util.size(knownScannedTargets)
     end
+    ---@param self
     mission.getUnscannedTargets = function(self)
         if isNil(targets) then return nil end
 
@@ -116,6 +123,7 @@ Missions.scan = function(self, things, config)
         for _, target in pairs(targets) do if target:isValid() and knownScannedTargets[target] == nil then table.insert(ret, target) end end
         return ret
     end
+    ---@param self
     mission.countUnscannedTargets = function(self)
         if isNil(targets) then return nil end
         return Util.size(self:getUnscannedTargets())
