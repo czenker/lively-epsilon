@@ -127,6 +127,16 @@ Chatter.newNoise = function(self, chatter, config)
             factories[id] = nil
             factoryKeys[id] = nil
         end,
+        getChatFactories = function(_)
+            -- make a copy to make it deletable while being traversable and prevent it from being manipulated
+            local facts = {}
+
+            for _, key in pairs(factoryKeys) do
+                facts[key] = factories[key]
+            end
+
+            return facts
+        end,
     }
 
 end
@@ -134,5 +144,6 @@ end
 Chatter.isChatNoise = function(self, thing)
     return isTable(thing) and
             isFunction(thing.addChatFactory) and
-            isFunction(thing.removeChatFactory)
+            isFunction(thing.removeChatFactory) and
+            isFunction(thing.getChatFactories)
 end

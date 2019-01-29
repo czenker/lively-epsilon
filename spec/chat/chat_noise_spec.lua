@@ -154,6 +154,39 @@ insulate("Chatter", function()
                 assert(chat5Seen >= 2 and chat5Seen <= 25, "chat5 should occur between 1 and 25 times. Got " .. chat5Seen)
             end)
         end)
+
+        it("allows to remove chat factories", function()
+            withUniverse(function(universe)
+                local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
+                local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
+
+                universe:add(player, ship)
+
+                local chat1 = Chatter:newFactory(1, function(thisShip)
+                    return {
+                        { thisShip, "Hello World"},
+                    }
+                end)
+                local chat2 = Chatter:newFactory(1, function(thisShip)
+                    return {
+                        { thisShip, "You should not see me"},
+                    }
+                end)
+
+                local chatter = mockChatter()
+                local noise = Chatter:newNoise(chatter)
+                noise:addChatFactory(chat2, "chat2")
+                noise:addChatFactory(chat1, "chat1")
+                noise:removeChatFactory("chat2")
+
+                for _=1,90 do Cron.tick(1) end
+
+                assert.is_same({
+                    {ship, "Hello World"},
+                }, chatter:getLastMessages())
+            end)
+        end)
+
         describe("addChatFactory()", function()
             it("allows to add a chat and returns an id", function()
                 local chatter = mockChatter()
@@ -217,6 +250,42 @@ insulate("Chatter", function()
                 assert.has_error(function() noise:removeChatFactory("") end)
                 assert.has_error(function() noise:removeChatFactory(42) end)
                 assert.has_error(function() noise:removeChatFactory({}) end)
+            end)
+        end)
+        describe("getChatFactories()", function()
+            it("returns all ChatFactories", function()
+                local chatter = mockChatter()
+                local noise = Chatter:newNoise(chatter)
+                local chat1 = mockChatFactory()
+                local chat2 = mockChatFactory()
+                local chat3 = mockChatFactory()
+
+                noise:addChatFactory(chat1, "one")
+                noise:addChatFactory(chat2, "two")
+                noise:addChatFactory(chat3, "three")
+
+                assert.is_same({
+                    one = chat1,
+                    two = chat2,
+                    three = chat3,
+                }, noise:getChatFactories())
+            end)
+            it("allows to remove all ChatFactories", function()
+                local chatter = mockChatter()
+                local noise = Chatter:newNoise(chatter)
+                local chat1 = mockChatFactory()
+                local chat2 = mockChatFactory()
+                local chat3 = mockChatFactory()
+
+                noise:addChatFactory(chat1, "one")
+                noise:addChatFactory(chat2, "two")
+                noise:addChatFactory(chat3, "three")
+
+                for id, _ in pairs(noise:getChatFactories()) do
+                    noise:removeChatFactory(id)
+                end
+
+                assert.is_same({}, noise:getChatFactories())
             end)
         end)
     end)
