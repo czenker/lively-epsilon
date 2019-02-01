@@ -10,6 +10,7 @@ Comms.merchantFactory = function(self, config)
     if not isFunction(config.sellScreen) then error("expected sellScreen to be a function, but got " .. typeInspect(config.sellScreen), 2) end
     if not isFunction(config.sellProductScreen) then error("expected sellProductScreen to be a function, but got " .. typeInspect(config.sellProductScreen), 2) end
     if not isFunction(config.sellProductConfirmScreen) then error("expected sellProductConfirmScreen to be a function, but got " .. typeInspect(config.sellProductConfirmScreen), 2) end
+    if not isNil(config.displayCondition) and not isFunction(config.displayCondition) then error("expected displayCondition to be a function, but got " .. typeInspect(config.displayCondition), 2) end
 
     local mainMenu
     local buyMenu
@@ -205,6 +206,8 @@ Comms.merchantFactory = function(self, config)
     return Comms.reply(config.label, mainMenu, function(comms_target, comms_source)
         if not Station:hasMerchant(comms_target) or not Player:hasStorage(comms_source) then
             logInfo("not displaying merchant in Comms, because target has no merchant.")
+            return false
+        elseif userCallback(config.displayCondition, self, comms_target, comms_source) == false then
             return false
         end
         return true

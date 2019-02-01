@@ -6,6 +6,7 @@ Comms.upgradeBrokerFactory = function(self, config)
     if not isFunction(config.mainScreen) then error("expected mainScreen to be a function, but got " .. typeInspect(config.mainScreen), 2) end
     if not isFunction(config.detailScreen) then error("expected detailScreen to be a function, but got " .. typeInspect(config.detailScreen), 2) end
     if not isFunction(config.installScreen) then error("expected installScreen to be a function, but got " .. typeInspect(config.installScreen), 2) end
+    if not isNil(config.displayCondition) and not isFunction(config.displayCondition) then error("expected displayCondition to be a function, but got " .. typeInspect(config.displayCondition), 2) end
 
     local mainMenu
     local detailMenu
@@ -80,6 +81,8 @@ Comms.upgradeBrokerFactory = function(self, config)
     return Comms.reply(config.label, mainMenu, function(comms_target, comms_source)
         if not Station:hasUpgradeBroker(comms_target) then
             logInfo("not displaying upgrade_broker in Comms, because target has no upgrade_broker.")
+            return false
+        elseif userCallback(config.displayCondition, self, comms_target, comms_source) == false then
             return false
         end
         return true
