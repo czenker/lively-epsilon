@@ -1,7 +1,12 @@
-local noop = function() end
+local noop = function(self) return self end
 
 function _G.getLongRangeRadarRange() return 30000 end
 
+local function mergeObjects(...)
+    local merged = Util.mergeTables(table.unpack({...}))
+    setmetatable(merged, Util.mergeTables(table.unpack(Util.map({...}, function(el) return getmetatable(el) end))))
+    return merged
+end
 
 function SpaceObject()
     local callSign = ""
@@ -9,13 +14,15 @@ function SpaceObject()
     local positionX, positionY = 0, 0
     local reputationPoints = 0
     local factionId = 0
+    local faction = "Independent"
 
-    return {
+    local obj = {
         setCallSign = function(self, sign)
             callSign = sign
             return self
         end,
         getCallSign = function() return callSign end,
+        getSectorName = function(self) return "AA" end,
         isValid = function() return isValid end,
         destroy = function(self)
             isValid = false
@@ -31,9 +38,30 @@ function SpaceObject()
         addReputationPoints = function(self, amount) reputationPoints = reputationPoints + amount; return self end,
         getFactionId = function(self) return factionId end,
         setFactionId = function(self, id) factionId = id; return self end,
+        setFaction = function(self, name) faction = name; return self end,
+        getFaction = function(self) return faction end,
         isEnemy = function(self, other) return self:getFactionId() > 0 and other:getFactionId() > 0 and self:getFactionId() ~= other:getFactionId() end,
         isFriendly = function(self, other) return self:getFactionId() == other:getFactionId() end,
+        setDescription = noop,
+        setDescriptionForScanState = noop,
+        getDescription = noop,
+        setDescriptions = noop,
+        setScanningParameters = noop,
+        setRadarSignatureInfo = noop,
+        getRadarSignatureGravity = function(self) return 1 end,
+        getRadarSignatureElectrical = function(self) return 1 end,
+        getRadarSignatureBiological = function(self) return 1 end,
     }
+
+    setmetatable(obj, {
+        __index = function(table, key)
+            if key:sub(1,3) == "set" then
+                return noop
+            end
+        end
+    })
+
+    return obj
 end
 function ShipTemplateBasedObject()
 
@@ -52,7 +80,8 @@ function ShipTemplateBasedObject()
     end
 
     local object = SpaceObject():setCallSign(Util.randomUuid())
-    return Util.mergeTables(object, {
+    return mergeObjects(object, {
+        setTemplate = noop,
         getShieldCount = function() return Util.size(shieldsMax) end,
         setShields = function(self, ...)
             shields = {...}
@@ -83,7 +112,8 @@ function ShipTemplateBasedObject()
         getHull = function() return hull end,
         getHullMax = function() return hullMax end,
         getRepairDocked = function() return repairDocked end,
-        setRepairDocked = function(_, value) repairDocked = value end,
+        setRepairDocked = function(self, value) repairDocked = value; return self end,
+        setCanBeDestroyed = noop,
     })
 end
 
@@ -111,7 +141,7 @@ function SpaceShip()
 
     local hasJumpDrive, hasWarpDrive = false, false
 
-    return Util.mergeTables(ShipTemplateBasedObject(), {
+    return mergeObjects(ShipTemplateBasedObject(), {
         typeName = "SpaceShip",
         getWeaponStorageMax = function(self, weapon)
             if weaponStorageMax[weapon] == nil then error("Invalid weapon type " .. weapon, 2) end
@@ -132,6 +162,15 @@ function SpaceShip()
             weaponStorage[weapon] = math.max(0, math.min(amount, weaponStorageMax[weapon]))
             return self
         end,
+        getBeamWeaponArc = function(index) return 42 end,
+        getBeamWeaponDirection = function(index) return 42 end,
+        getBeamWeaponRange = function(index) return 42 end,
+        getBeamWeaponTurretArc = function(index) return 42 end,
+        getBeamWeaponTurretDirection = function(index) return 42 end,
+        getBeamWeaponCycleTime = function(index) return 42 end,
+        getBeamWeaponDamage = function(index) return 42 end,
+        getBeamWeaponEnergyPerFire = function(index) return 42 end,
+        getBeamWeaponHeatPerFire = function(index) return 42 end,
         isFriendOrFoeIdentifiedBy = function(self, player)
             if not isEePlayer(player) then error("Mock only works for player", 2) end
             return scannedState ~= "not"
@@ -180,11 +219,13 @@ function SpaceShip()
             hasWarpDrive = has
             return self
         end,
+        setImpulseMaxSpeed = noop,
+        setRotationMaxSpeed = noop,
     })
 end
 
 function SpaceStation()
-    return Util.mergeTables(ShipTemplateBasedObject(), {
+    return mergeObjects(ShipTemplateBasedObject(), {
         typeName = "SpaceStation",
     })
 end
@@ -192,7 +233,7 @@ end
 function CpuShip()
     local order, orderTarget, orderX, orderY = "Idle", nil, nil, nil
 
-    return Util.mergeTables(SpaceShip(), {
+    return mergeObjects(SpaceShip(), {
         orderIdle = function(self)
             order, orderTarget, orderX, orderY = "Idle", nil, nil, nil
             return self
@@ -253,7 +294,7 @@ function PlayerSpaceship()
     end
     local lastCustomMessage = {}
 
-    return Util.mergeTables(SpaceShip(), {
+    local player = {
         typeName = "PlayerSpaceship",
         addCustomMessage = function(self, position, _, caption)
             lastCustomMessage[position] = caption
@@ -303,13 +344,27 @@ function PlayerSpaceship()
         getRepairCrewCount = function() return repairCrewCount end,
         commandSetSystemPowerRequest = function(self, system, power) return self:setSystemPower(system, power) end,
         commandSetSystemCoolantRequest = function(self, system, coolant) return self:setSystemCoolant(system, coolant) end,
+        addToShipLog = noop,
+    }
+
+    setmetatable(player, {
+        __index = function(table, key)
+            if key:sub(1,3) == "set" or key:sub(1,7) == "command" then
+                return noop
+            elseif key:sub(1,2) == "is" then
+                return function() return false end
+            end
+        end
     })
+
+    return mergeObjects(SpaceShip(), player)
+
 end
 
 function Artifact()
     local onPickUpCallback
 
-    return Util.mergeTables(SpaceShip(), {
+    return mergeObjects(SpaceObject(), {
         typeName = "Artifact",
         setModel = function(self) return self end,
         allowPickup = function(self) return self end,
@@ -325,32 +380,32 @@ function Artifact()
 end
 
 function Asteroid()
-    return Util.mergeTables(SpaceShip(), {
+    return mergeObjects(SpaceObject(), {
         typeName = "Asteroid",
     })
 end
 
 function ExplosionEffect()
-    return Util.mergeTables(SpaceObject(), {
+    return mergeObjects(SpaceObject(), {
         setSize = noop,
     })
 end
 
 function ElectricExplosionEffect()
-    return Util.mergeTables(SpaceObject(), {
+    return mergeObjects(SpaceObject(), {
         setSize = noop,
     })
 end
 
 function WarpJammer()
-    return Util.mergeTables(SpaceObject(), {
+    return mergeObjects(SpaceObject(), {
         typeName = "WarpJammer",
         setRange = noop,
     })
 end
 
 function ScanProbe()
-    return Util.mergeTables(SpaceObject(), {
+    return mergeObjects(SpaceObject(), {
         typeName = "ScanProbe",
         setRange = noop,
     })
@@ -359,7 +414,7 @@ end
 function SupplyDrop()
     local onPickUpCallback
 
-    return Util.mergeTables(SpaceObject(), {
+    return mergeObjects(SpaceObject(), {
         typeName = "SupplyDrop",
         setEnergy = noop,
         onPickUp = function(self, callback)
@@ -370,6 +425,39 @@ function SupplyDrop()
             if isFunction(onPickUpCallback) then onPickUpCallback(self, player) end
             self:destroy()
         end,
+    })
+end
+
+function Planet()
+    return mergeObjects(SpaceObject(), {
+        typeName = "Planet",
+        setPlanetAtmosphereColor = noop,
+        setPlanetAtmosphereTexture = noop,
+        setPlanetSurfaceTexture = noop,
+        setPlanetCloudTexture = noop,
+        setPlanetRadius = noop,
+        setPlanetCloudRadius = noop,
+        setDistanceFromMovementPlane = noop,
+        setAxialRotationTime = noop,
+        setOrbit = noop,
+    })
+end
+function Nebula()
+    return mergeObjects(SpaceObject(), {
+        typeName = "Nebula",
+    })
+end
+function Mine()
+    return mergeObjects(SpaceObject(), {
+        typeName = "Mine",
+    })
+end
+function WormHole()
+    return mergeObjects(SpaceObject(), {
+        typeName = "WormHole",
+        setTargetPosition = noop,
+        getTargetPosition = noop,
+        onTeleportation = noop,
     })
 end
 
