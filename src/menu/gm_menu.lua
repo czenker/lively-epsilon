@@ -131,17 +131,27 @@ draw = function(theMenu, page)
 
 end
 
+--- add a menu item to the main menu of the GM screen
+--- @param self
+--- @param menuItem MenuItem
 Menu.addGmMenuItem = function(self, menuItem)
     menu:addItem(menuItem:getLabel(), menuItem)
     if isOnMainMenu == true then draw() end
     return self
 end
 
+--- add a menu item to the main menu of the GM screen
+--- @param self
+--- @param label string the label of the menu item to remove
 Menu.removeGmMenuItem = function(self, label)
     menu:removeItem(label)
     if isOnMainMenu == true then draw() end
     return self
 end
+
+--- draw a specific menu on the GM screen
+--- @param self
+--- @param menu Menu (optional) the menu to draw. Draws the main menu by default.
 Menu.drawGmMenu = function(self, menu)
     draw(menu)
     return self

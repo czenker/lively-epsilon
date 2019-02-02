@@ -8,7 +8,16 @@ Mission = Mission or {}
 --  * onSuccess    function
 --  * onFailure    function
 --  * onEnd        function
-
+--- A mission
+--- @param self
+--- @param config table
+---   @field acceptCondition function gets `self` as arguments. should return `true` or `false` whether the mission can be accepted
+---   @field onAccept function gets `self` as argument
+---   @field onDecline function gets `self` as argument
+---   @field onStart function gets `self` as argument
+---   @field onSuccess function gets `self` as argument
+---   @field onFailure function gets `self` as argument
+---   @field onEnd function gets `self` as argument
 Mission.new = function(self, config)
     config = config or {}
     if not isTable(config) then
@@ -28,11 +37,14 @@ Mission.new = function(self, config)
 
     local mission = {
 
-        ---The unique id of the mission
-        ---@param self
+        --- The unique id of the mission
+        --- @internal
+        --- @param self
+        --- @return string
         getId = function(self) return id end,
-        ---Get the state of the mission.
-        ---@param self
+        --- Get the state of the mission.
+        --- @param self
+        --- @return string
         getState = function(self)
             if state == 0 then
                 return "new"
@@ -129,6 +141,10 @@ Mission.new = function(self, config)
     return mission
 end
 
+--- check if a thing is a `Mission`
+--- @param self
+--- @param mission any
+--- @return boolean
 Mission.isMission = function(self, mission)
     return isTable(mission) and
             isFunction(mission.getId) and

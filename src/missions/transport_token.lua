@@ -1,11 +1,16 @@
 Missions = Missions or {}
 
--- Bring something or someone from one station to another
--- This does not fill any storage on the ship.
-
--- config:
---   * onLoad
---   * onUnload
+--- Bring something or someone from one station to another
+---
+--- This does not fill any storage on the ship.
+---
+--- @param self
+--- @param from SpaceStation
+--- @param to SpaceStation
+--- @param config table
+---   @field onLoad function(mission)
+---   @field onUnload function(mission)
+--- @return Mission
 Missions.transportToken = function(self, from, to, config)
     if not isEeStation(from) then error("from needs to be a Station, but got " .. typeInspect(from), 2) end
     if not isEeStation(to) then error("to needs to be a Station, but got " .. typeInspect(to), 2) end
@@ -45,6 +50,8 @@ Missions.transportToken = function(self, from, to, config)
     })
     Mission:forPlayer(mission)
 
+    --- @param self
+    --- @return boolean
     mission.isTokenLoaded = function(self) return isLoaded end
 
     return mission

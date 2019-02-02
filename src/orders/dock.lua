@@ -1,16 +1,31 @@
 Order = Order or {}
-
+--- Order to dock at a station
+--- @param self
+--- @param station SpaceStation
+--- @param config table
+---   @field onExecution function the callback when the order is started to being executed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onCompletion function the callback when the order is completed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onAbort function the callback when the order is aborted. Gets the `OrderObject`, a `string` reason and the `CpuShip` or `Fleet` that executed the order.
+---   @field delayAfter number how many seconds to wait before executing the next order
+--- @return OrderObject
 Order.dock = function(self, station, config)
     if not isEeStation(station) then error("Expected to get a station, but got " .. typeInspect(station), 2) end
     config = config or {}
     local order = Order:_generic(config)
 
+    --- get the station to dock to
+    --- @param self
+    --- @return SpaceStation
     order.getStation = function(self)
         return station
     end
 
     local parentOnCompletion = order.onCompletion
 
+    --- the callback when the order is completed
+    --- @internal
+    --- @param self
+    --- @param ship CpuShip|Fleet
     order.onCompletion = function(self, thing)
         if Fleet:isFleet(thing) then
             for _, ship in pairs(thing:getShips()) do
@@ -25,6 +40,11 @@ Order.dock = function(self, station, config)
 
     local parentOnAbort = order.onAbort
 
+    --- the callback when the order is aborted
+    --- @param self
+    --- @internal
+    --- @param reason string
+    --- @param ship CpuShip|Fleet
     order.onAbort = function(self, reason, thing)
         if Fleet:isFleet(thing) then
             for _, ship in pairs(thing:getShips()) do
@@ -55,7 +75,7 @@ Order.dock = function(self, station, config)
         return true
     end
 
-
+    --- @internal
     order.getShipExecutor = function()
         return {
             go = function(self, ship)
@@ -75,6 +95,7 @@ Order.dock = function(self, station, config)
         }
     end
 
+    --- @internal
     order.getFleetExecutor = function()
         return {
             go = function(self, fleet)

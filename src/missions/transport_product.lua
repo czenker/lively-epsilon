@@ -1,14 +1,20 @@
 Missions = Missions or {}
 
--- Bring something to a station
--- This fills the storage on the ship
-
--- config:
---   * onLoad
---   * onUnload
---   * onInsufficientStorage
---   * onProductLost
-
+--- Bring something to a station
+---
+--- This fills the storage on the ship
+---
+--- @param self
+--- @param from SpaceStation
+--- @param to SpaceStation
+--- @param product Product
+--- @param config table
+---   @field amount number (default: `1`)
+---   @field onLoad function(mission) When the product is loaded
+---   @field onUnload function(mission)
+---   @field onInsufficientStorage function(mission)
+---   @field onProductLost function(mission)
+--- @return Mission
 Missions.transportProduct = function(self, from, to, product, config)
     if not isEeStation(from) then error("from needs to be a Station, but got " .. typeInspect(from), 2) end
     if not isEeStation(to) then error("to needs to be a Station, but got " .. typeInspect(to), 2) end
@@ -82,8 +88,17 @@ Missions.transportProduct = function(self, from, to, product, config)
     })
 
     Mission:forPlayer(mission)
+
+    --- @param self
+    --- @return number
     mission.isLoaded = function(self) return isLoaded end
+
+    --- @param self
+    --- @return Product
     mission.getProduct = function(self) return product end
+
+    --- @param self
+    --- @return number
     mission.getAmount = function(self) return config.amount end
 
     return mission

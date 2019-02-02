@@ -34,6 +34,10 @@ end
 -- @TODO: would be nice if you could return some value in that function to prevent it from being called ever again (might be cool to trigger an event once on the flight)
 -- onArrival (optional):       function         - called when the ship has arrived at target
 -- delay (default = 0):        numeric          - delay before ship heads to the next waypoint
+--- @deprecated use `OrderQueue` instead
+--- @param self
+--- @param ship CpuShip
+--- @param waypoints table
 Ship.patrol = function(self, ship, waypoints)
     waypoints = Util.deepCopy(waypoints) -- prevent mutability
 

@@ -24,10 +24,14 @@ local function validateAndInitEnemies(things)
     return enemies, knownValidEnemies
 end
 
--- Destroy stuff - pretty simple, huh?
--- approachDistance
--- onApproach
--- onDestruction
+--- Destroy stuff - pretty simple, huh?
+---
+--- @param self
+--- @param things ShipTemplateBased|WarpJammer|ScanProbe|table[ShipTemplateBased|WarpJammer|ScanProbe]|function what to destroy
+--- @param config table
+---   @field approachDistance number (default: `10000`)
+---   @field onApproach function(mission,closestEnemy) called when the player first approach one of the enemies
+---   @field onDestruction function(mission,enemy) called when an enemy was destroyed
 Missions.destroy = function(self, things, config)
     if isValid(things) then things = {things} end
 
@@ -88,6 +92,9 @@ Missions.destroy = function(self, things, config)
 
     Mission:forPlayer(mission)
 
+    --- get all enemy targets - alive or dead
+    --- @param self
+    --- @return nil|table[ShipTemplateBased|WarpJammer|ScanProbe]
     mission.getEnemies = function(self)
         if isNil(enemies) then return nil end
 
@@ -95,10 +102,17 @@ Missions.destroy = function(self, things, config)
         for _,enemy in pairs(enemies) do table.insert(ret, enemy) end
         return ret
     end
+    --- count all enemy targets - alive or dead
+    --- @param self
+    --- @return number
     mission.countEnemies = function(self)
         if isNil(enemies) then return nil end
         return Util.size(enemies)
     end
+
+    --- get enemies that are still alive
+    --- @param self
+    --- @return nil|table[ShipTemplateBased|WarpJammer|ScanProbe]
     mission.getValidEnemies = function(self)
         if isNil(enemies) then return nil end
 
@@ -106,10 +120,17 @@ Missions.destroy = function(self, things, config)
         for _,enemy in pairs(enemies) do if enemy:isValid() then table.insert(ret, enemy) end end
         return ret
     end
+    --- count enemies that are still alive
+    --- @param self
+    --- @return number
     mission.countValidEnemies = function(self)
         if isNil(enemies) then return nil end
         return Util.size(self:getValidEnemies())
     end
+
+    --- get enemies that were killed
+    --- @param self
+    --- @return nil|table[ShipTemplateBased|WarpJammer|ScanProbe]
     mission.getInvalidEnemies = function(self)
         if isNil(enemies) then return nil end
 
@@ -117,6 +138,10 @@ Missions.destroy = function(self, things, config)
         for _,enemy in pairs(enemies) do if not enemy:isValid() then table.insert(ret, enemy) end end
         return ret
     end
+
+    --- count enemies that were killed
+    --- @param self
+    --- @return number
     mission.countInvalidEnemies = function(self)
         if isNil(enemies) then return nil end
         return Util.size(self:getInvalidEnemies())

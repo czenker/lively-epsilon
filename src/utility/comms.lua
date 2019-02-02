@@ -1,20 +1,31 @@
 -- Helpers to create Comms conversations
 Comms = Comms or {}
 
+--- add text to the screen
+--- @param screen CommsScreen
+--- @param text string
+--- @return CommsScreen
 local addText = function(screen, text)
     screen.npcSays = screen.npcSays .. (text or "")
     return screen
 end
 
+--- add a reply to the screen
+--- @param screen CommsScreen
+--- @param reply CommsReply
+--- @return CommsScreen
 local withReply = function(screen, reply)
-    if not Comms.isReply(reply) then
+    if not Comms:isReply(reply) then
         return error("The given thing is not a valid CommsReply", 2)
     end
     table.insert(screen.howPlayerCanReact, reply)
     return screen
 end
 
-
+--- creates a CommsScreen
+--- @param npcSays string what the NPC says (aka longish text)
+--- @param howPlayerCanReact table[CommsReply] possible answers of the player
+--- @return CommsScreen
 Comms.screen = function(npcSays, howPlayerCanReact)
     npcSays = npcSays or ""
     howPlayerCanReact = howPlayerCanReact or {}
@@ -27,27 +38,41 @@ Comms.screen = function(npcSays, howPlayerCanReact)
     end
 
     for k, v in ipairs(howPlayerCanReact) do
-        if not Comms.isReply(v) then
+        if not Comms:isReply(v) then
             error("Reply at index " .. k .. " is not a valid reply.", 3)
         end
     end
 
 
-    return { npcSays = npcSays, howPlayerCanReact = howPlayerCanReact, withReply = withReply, addText = addText}
+    return {
+        npcSays = npcSays,
+        howPlayerCanReact = howPlayerCanReact,
+        withReply = withReply,
+        addText = addText
+    }
 end
 
-Comms.isScreen = function(thing)
+--- check if the given thing is a valid `CommsScreen`
+--- @param self
+--- @param thing any
+--- @return boolean
+Comms.isScreen = function(self, thing)
     if not isTable(thing) or not (isFunction(thing.npcSays) or isString(thing.npcSays)) or not isTable(thing.howPlayerCanReact) then
         return false
     end
     for k, v in ipairs(thing.howPlayerCanReact) do
-        if not Comms.isReply(v) then
+        if not Comms:isReply(v) then
             return false
         end
     end
     return true
 end
 
+--- creates a CommsReply
+--- @param playerSays string|function the short statement from the players
+--- @param nextScreen nil|function get the next screen that should be displayed to the players
+--- @param condition nil|function the condition under which this option should be displayed
+--- @return CommsReply
 Comms.reply = function(playerSays, nextScreen, condition)
 
     if not isFunction(playerSays) and not isString(playerSays) then
@@ -68,9 +93,17 @@ Comms.reply = function(playerSays, nextScreen, condition)
         pSays = playerSays
     end
 
-    return { playerSays = pSays, nextScreen = nextScreen, condition = condition }
+    return {
+        playerSays = pSays,
+        nextScreen = nextScreen,
+        condition = condition
+    }
 end
 
-Comms.isReply = function(thing)
+--- check if the given thing is a valid `CommsReply`
+--- @param self
+--- @param thing any
+--- @return boolean
+Comms.isReply = function(self, thing)
     return isTable(thing) and isFunction(thing.playerSays) and (isFunction(thing.nextScreen) or isNil(thing.nextScreen))
 end

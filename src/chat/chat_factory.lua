@@ -1,6 +1,12 @@
 Chatter = Chatter or {}
 
--- this chatter factory is able to generate (parameterized) chats
+--- create a factory that can create parameterized chats
+--- @param self
+--- @param cardinality number the number of participants in that conversation
+--- @param factory function
+--- @param config table
+---   @field filters table[number,function] a function that returns a boolean if the given first argument is a suitable candidate for the chat
+--- @return CommsReply
 Chatter.newFactory = function(self, cardinality, factory, config)
     if not isNumber(cardinality) then error("Cardinality needs to be a number, " .. typeInspect(cardinality) .. " given.", 2) end
     if cardinality < 1 or math.floor(cardinality) ~= cardinality then error("Cardinality needs to be a positive number, " .. cardinality .. " given.", 2) end
@@ -30,7 +36,14 @@ Chatter.newFactory = function(self, cardinality, factory, config)
     end
 
     return {
-        getCardinality = function() return cardinality end,
+        --- @internal
+        --- @param self
+        --- @return number
+        getCardinality = function(self) return cardinality end,
+        --- @internal
+        --- @param self
+        --- @param ... ShipTemplateBased
+        --- @return boolean
         areValidArguments = function(self, ...)
             local args = {...}
             local n = Util.size(args)
@@ -44,6 +57,10 @@ Chatter.newFactory = function(self, cardinality, factory, config)
             end
             return true
         end,
+        --- @internal
+        --- @param self
+        --- @param ... ShipTemplateBased
+        --- @return table
         createChat = function(self, ...)
             -- @TODO: error handling
             return factory(table.unpack({...}))
@@ -51,6 +68,10 @@ Chatter.newFactory = function(self, cardinality, factory, config)
     }
 end
 
+--- check if the given thing is a valid chat factory
+--- @param self
+--- @param thing any
+--- @return boolean
 Chatter.isChatFactory = function(self, thing)
     return isTable(thing) and
             isFunction(thing.getCardinality) and

@@ -1,17 +1,30 @@
 ShipTemplateBased = ShipTemplateBased or {}
 
-local function hasCrewAtPosition(ship, position)
-    return isTable(ship.crew) and ship.crew[position] ~= nil
+--- check if the ship or station has a person at the position with name
+--- @param self
+--- @param position string
+--- @return boolean
+local function hasCrewAtPosition(self, position)
+    return isTable(self.crew) and self.crew[position] ~= nil
 end
 
-local function getCrewAtPosition(ship, position)
-    if hasCrewAtPosition(ship, position) then
-        return ship.crew[position]
+--- get the person at the position
+--- @param self
+--- @param position string
+--- @return Person|nil
+local function getCrewAtPosition(self, position)
+    if hasCrewAtPosition(self, position) then
+        return self.crew[position]
     else
         return nil
     end
 end
 
+--- add a crew to the ShipTemplateBased
+--- @param self
+--- @param ship ShipTemplateBased
+--- @param positions nil|table[string,Person]
+--- @return ShipTemplateBased
 ShipTemplateBased.withCrew = function (self, ship, positions)
     positions = positions or {}
     if not isEeShipTemplateBased(ship) or not ship:isValid() then
@@ -39,6 +52,10 @@ ShipTemplateBased.withCrew = function (self, ship, positions)
     return ship
 end
 
+--- check if the thing has a crew
+--- @param self
+--- @param ship any
+--- @return boolean
 ShipTemplateBased.hasCrew = function(self, ship)
     return isFunction(ship.hasCrewAtPosition) and
             isFunction(ship.getCrewAtPosition)

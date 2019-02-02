@@ -1,9 +1,15 @@
 Mission = Mission or {}
 
--- a mission that the player can accept.
---
--- It is supposed to be used for side missions that ships can give you.
-
+--- A mission that the player can accept.
+--- It is supposed to be used for side missions that ships can give you.
+--- @param self
+--- @param mission Mission
+--- @param title string the title of this mission
+--- @param config table
+---   @field description string the description of the mission
+---   @field acceptMessage string the response the player get when the accept the message
+---   @field missionBroker ShipTemplateBased the party that issued this mission
+---   @field hint string a hint for this mission
 Mission.withBroker = function(self, mission, title, config)
     if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. typeInspect(mission) .. " given.", 2) end
     if mission:getState() ~= "new" then error("The mission must not be started yet, but got " .. typeInspect(mission:getState()), 2) end
@@ -22,6 +28,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---get the printable title of this mission
     ---@param self
+    --- @return string
     mission.getTitle = function(self)
         if isFunction(title) then
             return title(self)
@@ -32,6 +39,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---get the printable description of this mission
     ---@param self
+    ---@return string
     mission.getDescription = function(self)
         if isFunction(config.description) then
             return config.description(self)
@@ -42,6 +50,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---get the printable response when the mission has been accepted
     ---@param self
+    ---@return string
     mission.getAcceptMessage = function(self)
         if isFunction(config.acceptMessage) then
             return config.acceptMessage(self)
@@ -52,6 +61,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---mark the mission as accepted. `setMissionBroker` needs to have been called beforehand.
     ---@param self
+    ---@return nil
     mission.accept = function(self)
         if missionBroker == nil then error("The missionBroker needs to be set before calling accept", 2) end
         return parentAccept(self)
@@ -60,6 +70,7 @@ Mission.withBroker = function(self, mission, title, config)
     local parentStart = mission.start
     ---mark the mission as started
     ---@param self
+    --- @return nil
     mission.start = function(self)
         parentStart(self)
 
@@ -83,6 +94,7 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---get a printable hint for the current state of the mission
     ---@param self
+    ---@return nil|string
     mission.getHint = function(self)
         if isFunction(hint) then
             local ret = hint(self)
@@ -97,21 +109,28 @@ Mission.withBroker = function(self, mission, title, config)
 
     ---set the broker that has offered this mission
     ---@param self
-    ---@param thing SpaceShip
+    ---@param thing ShipTemplateBased
     mission.setMissionBroker = function(self, thing)
         missionBroker = thing
     end
 
-    ---get the broker that has offered this mission
-    ---@param self
+    --- get the broker that has offered this mission
+    --- @param self
+    --- @return ShipTemplateBased
     mission.getMissionBroker = function(self)
         return missionBroker
     end
 
     if config.missionBroker ~= nil then mission:setMissionBroker(config.missionBroker) end
     if config.hint ~= nil then mission:setHint(config.hint) end
+
+    return mission
 end
 
+--- check if the given thing is a broker mission
+--- @param self
+--- @param thing any
+--- @return boolean
 Mission.isBrokerMission = function(self, thing)
     return Mission:isMission(thing) and
             isFunction(thing.getTitle) and

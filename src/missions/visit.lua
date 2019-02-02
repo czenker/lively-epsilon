@@ -1,9 +1,12 @@
 Missions = Missions or {}
 
--- Your mission is to find a station and dock there
-
--- config:
---   * onVisit
+--- Your mission is to find a station and dock there
+---
+--- @param self
+--- @param station SpaceStation
+--- @param config table
+---   @field onVisit function(mission)
+--- @return Mission
 Missions.visit = function(self, station, config)
     if not isEeStation(station) then error("from needs to be a Station, but got " .. typeInspect(station), 2) end
     config = config or {}

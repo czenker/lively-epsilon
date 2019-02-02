@@ -1,17 +1,27 @@
 Util = {
-    size = function(array)
+    --- returns the size of any given table
+    --- @param table table
+    --- @return number
+    size = function(table)
         local cnt = 0
-        for _, _ in pairs( array ) do
+        for _, _ in pairs(table) do
             cnt = cnt + 1
         end
 
         return cnt
     end,
 
+    --- returns true if the table only contains numberical keys
+    --- @param table table
+    --- @return boolean
     isNumericTable = function(table)
         return isTable(table) and #table == Util.size(table)
     end,
 
+    --- selects a random item from a table
+    --- @param table table
+    --- @param filterFunc function an optional filter function for items to consider
+    --- @return any|nil
     random = function(table, filterFunc)
         if type(table) == "table" and Util.size(table) > 0 then
             local keys = {}
@@ -33,6 +43,8 @@ Util = {
         end
     end,
 
+    --- generate a random unique id
+    --- @return string
     randomUuid = function()
         local string = ""
         for i=1,16,1 do
@@ -57,6 +69,9 @@ Util = {
         return string
     end,
 
+    --- randomly sort a table and return a copy
+    --- @param input table
+    --- @return table
     randomSort = function(input)
         if not isTable(input) then error("Expected a table, but got " .. typeInspect(input), 2) end
         local copy = {}
@@ -73,7 +88,9 @@ Util = {
         return copy
     end,
 
-    -- merges multiple tables together where later tables take precedence
+    --- merges multiple tables together where later tables take precedence
+    --- @param ... table
+    --- @return table
     mergeTables = function(...)
         local args = {...}
         local ret = {}
@@ -85,7 +102,9 @@ Util = {
         return ret
     end,
 
-    -- merges multiple tables together where all items of following tables are appended to the first one
+    --- merges multiple tables together where all items of following tables are appended to the first one
+    --- @param ... table
+    --- @return table
     appendTables = function(...)
         local args = {...}
         local ret = {}
@@ -97,21 +116,36 @@ Util = {
         return ret
     end,
 
+    --- calculates a vector the given direction and length
+    --- @param angle number
+    --- @param length number
+    --- @return number,number
     vectorFromAngle = function(angle, length)
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,
 
+    --- calculates the angle of a given vector
+    --- @param dx number
+    --- @param dy number
+    --- @return number
     angleFromVector = function(dx, dy)
         return math.deg(math.atan(dy, dx)), math.sqrt(dx * dx + dy * dy)
     end,
 
-    -- returns the heading in the coordinate system used for the science station
+    --- returns the heading in the coordinate system used for the science station
+    --- @param spaceShip1 SpaceShip
+    --- @param spaceShip2 SpaceShip
+    --- @return number
     heading = function(spaceShip1, spaceShip2)
         local s1x, s1y = spaceShip1:getPosition()
         local s2x, s2y = spaceShip2:getPosition()
         return (Util.angleFromVector(s2x - s1x, s2y - s1y) + 90) % 360
     end,
 
+    --- calculates the difference between to angles - which ever direction is shorter
+    --- @param angle1 number
+    --- @param angle2 number
+    --- @return number a number between 0 and 180
     angleDiff = function(angle1, angle2)
         local diff = (angle2 - angle1) % 360
         if math.abs(diff) > 180 then
@@ -121,6 +155,10 @@ Util = {
         end
     end,
 
+    --- spawns a ship at the station
+    --- @param station SpaceStation
+    --- @param obj SpaceShip
+    --- @param distance number default: 500
     spawnAtStation = function(station, obj, distance)
         distance = distance or 500
         local x, y = station:getPosition()
@@ -129,6 +167,13 @@ Util = {
         return obj:setPosition(x + dx, y + dy):setRotation(angle)
     end,
 
+    --- selects a point on a vector
+    --- @param x1 number
+    --- @param y1 number
+    --- @param x2 number
+    --- @param y2 number
+    --- @param ratio number if ratio is `0` it will return `x1,y1`, if ratio is `1` it will return `x2,y2`
+    --- @return number,number
     onVector = function(x1, y1, x2, y2, ratio)
         if isEeShipTemplateBased(x1) then
             if isEeShipTemplateBased(y1) then
@@ -148,8 +193,10 @@ Util = {
         return x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio
     end,
 
-    --- copies a thing (table) recursive
-    -- @ see http://lua-users.org/wiki/CopyTable
+    --- returns a copy of a table
+    --- @see http://lua-users.org/wiki/CopyTable
+    --- @param orig table
+    --- @return table
     deepCopy = function (orig)
         local copy
         if isTable(orig) and not isEeObject(orig) then
@@ -164,6 +211,10 @@ Util = {
         return copy
     end,
 
+    --- map all values of a table by a mapping function
+    --- @param table table
+    --- @param mappingFunc function the faction gets an entry from the table. Should return the new value.
+    --- @return table
     map = function(table, mappingFunc)
         if not isTable(table) then error("expected first argument to be a table, but got " .. typeInspect(table), 2) end
         if not isFunction(mappingFunc) then error("expected second argument to be a function, but got " .. typeInspect(mappingFunc), 2) end
@@ -176,6 +227,10 @@ Util = {
         return ret
     end,
 
+    --- create a string from a table by concatenating
+    --- @param table table[string]
+    --- @param separator string
+    --- @param lastSeparator string the seperator between the last and the second to last item are seperated
     mkString = function(table, separator, lastSeparator)
         if not Util.isNumericTable(table) then
             error("The given table needs to have numerical indices.", 2)
@@ -206,8 +261,10 @@ Util = {
         return string
     end,
 
-    -- rounds mathematically correct
-    -- if `base` is given it rounds to the closest multiple of `base`
+    --- rounds mathematically correct
+    --- @param number number
+    --- @param base number (default: `1`) if given it rounds to the closest multiple of `base`
+    --- @return number
     round = function(number, base)
         if base == nil or base == 1 then
             return math.floor(number + 0.5)
@@ -216,6 +273,10 @@ Util = {
         end
     end,
 
+    --- calculates the total damage the Lasers can deal per second
+    --- @deprecated
+    --- @param ship SpaceShip
+    --- @return number
     totalLaserDps = function(ship)
         if not isEeShip(ship) and not isEePlayer(ship) then error("Expected ship to be a Ship or player, but got " .. typeInspect(ship), 2) end
         local total = 0
@@ -230,6 +291,10 @@ Util = {
         return total
     end,
 
+    --- calculates the total current shield level of a ship
+    --- @deprecated
+    --- @param ship SpaceShip
+    --- @return number
     totalShieldLevel = function(ship)
         if not isEeShipTemplateBased(ship) then error("Expected ship to be a ShipTemplateBased, but got " .. typeInspect(ship), 2) end
         local total = 0
@@ -240,6 +305,10 @@ Util = {
         return total
     end,
 
+    --- gets the sector name by coordinates
+    --- @param x number
+    --- @param y number
+    --- @return string
     sectorName = function(x, y)
         local a = Artifact():setPosition(x, y)
         local sectorName = a:getSectorName()

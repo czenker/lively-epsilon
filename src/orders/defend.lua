@@ -10,6 +10,7 @@ local orderDefendLocation = function(order, x, y, config)
         return false
     end
 
+    --- @internal
     order.getShipExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -26,6 +27,7 @@ local orderDefendLocation = function(order, x, y, config)
         }
     end
 
+    --- @internal
     order.getFleetExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -46,6 +48,7 @@ end
 
 local orderDefendTarget = function(order, target, config)
     if not isEeShipTemplateBased(target) then error("Expected target to be a shipTemplateBased, but got " .. typeInspect(target), 3) end
+    --- @internal
     order.getShipExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -66,6 +69,7 @@ local orderDefendTarget = function(order, target, config)
         }
     end
 
+    --- @internal
     order.getFleetExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -89,6 +93,7 @@ local orderDefendTarget = function(order, target, config)
 end
 
 local orderDefendSelf = function(order, config)
+    --- @internal
     order.getShipExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -105,6 +110,7 @@ local orderDefendSelf = function(order, config)
         }
     end
 
+    --- @internal
     order.getFleetExecutor = function()
         local noEndBefore = Cron.now() + config.minDefendTime
         return {
@@ -123,6 +129,19 @@ local orderDefendSelf = function(order, config)
     return order
 end
 
+--- defend a location a `ShipTemplateBased` or yourself
+--- @param self
+--- @param arg1 number|ShipTemplateBased (optional) the x coordinate of the defense location or the `ShipTemplateBased` to defend. If not given the ship will defend itself.
+--- @param arg2 number (optional) the y coordinate of the defense location
+--- @param config table (optional)
+---   @field minDefendTime number (default: 60) the number of seconds to execute this order at least
+---   @field minClearTime number (default: 10) the minimum number of seconds there should be no enemies in range
+---   @field range number (default: longRangeRadar) how far to check for enemies
+---   @field onExecution function the callback when the order is started to being executed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onCompletion function the callback when the order is completed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onAbort function the callback when the order is aborted. Gets the `OrderObject`, a `string` reason and the `CpuShip` or `Fleet` that executed the order.
+---   @field delayAfter number how many seconds to wait before executing the next order
+--- @return OrderObject
 Order.defend = function(self, arg1, arg2, config)
     local version
     if isEeObject(arg1) then

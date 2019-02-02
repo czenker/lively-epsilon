@@ -1,7 +1,10 @@
 Tools = Tools or {}
 
--- makes sure the player is able to at least once accept a communication
-
+--- makes sure the player is able to at least once accept a communication
+--- @param self
+--- @param shipTemplateBased ShipTemplateBased
+--- @param player PlayerSpaceship
+--- @param description nil|string if `nil` it will offer a comms to the given target. Else it will just send the message.
 Tools.ensureComms = function(self, shipTemplateBased, player, description)
     if not isEeShipTemplateBased(shipTemplateBased) then error("Expected a station or ship, but got " .. typeInspect(shipTemplateBased), 2) end
     if not isEePlayer(player) then error("Expected a player, but got " .. typeInspect(player), 2) end

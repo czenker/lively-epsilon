@@ -8,12 +8,13 @@ local function calculateDelay(message)
     return numberOfWords / wordsPerMinute * 60
 end
 
--- Chatter is a module to handle random messages flying through space.
--- Usually they come from nearby ships and stations and the comms officer is able to monitor them.
---
--- Config:
---   * maxRange
-Chatter.new = function(_, config)
+--- Chatter is a module to handle random messages flying through space.
+--- Usually they come from nearby ships and stations and the comms officer is able to monitor them.
+---
+--- @param self
+--- @param config table
+---    @field maxRange number (default: `getLongRangeRadarRange * 1.5`) the maximum range the player receives chats from their surrounding.
+Chatter.new = function(self, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     local maxRange = config.maxRange or (getLongRangeRadarRange() * 1.5)
@@ -61,9 +62,13 @@ Chatter.new = function(_, config)
         end
     end
 
-    local self = {}
+    local chatter = {}
 
-    self.say = function(_, sender, message)
+    --- send a single message
+    --- @param self
+    --- @param sender ShipTemplateBased
+    --- @param message string
+    chatter.say = function(self, sender, message)
         if not isEeShipTemplateBased(sender) and not isString(sender) then error("Sender needs to be a shipTemplateBased or a string, but got " .. typeInspect(sender), 2) end
         if not isString(message) then error("Message needs to be a string, but got " .. typeInspect(message), 2) end
 
@@ -71,7 +76,10 @@ Chatter.new = function(_, config)
             logWarning("Not sending chat because sender is destroyed.")
         end
     end
-    self.converse = function(_, messages)
+    --- start a conversation
+    --- @param self
+    --- @param messages table
+    chatter.converse = function(self, messages)
         if not isTable(messages) then error("Expected messages to be a numeric table, but got " .. typeInspect(messages), 2) end
         if not Util.isNumericTable(messages) then error("Expected messages to be a numeric table, but got an associative one. This is problematic because such a table does not guarantee the order of its contained elements. Create a table with numeric indices instead.", 2) end
         if messages[1] == nil then
@@ -92,9 +100,13 @@ Chatter.new = function(_, config)
         end
     end
 
-    return self
+    return chatter
 end
 
+--- check if the given thing is a valid Chatter
+--- @param self
+--- @param thing any
+--- @return boolean
 Chatter.isChatter = function(self, thing)
     return isTable(thing) and
             isFunction(thing.say) and

@@ -1,5 +1,17 @@
 Comms = Comms or {}
 
+--- create comms for a merchant
+--- @param self
+--- @param config table
+---   @field label string|function the label that leads to the merchant in comms
+---   @field mainScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field buyScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field buyProductScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field buyProductConfirmScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field sellScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field sellProductScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field sellProductConfirmScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field displayCondition nil|function  gets `station` and `comms_source`. Should return a `boolean`.
 Comms.merchantFactory = function(self, config)
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. typeInspect(config.label), 2) end
@@ -79,7 +91,7 @@ Comms.merchantFactory = function(self, config)
 
     mainMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config:mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
             selling = formatSoldProducts(comms_target, comms_source),
         }))
@@ -88,7 +100,7 @@ Comms.merchantFactory = function(self, config)
 
     buyMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config:buyScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config.buyScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
         }))
         return screen
@@ -99,7 +111,7 @@ Comms.merchantFactory = function(self, config)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
             local info = formatBoughtProduct(product, comms_target, comms_source)
-            config:buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
+            config.buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -120,7 +132,7 @@ Comms.merchantFactory = function(self, config)
                 info.stationAmount,
                 info.playerAmount
             )
-            local success = config:buyProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+            local success = config.buyProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -142,7 +154,7 @@ Comms.merchantFactory = function(self, config)
 
     sellMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config:sellScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config.sellScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             selling = formatSoldProducts(comms_target, comms_source),
         }))
         return screen
@@ -153,7 +165,7 @@ Comms.merchantFactory = function(self, config)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
             local info = formatSoldProduct(product, comms_target, comms_source)
-            config:sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
+            config.sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -175,7 +187,7 @@ Comms.merchantFactory = function(self, config)
                 info.playerAmount,
                 info.affordableAmount
             )
-            local success = config:sellProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
+            local success = config.sellProductConfirmScreen(screen, comms_target, comms_source, Util.mergeTables(
                 defaultCallbackConfig,
                 info,
                 {
@@ -207,7 +219,7 @@ Comms.merchantFactory = function(self, config)
         if not Station:hasMerchant(comms_target) or not Player:hasStorage(comms_source) then
             logInfo("not displaying merchant in Comms, because target has no merchant.")
             return false
-        elseif userCallback(config.displayCondition, self, comms_target, comms_source) == false then
+        elseif userCallback(config.displayCondition, comms_target, comms_source) == false then
             return false
         end
         return true

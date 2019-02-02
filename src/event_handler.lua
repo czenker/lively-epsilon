@@ -1,4 +1,9 @@
 EventHandler = {
+    --- Creates a new event handler
+    --- @param self
+    --- @param config table
+    ---   @field allowedEvents table[string] a table of all valid event names
+    ---   @field unique boolean if every event could only triggered once
     new = function(self, config)
         config = config or {}
         if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
@@ -27,6 +32,11 @@ EventHandler = {
         local events = {}
 
         return {
+            --- Register a new event listener
+            --- @param self
+            --- @param eventName string
+            --- @param handler function
+            --- @param priority number default: `0`
             register = function(self, eventName, handler, priority)
                 failIfEventNameNotAllowed(eventName)
                 if not isFunction(handler) then error("Expected handler to be a function, but got " .. typeInspect(handler), 2) end
@@ -40,6 +50,10 @@ EventHandler = {
                 events[eventName][priority] = events[eventName][priority] or {}
                 table.insert(events[eventName][priority], handler)
             end,
+            --- Fire an event
+            --- @param self
+            --- @param eventName string
+            --- @param arg table an argument for all event listeners
             fire = function(self, eventName, arg)
                 failIfEventNameNotAllowed(eventName)
                 if not isString(eventName) then error("Expected eventName to be a string, but got " .. typeInspect(eventName), 2) end

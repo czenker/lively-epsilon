@@ -1,5 +1,14 @@
 Comms = Comms or {}
 
+--- create comms for an upgrade broker
+--- @param self
+--- @param config table
+---   @field label string|function the label that leads to the upgrade broker in comms
+---   @field mainScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field detailScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field installScreen function gets a `screen`, `comms_target`, `comms_source` and an `info`. Should manipulate the screen to contain human readable text.
+---   @field displayCondition nil|function gets `comms_target` and `comms_source`. Should return a `boolean`.
+--- @return CommsReply
 Comms.upgradeBrokerFactory = function(self, config)
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
     if not isString(config.label) and not isFunction(config.label) then error("expected label to be a string or function, but got " .. typeInspect(config.label), 2) end
@@ -37,7 +46,7 @@ Comms.upgradeBrokerFactory = function(self, config)
 
     mainMenu = function(comms_target, comms_source)
         local screen = Comms.screen()
-        config:mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
+        config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             upgrades = formatUpgrades(comms_target, comms_source),
         }))
         return screen
@@ -46,7 +55,7 @@ Comms.upgradeBrokerFactory = function(self, config)
     detailMenu = function(upgrade)
         return function(comms_target, comms_source)
             local screen = Comms.screen()
-            config:detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatUpgrade(upgrade, comms_target, comms_source)))
+            config.detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatUpgrade(upgrade, comms_target, comms_source)))
             return screen
         end
     end
@@ -55,7 +64,7 @@ Comms.upgradeBrokerFactory = function(self, config)
         return function(comms_target, comms_source)
             local upgradeInfo = formatUpgrade(upgrade, comms_target, comms_source)
             local screen = Comms.screen()
-            local success = config:installScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, upgradeInfo))
+            local success = config.installScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, upgradeInfo))
             if not upgrade:canBeInstalled(comms_source) then
                 if success == true then
                     logWarning("The upgrade " .. upgrade:getId() .. " can not be installed. This seems to be a problem with your comms screen.")
@@ -82,7 +91,7 @@ Comms.upgradeBrokerFactory = function(self, config)
         if not Station:hasUpgradeBroker(comms_target) then
             logInfo("not displaying upgrade_broker in Comms, because target has no upgrade_broker.")
             return false
-        elseif userCallback(config.displayCondition, self, comms_target, comms_source) == false then
+        elseif userCallback(config.displayCondition, comms_target, comms_source) == false then
             return false
         end
         return true

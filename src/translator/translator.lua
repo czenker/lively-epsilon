@@ -1,5 +1,9 @@
 Translator = Translator or {}
 
+--- create a new Translator
+--- @param self
+--- @param defaultLocale string (default: `en`)
+--- @return Translator
 Translator.new = function(self, defaultLocale)
     defaultLocale = defaultLocale or "en"
     if not isString(defaultLocale) then error("Expected defaultLocale to be a string, but got " .. typeInspect(defaultLocale), 2) end
@@ -7,16 +11,27 @@ Translator.new = function(self, defaultLocale)
     local dictionaries = {}
     local locales = {defaultLocale}
 
-    local self
-    self = {
+    local translator
+    translator = {
+        --- change the current locale used for translation
+        --- @param self
+        --- @param ... string
+        --- @return Translator
         useLocale = function(self, ...)
             for i,locale in ipairs({...}) do
                 if not isString(locale) then error("Expected locales to be strings, but got " .. typeInspect(locale) .. " at position " .. i, 2) end
             end
             locales = {...}
             table.insert(locales, defaultLocale)
+            return self
         end,
 
+        --- register one or more translations
+        --- @param self
+        --- @param locale string (optional)
+        --- @param key string|table could be the name of the key or a table with keys and translations
+        --- @param label string|function (optional) when key is a string this is the translation
+        --- @return string
         register = function(self, locale, key, label)
             if isTable(locale) then
                 key = locale
@@ -40,6 +55,10 @@ Translator.new = function(self, defaultLocale)
             end
         end,
 
+        --- translate a message
+        --- @param key string
+        --- @param ... any whatever arguments the translation needs
+        --- @return string it will always return a string except when the translation key exists in no language
         translate = function(key, ...)
             local args = {... }
             if isTable(key) then
@@ -79,24 +98,29 @@ Translator.new = function(self, defaultLocale)
             end
         end,
 
-        -- internal function
+        --- @internal
         getDictionaries = function()
             return dictionaries
         end,
 
-        -- internal function
+        --- @internal
         getDefaultLocale = function()
             return defaultLocale
         end,
 
+        --- @internal
         -- internal function
         getLocales = function()
             return locales
         end,
     }
-    return self
+    return translator
 end
 
+--- check if the given thing is a translator
+--- @param self
+--- @param thing any
+--- @return boolean
 Translator.isTranslator = function(self, thing)
     return isTable(thing) and
         isFunction(thing.useLocale) and

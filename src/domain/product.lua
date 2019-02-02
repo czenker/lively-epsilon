@@ -1,6 +1,13 @@
 products = products or {}
 
 Product = {
+    --- create a new Product
+    --- @param self
+    --- @param name string
+    --- @param config table
+    ---   @field id string|nil
+    ---   @field size number (default: `1`)
+    --- @return Product
     new = function(self, name, config)
         if not isString(name) then error("Expected name to be a string, but got " .. typeInspect(name)) end
         config = config or {}
@@ -11,15 +18,28 @@ Product = {
         if not isNumber(config.size) then error("Expected size to be numeric, but got " .. typeInspect(config.size)) end
 
         return {
+            --- get the id of the product
+            --- @param self
+            --- @return string
             getId = function(self) return config.id end,
+
+            --- get the name of the product
+            --- @param self
+            --- @return string
             getName = function(self) return name end,
+
+            --- get the size of this product
+            --- @param self
+            --- @return number
             getSize = function(self) return config.size end,
         }
     end,
 
     --- accepts string or product and returns the id
-    -- @param product
-    -- @return string
+    --- @internal
+    --- @param self
+    --- @param product Product
+    --- @return string
     toId = function(self, product)
         if isString(product) then
             return product
@@ -30,6 +50,10 @@ Product = {
         end
     end,
 
+    --- check if the given thing is a product
+    --- @param self
+    --- @param thing any
+    --- @return boolean
     isProduct = function(self, thing)
         return isTable(thing) and
                 isFunction(thing.getId) and

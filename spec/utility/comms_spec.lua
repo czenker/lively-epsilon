@@ -8,21 +8,21 @@ insulate("Comms", function()
         it("can create a reply", function()
             local reply = Comms.reply("Foobar", function() end)
 
-            assert.is_true(Comms.isReply(reply))
+            assert.is_true(Comms:isReply(reply))
             assert.is_same("Foobar", reply:playerSays())
         end)
         it("can create a reply with function instead of string", function()
             local name = function() return "Foobar" end
             local reply = Comms.reply(name, function() end)
 
-            assert.is_true(Comms.isReply(reply))
+            assert.is_true(Comms:isReply(reply))
             assert.is_same("Foobar", reply:playerSays())
         end)
         it("can create a reply condition check", function()
             local condition = function() return true end
             local reply = Comms.reply("Foobar", nil, condition)
 
-            assert.is_true(Comms.isReply(reply))
+            assert.is_true(Comms:isReply(reply))
             assert.is_true(reply:condition())
         end)
         it("fails if first argument is a number", function()
@@ -43,7 +43,7 @@ insulate("Comms", function()
                 Comms.reply("Two", function () end),
             })
 
-            assert.is_true(Comms.isScreen(screen))
+            assert.is_true(Comms:isScreen(screen))
             assert.is_same(2, Util.size(screen.howPlayerCanReact))
         end)
 
@@ -52,7 +52,7 @@ insulate("Comms", function()
             :withReply(Comms.reply("One", function() end))
             :withReply(Comms.reply("Two", function() end))
 
-            assert.is_true(Comms.isScreen(screen))
+            assert.is_true(Comms:isScreen(screen))
             assert.is_same(2, Util.size(screen.howPlayerCanReact))
         end)
     end)

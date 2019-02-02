@@ -1,12 +1,19 @@
 Missions = Missions or {}
 
--- Disable a ship by destroying its engines and force it to stop.
--- - approachDistance
--- - onApproach
--- - damageThreshold
--- - distanceToFinish
--- - onSurrender
--- - onDestruction
+--- Disable a ship by destroying its engines and force it to stop.
+---
+--- Assuming the ship has it, the Impulse Drive, Warp Drive and Jump Drive have to be destroyed.
+---
+--- @param self
+--- @param target CpuShip|function
+--- @param config table
+---   @field approachDistance (default: `10000`)
+---   @field onApproach function(mission)
+---   @field damageThreshold number (default: `-0.2`) How far the systems need to be destroyed to count as success. (`1` = full health, `0` = disabled, `-1` = severely damaged)
+---   @field distanceToFinish number (default: `1000`) How close the players need to be to the ship so they surrender
+---   @field onSurrender function(mission)
+---   @field onDestruction function(mission)
+--- @return Mission
 Missions.disable = function(self, target, config)
     local cronId = Util.randomUuid()
 
@@ -72,6 +79,8 @@ Missions.disable = function(self, target, config)
 
     Mission:forPlayer(mission)
 
+    --- @param self
+    --- @return nil|CpuShip
     mission.getTarget = function(self)
         if isEeShip(target) and target:isValid() then return target end
     end

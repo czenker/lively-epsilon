@@ -1,17 +1,21 @@
 Missions = Missions or {}
 
--- Lend someone part of your repair crew for a limited time
---
--- distance
--- crewCount
--- duration
--- sendCrewLabel
--- sendCrewFailed
--- onCrewArrived
--- onCrewReady
--- returnCrewLabel
--- onCrewReturned
--- onDestruction
+--- Lend someone part of your repair crew for a limited time
+---
+--- @param self
+--- @param needy ShipTemplateBased
+--- @param config table
+---   @field distance number (default: `1000`) range to beam the crew
+---   @field crewCount number (default: `1`)
+---   @field duration number (default: `60`) how long the crew is occupied
+---   @field sendCrewLabel string
+---   @field sendCrewFailed function
+---   @field onCrewArrived function
+---   @field onCrewReady function
+---   @field returnCrewLabel string
+---   @field onCrewReturned function
+---   @field onDestruction function
+--- @return Mission
 Missions.crewForRent = function(self, needy, config)
     if not isEeShipTemplateBased(needy) and not isFunction(needy) then error("Expected needy to be a shipTemplateBased, but got " .. typeInspect(needy), 2) end
 
@@ -124,7 +128,9 @@ Missions.crewForRent = function(self, needy, config)
 
     Mission:forPlayer(mission)
 
-    mission.getNeedy = function()
+    --- @param self
+    --- @return ShipTemplateBased
+    mission.getNeedy = function(self)
         if isEeShipTemplateBased(needy) then
             return needy
         else
@@ -132,11 +138,17 @@ Missions.crewForRent = function(self, needy, config)
         end
     end
 
-    mission.getRepairCrewCount = function()
+    --- the number of crew members currently away
+    --- @param self
+    --- @return number
+    mission.getRepairCrewCount = function(self)
         return currentRepairCrewCount
     end
 
-    mission.getTimeToReady = function()
+    --- the time it still takes before the crew returns
+    --- @param self
+    --- @return number|nil
+    mission.getTimeToReady = function(self)
         if crewReady == true then return 0
         elseif currentRepairCrewCount > 0 then
             return Cron.getDelay(cronId) or 0

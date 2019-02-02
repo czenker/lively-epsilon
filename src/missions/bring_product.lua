@@ -7,20 +7,20 @@ Missions = Missions or {}
 --- @param self
 --- @param station SpaceStation
 --- @param config table
----   @subparam product Product the product the players have to bring
----   @subparam amount number number of units the player have to bring
----   @subparam acceptCondition function
----   @subparam onAccept function
----   @subparam onDecline function
----   @subparam onStart function
----   @subparam onDelivery function
----   @subparam successScreen function
----   @subparam sellProductScreen function
----   @subparam commsLabel string
----   @subparam sellProductScreen function
----   @subparam onSuccess function
----   @subparam onFailure function
----   @subparam onEnd function
+---   @field product Product the product the players have to bring
+---   @field amount number number of units the player have to bring
+---   @field acceptCondition function
+---   @field onAccept function
+---   @field onDecline function
+---   @field onStart function
+---   @field onDelivery function
+---   @field successScreen function
+---   @field sellProductScreen function
+---   @field commsLabel string
+---   @field sellProductScreen function
+---   @field onSuccess function
+---   @field onFailure function
+---   @field onEnd function
 Missions.bringProduct = function(self, station, config)
     if not isEeStation(station) then error("Expected a station, but got " .. typeInspect(station), 2) end
     if not Station:hasComms(station) then error("Expected station to have comms, but it does not.", 2) end

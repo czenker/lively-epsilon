@@ -1,5 +1,10 @@
 Ship = Ship or {}
 
+--- allow ships to have named crews
+--- @param self
+--- @param ship CpuShip
+--- @param positions table[string,Person]
+--- @return CpuShip
 Ship.withCrew = function (self, ship, positions)
     positions = positions or {}
     if not (isEeShip(ship) or isEePlayer(ship)) or not ship:isValid() then
@@ -25,13 +30,52 @@ Ship.withCrew = function (self, ship, positions)
     return ship
 end
 
-Ship.withCaptain = function(self, ship, person) Ship.withCrew(self, ship, {captain = person}) end
-Ship.withHelmsOfficer = function(self, ship, person) Ship.withCrew(self, ship, {helms = person}) end
-Ship.withRelayOfficer = function(self, ship, person) Ship.withCrew(self, ship, {relay = person}) end
-Ship.withScienceOfficer = function(self, ship, person) Ship.withCrew(self, ship, {science = person}) end
-Ship.withWeaponsOfficer = function(self, ship, person) Ship.withCrew(self, ship, {weapons = person}) end
-Ship.withEngineeringOfficer = function(self, ship, person) Ship.withCrew(self, ship, {engineering = person}) end
+--- set a captain for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withCaptain = function(self, ship, person) return Ship.withCrew(self, ship, {captain = person}) end
 
+--- set a helms officer for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withHelmsOfficer = function(self, ship, person) return Ship.withCrew(self, ship, {helms = person}) end
+
+--- set a relay officer for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withRelayOfficer = function(self, ship, person) return Ship.withCrew(self, ship, {relay = person}) end
+
+--- set a science officer for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withScienceOfficer = function(self, ship, person) return Ship.withCrew(self, ship, {science = person}) end
+
+--- set a weapons officer for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withWeaponsOfficer = function(self, ship, person) return Ship.withCrew(self, ship, {weapons = person}) end
+
+--- set an engineer officer for the ship
+--- @param self
+--- @param ship CpuShip
+--- @param person Person
+--- @return CpuShip
+Ship.withEngineeringOfficer = function(self, ship, person) return Ship.withCrew(self, ship, {engineering = person}) end
+
+--- check if the given thing is a `CpuShip` with crew
+--- @param self
+--- @param ship any
+--- @return boolean
 Ship.hasCrew = function(self, ship)
     return isFunction(ship.hasCrewAtPosition) and
             isFunction(ship.hasCaptain) and

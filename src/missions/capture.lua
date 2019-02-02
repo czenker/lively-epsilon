@@ -1,17 +1,21 @@
 Missions = Missions or {}
 
--- Destroy something in order to pick up something that you have to drop at some station.
---
--- Think: "Retrieve plans for a super weapon", "Free prisoners", "Capture Mr. Superbaddy", etc.
---
--- approachDistance
--- onApproach
--- onBearerDestruction
--- onItemDestruction
--- onPickup
--- dropOffTarget
--- onDropOff
--- onDropOffTargetDestroyed
+--- Destroy something in order to pick up something that you have to drop at some station.
+---
+--- Think: "Retrieve plans for a super weapon", "Free prisoners", "Capture Mr. Superbaddy", etc.
+---
+--- @param self
+--- @param bearer ShipTemplateBased|function
+--- @param config table
+---   @field approachDistance number (default: `10000`)
+---   @field onApproach function
+---   @field onBearerDestruction function
+---   @field onItemDestruction function
+---   @field onPickup function
+---   @field dropOffTarget nil|SpaceStation
+---   @field onDropOff function
+---   @field onDropOffTargetDestroyed function
+--- @return Mission
 Missions.capture = function(self, bearer, config)
     if not isEeShipTemplateBased(bearer) and not isFunction(bearer) then error("Expected bearer to be a shipTemplateBased, but got " .. typeInspect(bearer), 2) end
 
@@ -116,17 +120,20 @@ Missions.capture = function(self, bearer, config)
 
     Mission:forPlayer(mission)
 
-    -- @return nil|ShipTemplateBased
+    --- @param self
+    --- @return nil|ShipTemplateBased
     mission.getBearer = function(self)
         if isEeShipTemplateBased(bearer) then return bearer else return nil end
     end
 
-    -- @return nil|SpaceObject
+    --- @param self
+    --- @return nil|SpaceObject
     mission.getItemObject = function(self)
         if isEeObject(itemObject) then return itemObject else return nil end
     end
 
-    -- @return nil|SpaceStation
+    --- @param self
+    --- @return nil|SpaceStation
     mission.getDropOffTarget = function(self)
         if isEeStation(dropOffTarget) then return dropOffTarget else return nil end
     end

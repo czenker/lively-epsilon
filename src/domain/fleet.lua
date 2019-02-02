@@ -37,6 +37,12 @@ local getOrderToSetOrder = function(ship)
     end
 end
 
+--- creates a new fleet
+--- @param self
+--- @param ships table[CpuShip]
+--- @param config table
+---   @field id string (optional)
+--- @return FleetObject
 Fleet.new = function(self, ships, config)
     if not isTable(ships) then error("Exptected ships to be a table, but got " .. typeInspect(ships), 2) end
     for _, ship in pairs(ships) do
@@ -91,15 +97,25 @@ Fleet.new = function(self, ships, config)
     end
 
     local fleet = {
+        --- get the id of the fleet
+        --- @internal
+        --- @param self
+        --- @return string
         getId = function(self)
             return id
         end,
+        --- check if there are any valid ships in the fleet
+        --- @param self
+        --- @return boolean
         isValid = function(self)
             for _, ship in pairs(currentShips) do
                 if ship:isValid() then return true end
             end
             return false
         end,
+        --- get all the valid ships that are belonging to the fleet
+        --- @param self
+        --- @return table[CpuShip]
         getShips = function(self)
             local ret = {}
             for _, ship in pairs(currentShips) do
@@ -107,6 +123,9 @@ Fleet.new = function(self, ships, config)
             end
             return ret
         end,
+        --- count the valid ships in the fleet
+        --- @param self
+        --- @return number
         countShips = function(self)
             local cnt = 0
             for _, ship in pairs(currentShips) do
@@ -114,6 +133,9 @@ Fleet.new = function(self, ships, config)
             end
             return cnt
         end,
+        --- get the leader of the fleet
+        --- @param self
+        --- @return CpuShip|nil
         getLeader = function(self)
             for _, ship in pairs(currentShips) do
                 if ship:isValid() then return ship end
@@ -173,6 +195,10 @@ Fleet.new = function(self, ships, config)
     return fleet
 end
 
+--- check if the given thing is a FleetObject
+--- @param self
+--- @param thing any
+--- @return boolean
 Fleet.isFleet = function(self, thing)
     return isTable(thing) and
             isFunction(thing.getId) and

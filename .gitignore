@@ -7,3 +7,4 @@
 
 luacov.*.out
 utils.lua
+docs/reference.*

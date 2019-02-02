@@ -24,9 +24,15 @@ local function validateAndInitStation(thing)
 
 end
 
--- Pick up artifacts or supplyDrops
--- onPickUp
--- onAllPickedUp
+--- Pick up ``Artifact``s or ``SupplyDrop``s
+---
+--- @param self
+--- @param things Artifact|SupplyDrop|table[Artifact|SupplyDrop]|function the things to pick up
+--- @param deliveryStation SpaceStation|function|nil where to deliver the things to
+--- @param config table
+---   @field onPickUp function(mission,thing)
+---   @field onAllPickedUp function(mission)
+--- @return Mission
 Missions.pickUp = function(self, things, deliveryStation, config)
     local cronId = "pick_up_" .. Util.randomUuid()
     local pickUps, station
@@ -130,6 +136,8 @@ Missions.pickUp = function(self, things, deliveryStation, config)
 
     Mission:forPlayer(mission)
 
+    --- @param self
+    --- @return table[Artifact|SupplyDrop]
     mission.getPickUps = function(self)
         if isNil(pickUps) then return nil end
 
@@ -137,6 +145,9 @@ Missions.pickUp = function(self, things, deliveryStation, config)
         for _, pickUp in pairs(pickUps) do table.insert(ret, pickUp) end
         return ret
     end
+
+    --- @param self
+    --- @return number
     mission.countPickUps = function(self)
         if isNil(pickUps) then
             return nil
@@ -144,6 +155,9 @@ Missions.pickUp = function(self, things, deliveryStation, config)
             return Util.size(pickUps)
         end
     end
+
+    --- @param self
+    --- @return nil|SpaceStation
     mission.getDeliveryStation = function(self)
         return station
     end

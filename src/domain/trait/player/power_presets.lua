@@ -3,16 +3,21 @@ Player = Player or {}
 local systems = {"reactor", "beamweapons", "missilesystem", "maneuver", "impulse", "warp", "jumpdrive", "frontshield", "rearshield"}
 
 -- config
--- - slots
--- - label
--- - labelLoad
--- - labelStore
--- - labelLoadItem
--- - labelStoreItem
--- - labelReset
--- - labelInfo
--- - infoText
 
+--- add power presets for the engineering station. This allows to quickly change between different configurations for power and coolant
+--- @param self
+--- @param player PlayerSpaceship
+--- @param config table
+--- @field slots number (default: `8`)
+--- @field label string
+--- @field labelLoad string
+--- @field labelStore string
+--- @field labelLoadItem string
+--- @field labelStoreItem string
+--- @field labelReset string
+--- @field labelInfo string
+--- @field infoText string
+--- @return PlayerSpaceship
 Player.withPowerPresets = function(self, player, config)
     config = config or {}
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
@@ -73,8 +78,14 @@ Player.withPowerPresets = function(self, player, config)
     player:addMenuItem("engineering", "presets", Menu:newItem(config.label, mainMenu))
 
     player.powerPresetsActive = true
+
+    return player
 end
 
+--- check if a player has power presets enabled
+--- @param self
+--- @param player PlayerSpaceship
+--- @return boolean
 Player.hasPowerPresets = function(self, player)
     return isTable(player) and player.powerPresetsActive == true
 end

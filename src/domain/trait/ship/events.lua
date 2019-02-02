@@ -1,8 +1,18 @@
 Ship = Ship or {}
 
--- onDocking
--- onUndocking
--- onDockInitiation
+--- add event listeners to the ship
+--- @deprecated I am not sure if i will leave it in or remove it
+--- @param self
+--- @param ship CpuShip
+--- @param config table
+---   @field onDocking function when a ship docked at a station. gets `ship` and `station` as arguments.
+---   @field onUndocking function when a ship is undocking a station. gets `ship` and `station` as arguments.
+---   @field onDockInitiation function when a ship heading to a station intending to dock. gets `ship` and `station` as arguments.
+---   @field onDestruction nil|function gets `ship` as argument.
+---   @field onEnemyDetection nil|function gets `ship` as argument.
+---   @field onEnemyClear nil|function gets `ship` as argument.
+---   @field onBeingAttacked nil|function gets `ship` as argument.
+--- @return CpuShip
 Ship.withEvents  = function(self, ship, config)
     if not isEeShip(ship) then error("Expected a ship, but got " .. typeInspect(ship), 2) end
     config = config or {}
@@ -85,4 +95,6 @@ Ship.withEvents  = function(self, ship, config)
 
         Cron.regular(cronId, waitForDockInitiation, tick)
     end
+
+    return ship
 end

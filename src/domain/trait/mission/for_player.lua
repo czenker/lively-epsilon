@@ -1,5 +1,9 @@
 Mission = Mission or {}
 
+--- mark a mission as relevant for a player
+--- @param self
+--- @param mission Mission
+--- @param initPlayer PlayerSpaceship
 Mission.forPlayer = function(self, mission, initPlayer)
     if not Mission:isMission(mission) then error("Expected mission to be a Mission, but " .. typeInspect(mission) .. " given.", 2) end
     if mission:getState() ~= "new" then error("The mission must not be started yet, but got " .. typeInspect(mission:getState()), 2) end
@@ -49,8 +53,14 @@ Mission.forPlayer = function(self, mission, initPlayer)
     if isEePlayer(initPlayer) then
         mission:setPlayer(initPlayer)
     end
+
+    return mission
 end
 
+--- check if the given thing is a PlayerMission
+--- @param self
+--- @param thing any
+--- @return boolean
 Mission.isPlayerMission = function(self, thing)
     return Mission:isMission(thing) and
             isFunction(thing.getPlayer) and

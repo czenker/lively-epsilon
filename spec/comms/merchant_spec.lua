@@ -19,7 +19,7 @@ insulate("Comms", function()
         it("should create a valid Comms.reply", function()
             local merchantComms = Comms:merchantFactory(requiredConfig)
 
-            assert.is_true(Comms.isReply(merchantComms))
+            assert.is_true(Comms:isReply(merchantComms))
         end)
         it("fails if any of the required configs is missing", function()
             for k, _ in pairs(requiredConfig) do

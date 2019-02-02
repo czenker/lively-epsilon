@@ -4,6 +4,11 @@ local function isWeapon(product)
     return product:getId() == "hvli" or product:getId() == "homing" or product:getId() == "mine" or product:getId() == "emp" or product:getId() == "nuke"
 end
 
+--- configure storage for a player
+--- @param self
+--- @param player PlayerSpaceship
+--- @param config table
+--- @return PlayerSpaceship
 Player.withStorage = function(self, player, config)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if Player:hasStorage(player) then error("Player " .. player:getCallSign() .. " already has a storage", 2) end
@@ -16,6 +21,9 @@ Player.withStorage = function(self, player, config)
     -- value: storage amount
     local storage = {}
 
+    --- get a list of all products currently stored
+    --- @param self
+    --- @return table[Product,number]
     player.getStoredProducts = function(self)
         local ret = {}
         local i = 1
@@ -26,6 +34,10 @@ Player.withStorage = function(self, player, config)
         return ret
     end
 
+    --- get the storage level of a given product
+    --- @param self
+    --- @param product Product
+    --- @return number
     player.getProductStorage = function(self, product)
         if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
         if isWeapon(product) then
@@ -37,6 +49,10 @@ Player.withStorage = function(self, player, config)
         end
     end
 
+    --- get the maximum amount the player can store
+    --- @param self
+    --- @param product Product
+    --- @return number
     player.getMaxProductStorage = function(self, product)
         if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
 
@@ -47,6 +63,10 @@ Player.withStorage = function(self, player, config)
         end
     end
 
+    --- get the free space to store a product
+    --- @param self
+    --- @param product Product
+    --- @return number
     player.getEmptyProductStorage = function(self, product)
         if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
 
@@ -57,6 +77,11 @@ Player.withStorage = function(self, player, config)
         end
     end
 
+    --- change the amount of stored product
+    --- @param self
+    --- @param product Product
+    --- @param amount number positive or negative number to add or remove
+    --- @return PlayerSpaceship
     player.modifyProductStorage = function(self, product, amount)
         if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
         if not isNumber(amount) then error("Expected a number, but got " .. typeInspect(amount)) end
@@ -67,8 +92,12 @@ Player.withStorage = function(self, player, config)
             storage[product] = (storage[product] or 0) + amount
             if storage[product] <= 0 then storage[product] = nil end
         end
+        return self
     end
 
+    --- get the total empty storage space
+    --- @param self
+    --- @return number
     player.getEmptyStorageSpace = function(self)
         local free = maxStorage
         for product, amount in pairs(storage) do
@@ -77,14 +106,25 @@ Player.withStorage = function(self, player, config)
         return math.max(free, 0)
     end
 
+    --- get the maximum storage space
+    --- @param self
+    --- @return number
     player.getMaxStorageSpace = function(self)
         return maxStorage
     end
 
+    --- set the maximum storage space
+    --- @param self
+    --- @param number number
+    --- @return PlayerSpaceship
     player.setMaxStorageSpace = function(self, number)
         maxStorage = number
+        return self
     end
 
+    --- get the used storage space
+    --- @param self
+    --- @return number
     player.getStorageSpace = function(self)
         local sum = 0
         for product, amount in pairs(storage) do
@@ -92,8 +132,13 @@ Player.withStorage = function(self, player, config)
         end
         return sum
     end
+
+    return player
 end
 
+--- check if the player has a storage
+--- @param self
+--- @param player PlayerSpaceship
 Player.hasStorage = function(self, player)
     return isTable(player) and
             isFunction(player.getStoredProducts) and

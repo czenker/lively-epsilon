@@ -1,5 +1,12 @@
 ShipTemplateBased = ShipTemplateBased or {}
 
+--- add an improved api to set comms
+--- @param self
+--- @param spaceObject ShipTemplateBased
+--- @param config table
+---   @field hailText string|function
+---   @field comms table[CommsReply]
+--- @return ShipTemplateBased
 ShipTemplateBased.withComms = function (self, spaceObject, config)
     if not isEeShipTemplateBased(spaceObject) then
         error ("Expected a shipTemplateBased object but got " .. typeInspect(spaceObject), 2)
@@ -18,15 +25,26 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
     local overriddenComms
     local overriddenCommsOnce
 
+    --- set the hail text
+    --- @param self
+    --- @param hailText nil|string|function
+    --- @return ShipTemplatBased
     spaceObject.setHailText = function(self, hailText)
         if not isString(hailText) and not isNil(hailText) and not isFunction(hailText) then
             error("hailText needs to be a string or a function", 2)
         end
         theHailText = hailText
+
+        return self
     end
 
+    --- add a comms item
+    --- @param self
+    --- @param reply CommsReply
+    --- @param id string (optional)
+    --- @return string the id of this item
     spaceObject.addComms = function(self, reply, id)
-        if not Comms.isReply(reply) then error("Expected reply to be a reply, but got " .. typeInspect(reply), 2) end
+        if not Comms:isReply(reply) then error("Expected reply to be a reply, but got " .. typeInspect(reply), 2) end
         id = id or Util.randomUuid()
         if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
 
@@ -35,11 +53,21 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
         return id
     end
 
+    --- remove a comms item
+    --- @param self
+    --- @param id string
+    --- @return ShipTemplateBased
     spaceObject.removeComms = function(self, id)
         if not isString(id) then error("Expected id to be a string, but got " .. typeInspect(id), 2) end
         comms[id] = nil
+        return self
     end
 
+    --- get the comms screen to display
+    --- @internal
+    --- @param self
+    --- @param player PlayerSpaceship
+    --- @return CommsScreen
     spaceObject.getComms = function(self, player)
         if not isEePlayer(player) then error("Expected a Player, but got " .. typeInspect(player), 2) end
         if overriddenComms ~= nil then
@@ -71,13 +99,20 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
         end
     end
 
+    --- temporarily override comms
+    --- @param self
+    --- @param screen CommsScreen
+    --- @param once boolean (default: `false`)
+    --- @return ShipTemplateBased
     spaceObject.overrideComms = function(self, screen, once)
-        if not Comms.isScreen(screen) and not isNil(screen) then error("Expected a screen, but got " .. typeInspect(screen), 2) end
+        if not Comms:isScreen(screen) and not isNil(screen) then error("Expected a screen, but got " .. typeInspect(screen), 2) end
         once = once or false
         if not isBoolean(once) then error("Expected a boolean, but got " .. typeInspect(once), 2) end
 
         overriddenComms = screen
         overriddenCommsOnce = once
+
+        return self
     end
 
     spaceObject:setCommsScript("lively_epsilon/src/scripts/comms.lua")
@@ -94,8 +129,14 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
     elseif not isNil(config.comms) then
         error("Expected comms to be a table of comms, but got " .. typeInspect(config.comms), 2)
     end
+
+    return spaceObject
 end
 
+--- check if the given thing has comms
+--- @param self
+--- @param thing any
+--- @return boolean
 ShipTemplateBased.hasComms = function(self, thing)
     return isFunction(thing.setHailText) and
             isFunction(thing.addComms) and

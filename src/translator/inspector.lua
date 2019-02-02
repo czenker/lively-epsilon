@@ -10,7 +10,10 @@ local function distinctKeys(table1, table2)
     return ret
 end
 
--- inspects for missing or excessive translations
+--- inspects for missing or excessive translations
+--- @internal
+--- @param self
+--- @param translator Translator
 Translator.inspect = function(self, translator)
     if not Translator:isTranslator(translator) then error("Expected translator to be a Translator, but got " .. typeInspect(translator), 2) end
     local locale1 = translator:getDefaultLocale()
@@ -29,6 +32,10 @@ Translator.inspect = function(self, translator)
     end
 end
 
+--- prints the inspection for missing or excessive translations
+--- @internal
+--- @param self
+--- @param translator Translator
 Translator.printInspection = function(self, translator)
     local missing, excessive = Translator:inspect(translator)
     local locale1 = translator:getDefaultLocale()

@@ -11,6 +11,13 @@ local function filterRandomObject(station, filterFunction, radius)
     return Util.random(objects)
 end
 
+--- let a ship act as a buyer of products for a station
+--- @param self
+--- @param ship CpuShip
+--- @param homeStation SpaceStation
+--- @param product Product
+--- @param config table
+---   @field maxDistanceFromHome number (default: `getLongRangeRadarRange`)
 Ship.behaveAsBuyer = function (self, ship, homeStation, product, config)
     product = Product:toId(product)
 

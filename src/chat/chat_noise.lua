@@ -52,7 +52,11 @@ local findParameters = function(factory, shipTemplateBaseds)
     return find(factory, {}, shipTemplateBaseds)
 end
 
--- a randomizer that generates chats between ships and stations
+--- a randomizer that generates chats between ships and stations
+--- @param self
+--- @param chatter Chatter
+--- @param config table
+--- @return ChatterNoise
 Chatter.newNoise = function(self, chatter, config)
     if not Chatter:isChatter(chatter) then error("Expected chatter to be a Chatter, but got " .. typeInspect(chatter), 2) end
 
@@ -112,7 +116,12 @@ Chatter.newNoise = function(self, chatter, config)
     Cron.regular(cronId, doit, delay, delay)
 
     return {
-        addChatFactory = function(_, chatFactory, id)
+        --- add a chat factory
+        --- @param self
+        --- @param chatFactory ChatFactory
+        --- @param id string (optional)
+        --- @return string the id of this chat factory
+        addChatFactory = function(self, chatFactory, id)
             if not Chatter:isChatFactory(chatFactory) then error("Expected chatFactory, but got " .. typeInspect(chatFactory)) end
             id = id or Util.randomUuid()
             if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. typeInspect(id)) end
@@ -122,12 +131,17 @@ Chatter.newNoise = function(self, chatter, config)
 
             return id
         end,
-        removeChatFactory = function(_, id)
+        --- @param self
+        --- @param id string
+        removeChatFactory = function(self, id)
             if not isString(id) or id == "" then error("Expected id to be a non-empty string, but got " .. typeInspect(id)) end
             factories[id] = nil
             factoryKeys[id] = nil
         end,
-        getChatFactories = function(_)
+        --- return all chat factories
+        --- @param self
+        --- @return table[string,ChatFactory]
+        getChatFactories = function(self)
             -- make a copy to make it deletable while being traversable and prevent it from being manipulated
             local facts = {}
 
@@ -141,6 +155,10 @@ Chatter.newNoise = function(self, chatter, config)
 
 end
 
+--- check if the given thing is a valid ChatNoise
+--- @param self
+--- @param thing any
+--- @return boolean
 Chatter.isChatNoise = function(self, thing)
     return isTable(thing) and
             isFunction(thing.addChatFactory) and

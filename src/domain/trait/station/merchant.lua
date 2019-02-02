@@ -1,5 +1,11 @@
 Station = Station or {}
--- enhances a station with the possibility to buy and sell products
+--- enhances a station with the possibility to buy and sell products
+--- @param self
+--- @param station SpaceStation
+--- @param configuration table[Product,table]
+---   @field buyingPrice number|function|nil
+---   @field sellingPrice number|function|nil
+--- @return SpaceStation
 Station.withMerchant = function (self, station, configuration)
     if not isEeStation(station) then
         error ("Expected a station but got " .. typeInspect(station), 2)
@@ -79,6 +85,11 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
+    --- get the price the station is buying this product at
+    --- @param self
+    --- @param product Product
+    --- @param seller SpaceShip
+    --- @return nil|number
     station.getProductBuyingPrice = function (self, product, seller)
         local buying = getBuying(product, seller)
 
@@ -91,6 +102,11 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
+    --- get the maximum number of units the station would buy
+    --- @param self
+    --- @param product Product
+    --- @param seller SpaceShip
+    --- @return number|nil
     station.getMaxProductBuying = function (self, product, seller)
         local buying = getBuying(product, seller)
 
@@ -110,10 +126,19 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
+    --- check if the station is buying the product
+    --- @param self
+    --- @param product Product
+    --- @param seller SpaceShip
+    --- @return boolean
     station.isBuyingProduct = function (self, product, seller)
         return self:getProductBuyingPrice(product, seller) ~= nil
     end
 
+    --- get a list of all products the station is buying
+    --- @param self
+    --- @param seller SpaceShip
+    --- @return table[Product]
     station.getProductsBought = function (self, seller)
         local products = {}
 
@@ -126,6 +151,11 @@ Station.withMerchant = function (self, station, configuration)
         return products
     end
 
+    --- get the price the station is selling this product at
+    --- @param self
+    --- @param product Product
+    --- @param buyer SpaceShip
+    --- @return nil|number
     station.getProductSellingPrice = function (self, product, buyer)
         local selling = getSelling(product, buyer)
 
@@ -138,6 +168,11 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
+    --- get the maximum number of units the station would sell
+    --- @param self
+    --- @param product Product
+    --- @param buyer SpaceShip
+    --- @return number|nil
     station.getMaxProductSelling = function (self, product, buyer)
         local selling = getSelling(product, buyer)
 
@@ -157,10 +192,19 @@ Station.withMerchant = function (self, station, configuration)
         end
     end
 
+    --- check if the station is selling the product
+    --- @param self
+    --- @param product Product
+    --- @param buyer SpaceShip
+    --- @return boolean
     station.isSellingProduct = function (self, product, buyer)
         return self:getProductSellingPrice(product, buyer) ~= nil
     end
 
+    --- get a list of all products the station is selling
+    --- @param self
+    --- @param buyer SpaceShip
+    --- @return table[Product]
     station.getProductsSold = function (self, buyer)
         local products = {}
 
@@ -173,13 +217,17 @@ Station.withMerchant = function (self, station, configuration)
         return products
     end
 
+    return station
+
 end
 
 --- checks if the given object has a merchant that buys or sells stuff
--- @param station
--- @return boolean
+--- @param self
+--- @param station any
+--- @return boolean
 Station.hasMerchant = function(self, station)
-    return isFunction(station.getProductBuyingPrice) and
+    return isTable(station) and
+            isFunction(station.getProductBuyingPrice) and
             isFunction(station.getMaxProductBuying) and
             isFunction(station.isBuyingProduct) and
             isFunction(station.getProductsBought) and

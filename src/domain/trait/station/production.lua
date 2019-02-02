@@ -1,18 +1,9 @@
 Station = Station or {}
--- a station that produces or consumes products
---
--- productionTime       float
--- consumes:            array of
---   product            Product
---     id:              string
---     name:            string
---   amount             integer
--- produces             array of
---   product            Product
---     id:              string
---     name:            string
---   amount             integer
---
+--- a station that produces or consumes products
+--- @param self
+--- @param station SpaceStation
+--- @param configuration table
+--- @return SpaceStation
 Station.withProduction = function (self, station, configuration)
     if not isEeStation(station) then
         error ("Expected a station but got " .. typeInspect(station), 2)
@@ -122,19 +113,29 @@ Station.withProduction = function (self, station, configuration)
         end, conf.productionTime, conf.productionTime)
     end
 
+    --- get all the products the station produces
+    --- @param self
+    --- @return table[Product]
     station.getProducedProducts = function (self)
         return Util.deepCopy(produces)
     end
 
+    --- get all the products the station consumes
+    --- @param self
+    --- @return table[Product]
     station.getConsumedProducts = function (self)
         return Util.deepCopy(consumes)
     end
+
+    return station
 end
 
 --- checks if the given object has a production configured
--- @param station
--- @return boolean
+--- @param self
+--- @param station any
+--- @return boolean
 Station.hasProduction = function(self, station)
-    return isFunction(station.getProducedProducts) and
+    return isTable(station) and
+            isFunction(station.getProducedProducts) and
             isFunction(station.getConsumedProducts)
 end

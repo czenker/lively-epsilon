@@ -156,7 +156,7 @@ insulate("ShipTemplateBased", function()
             station:addComms(reply3)
 
             local comms = station:getComms(player)
-            assert.is_true(Comms.isScreen(comms))
+            assert.is_true(Comms:isScreen(comms))
             assert.contains_value(reply1, comms.howPlayerCanReact)
             assert.contains_value(reply2, comms.howPlayerCanReact)
             assert.contains_value(reply3, comms.howPlayerCanReact)

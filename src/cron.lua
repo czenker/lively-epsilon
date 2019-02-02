@@ -11,6 +11,7 @@ local events = {}
 --- A nice side effect is also that it makes working with delays and timeouts very easy.
 Cron = {
     ---@param delta number of the ellapsed time since the last call
+    ---@return nil
     tick = function(delta)
         now = now + delta
 
@@ -53,6 +54,7 @@ Cron = {
     ---@param name string unique identifier
     ---@param func function the function to call once
     ---@param delay number the number of seconds after which the function should be called
+    ---@return string uid of the cron
     once = function(name, func, delay)
         if type(name) == "function" then
             delay = func
@@ -76,6 +78,7 @@ Cron = {
     ---@param func function the function to call once
     ---@param interval number the interval in seconds at which the function should be called
     ---@param delay number the initial delay in seconds after which the function is called for the first time
+    ---@return string uid of the cron
     regular = function(name, func, interval, delay)
         if isFunction(name) then
             delay = interval
@@ -95,6 +98,7 @@ Cron = {
     --- Abort a Cron
     ---
     ---@param name string unique identifier of the cron to be aborted.
+    ---@return nil
     abort = function(name)
         events[name] = nil
     end,
@@ -102,6 +106,7 @@ Cron = {
     --- Get the time in seconds until the cron will be called the next time
     ---
     ---@param name string unique identifier of the cron to be aborted.
+    ---@return nil|number
     getDelay = function(name)
         if events[name] == nil then
             return nil
@@ -109,7 +114,7 @@ Cron = {
             return events[name].next - now
         end
     end,
-    ---@obsolete will be removed
+    ---@deprecated will be removed
     ---@param name string
     ---@param delay number
     setDelay = function(name, delay)
@@ -120,12 +125,14 @@ Cron = {
     --- postpone the cron by the specified delay in seconds
     ---@param name string unique identifier of the cron
     ---@param delay number seconds to postpone the execution
+    ---@return nil
     addDelay = function(name, delay)
         if events[name] ~= nil then
             events[name].next = events[name].next + delay
         end
     end,
     ---get the current in-game time in seconds
+    ---@return number
     now = function()
         return now
     end,

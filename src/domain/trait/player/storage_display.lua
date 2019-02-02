@@ -1,10 +1,15 @@
 Player = Player or {}
 
--- config
--- - label
--- - title
--- - labelUsedStorage
--- - emptyStorage
+--- add a storage display for the engineering station
+--- @deprecated The integration will probably change, because I think having some kind of menu structure might be the better option
+--- @param self
+--- @param player PlayerSpaceship
+--- @param config table
+---   @field label string the label for the menu item
+---   @field title string the title displayed above the listing
+---   @field labelUsedStorage string the label to indicate used storage
+---   @field emptyStorage string the text to display if the storage is empty
+--- @return PlayerSpaceship
 Player.withStorageDisplay = function(self, player, config)
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
     if not Player:hasStorage(player) then error("Player should have a storage", 2) end
@@ -16,9 +21,6 @@ Player.withStorageDisplay = function(self, player, config)
     if not isString(config.title) then error("Expected title to be a string, but got " .. typeInspect(config.title), 2) end
     if not isString(config.labelUsedStorage) then error("Expected labelUsedStorage to be a string, but got " .. typeInspect(config.labelUsedStorage), 2) end
     if not isString(config.emptyStorage) then error("Expected emptyStorage to be a string, but got " .. typeInspect(config.emptyStorage), 2) end
-
-    -- The integration will probably change, because I think having some kind of menu structure might be the better option
-    -- And it should be possible to translate or modify this. :)
 
     player:addEngineeringMenuItem(Menu:newItem(config.label, function()
         local text = config.title .. "\n--------------------------\n"
@@ -39,8 +41,13 @@ Player.withStorageDisplay = function(self, player, config)
 
     player.storageDisplayActive = true
 
+    return player
 end
 
+--- check if the player has a storage display
+--- @param self
+--- @param player PlayerSpaceship
+--- @return boolean
 Player.hasStorageDisplay = function(self, player)
-    return isTable(player) and player.storageDisplayActive
+    return isTable(player) and player.storageDisplayActive == true
 end

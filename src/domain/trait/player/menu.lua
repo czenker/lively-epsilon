@@ -6,11 +6,15 @@ end
 
 local positions = {"helms", "relay", "science", "weapons", "engineering"}
 
--- config
--- - backLabel
--- - labelNext
--- - labelPrevious
--- - itemsPerPage
+--- Add menus to the player stations
+--- @param self
+--- @param player PlayerSpaceship
+--- @param config table
+---   @field backLabel string label to go back to the main menu
+---   @field labelNext string label to go to the next page
+---   @field labelPrevious string label to go to the previous page
+---   @field itemsPerPage number|table[string,number] how many items to display at most per page
+--- @return PlayerSpaceship
 Player.withMenu = function(self, player, config)
     config = config or {}
     if not isEePlayer(player) then error("Expected player to be a Player, but got " .. typeInspect(player), 2) end
@@ -35,6 +39,7 @@ Player.withMenu = function(self, player, config)
         if config.itemsPerPage[position] == nil then error("Expected itemsPerPage to be set for " .. position, 3) end
         if not isNumber(config.itemsPerPage[position]) then error("Expected itemsPerPage to be a positive number for " .. position .. ", but got " .. typeInspect(config.itemsPerPage[position]), 3) end
         if config.itemsPerPage[position] < 4 then error("Expected itemsPerPage for " .. position .. " to be larger than 4, but got " .. config.itemsPerPage[position], 3) end
+        if config.itemsPerPage[position] > 16 then logWarning("Setting itemsPerPage higher than 16 can lead to cases where players can not see the back button. Got: " .. config.itemsPerPage) end
     end
 
     for _,position in pairs(positions) do
@@ -183,15 +188,30 @@ Player.withMenu = function(self, player, config)
 
         end
 
+        --- draw menu for station
+        --- @param self
+        --- @param menu Menu (optional) If not given draws the main menu
+        --- @return PlayerSpaceship
         player[drawName] = function(self, menu)
             draw(menu)
             return self
         end
+
+        --- add a menu entry to the main menu
+        --- @param self
+        --- @param id string
+        --- @param menuItem MenuItem
+        --- @return PlayerSpaceship
         player[adderName] = function(self, id, menuItem)
             menu:addItem(id, menuItem)
             if isOnMainMenu == true then draw() end
             return self
         end
+
+        --- remove a menu entry from the main menu
+        --- @param self
+        --- @param id string
+        --- @return PlayerSpaceship
         player[removerName] = function(self, id)
             menu:removeItem(id)
             if isOnMainMenu == true then draw() end
@@ -199,6 +219,12 @@ Player.withMenu = function(self, player, config)
         end
     end
 
+    --- add a menu entry to the main menu for that station
+    --- @param self
+    --- @param position string
+    --- @param id string
+    --- @param menuItem MenuItem
+    --- @return PlayerSpaceship
     player.addMenuItem = function(self, position, id, menuItem)
         if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local adderName = "add" .. upperFirst(position) .. "MenuItem"
@@ -207,6 +233,12 @@ Player.withMenu = function(self, player, config)
         self[adderName](self, id, menuItem)
         return self
     end
+
+    --- remove a menu entry from the main menu for that station
+    --- @param self
+    --- @param position string
+    --- @param id string
+    --- @return PlayerSpaceship
     player.removeMenuItem = function(self, position, id)
         if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local removerName = "remove" .. upperFirst(position) .. "MenuItem"
@@ -215,6 +247,12 @@ Player.withMenu = function(self, player, config)
         self[removerName](self, id)
         return self
     end
+
+    --- draw a menu for a station
+    --- @param self
+    --- @param position string
+    --- @param menu Menu (optional) the menu to draw. If not given draws the main menu
+    --- @return PlayerSpaceship
     player.drawMenu = function(self, position, menu)
         if not isString(position) then error("Expected position to be string, but got " .. typeInspect(position), 2) end
         local drawName = "draw" .. upperFirst(position) .. "Menu"
@@ -223,8 +261,14 @@ Player.withMenu = function(self, player, config)
         self[drawName](self, menu)
         return self
     end
+
+    return player
 end
 
+--- check if the thing has a menu
+--- @param self
+--- @param player any
+--- @return boolean
 Player.hasMenu = function(self, player)
     return isTable(player) and
             isFunction(player.addMenuItem) and

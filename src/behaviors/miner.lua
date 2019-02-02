@@ -29,6 +29,22 @@ end
 -- how regular to run cron
 local tick = 1
 
+--- let a ship mine near asteroids and deliver to their home station
+--- @param self
+--- @param ship CpuShip
+--- @param homeStation SpaceStation
+--- @param whenMined function gets `asteroid`, `miner` and `homeStation` as arguments. Should return a `table` where a `Product` is key and the value is a `number`.
+--- @param config table
+---   @field timeToUnload number (default: `15`) seconds it takes the miner to unload goods at home station
+---   @field timeToMine number (default: `15`) seconds it takes the miner to mine an asteroid
+---   @field timeToGoHome number (default: `900`) seconds the miner tries to mine asteroids before giving up and returning home disappointed
+---   @field mineDistance number (default: `beamWeaponRange`) units how close the miner needs to be to the asteroid
+---   @field maxDistanceFromHome number (default: `getLongRangeRadarRange`) units how far away from home the miner looks for asteroids
+---   @field maxDistanceToNext number (default: `getLongRangeRadarRange / 2`) units how far from the current asteroid the miner will look for a next one
+---   @field onHeadingAsteroid function gets `miner` and `asteroid` when the miner is flying towards an asteroid
+---   @field onAsteroidMined function gets `miner`, `asteroid` and the return of `whenMined`
+---   @field onHeadingHome function gets `miner`, `asteroid` and all the gathered products
+---   @field onUnloaded function gets `miner`, `asteroid` and all the gathered products
 Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
     if not isEeShip(ship) then
         error("Expected ship to be a CpuShip, but got " .. typeInspect(ship), 2)

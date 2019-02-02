@@ -15,7 +15,7 @@ insulate("Comms", function()
         it("should create a valid Comms.reply", function()
             local missionComms = Comms:missionBrokerFactory(requiredConfig)
 
-            assert.is_true(Comms.isReply(missionComms))
+            assert.is_true(Comms:isReply(missionComms))
         end)
         it("fails if any of the required configs is missing", function()
             for k, _ in pairs(requiredConfig) do

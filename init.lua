@@ -37,7 +37,6 @@ local myPackages = {
 
     "lively_epsilon/src/domain/station.lua",
     "lively_epsilon/src/domain/trait/station/merchant.lua",
-    "lively_epsilon/src/comms/command.lua",
     "lively_epsilon/src/comms/merchant.lua",
     "lively_epsilon/src/comms/mission_broker.lua",
     "lively_epsilon/src/comms/upgrade_broker.lua",

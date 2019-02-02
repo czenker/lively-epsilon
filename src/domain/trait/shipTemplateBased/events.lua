@@ -1,9 +1,15 @@
 ShipTemplateBased = ShipTemplateBased or {}
 
--- onDestruction
--- onEnemyDetection
--- onEnemyClear
--- onBeingAttacked
+--- listen for events on the `ShipTemplateBased`
+--- @deprecated I am not sure if i will leave it in or remove it
+--- @param self
+--- @param shipTemplateBased ShipTemplateBased
+--- @param config table
+---   @field onDestruction nil|function gets `shipTemplateBased` as argument.
+---   @field onEnemyDetection nil|function gets `shipTemplateBased` as argument.
+---   @field onEnemyClear nil|function gets `shipTemplateBased` as argument.
+---   @field onBeingAttacked nil|function gets `shipTemplateBased` as argument.
+--- @return ShipTemplateBased
 ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
     if not isEeShipTemplateBased(shipTemplateBased) then error("Expected a shipTemplateBased, but got " .. typeInspect(shipTemplateBased), 2) end
     config = config or {}
@@ -87,4 +93,6 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
         end, tick)
 
     end
+
+    return shipTemplateBased
 end

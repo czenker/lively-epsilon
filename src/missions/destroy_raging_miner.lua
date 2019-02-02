@@ -1,23 +1,29 @@
 Missions = Missions or {}
 
--- A mission engaging all crew members and allowing different ways to solve.
---
--- Here is the basic run through that should also explain its name
--- A mining ship got out of control. It is roaming around trying to shoot everything that moves and the crew has to
--- destroy it. Unfortunately it has a very strong, but slow firing, laser and a malfunctioning shield that will emit
--- EMP bursts regularily. The good thing is, it is very slow and clumsy.
---
--- Possible ways to defeat it.
---   * a good helms can outmanouver its laser
---   * weapons can target specific systems to support the strategy
---   * comms can hack specific systems to achieve the same
---   * relay sees when EMP burst occur, so the crew may lower the shields to avoid damage
---   * engineering won't get bored during fights anyways
---
--- As a GM, if you really want to challenge your crew, take a faster and more agile ship or add more lasers. :)
---
--- onDestruction
--- onPlayerHitByEmpBurst
+--- A mission engaging all crew members and allowing different ways to solve.
+---
+--- Here is the basic run through that should also explain its name
+--- A mining ship got out of control. It is roaming around trying to shoot everything that moves and the crew has to
+--- destroy it. Unfortunately it has a very strong, but slow firing, laser and a malfunctioning shield that will emit
+--- EMP bursts regularily. The good thing is, it is very slow and clumsy.
+---
+--- Possible ways to defeat it.
+---
+--- * a good helms can outmanouver its laser
+--- * weapons can target specific systems to support the strategy
+--- * comms can hack specific systems to achieve the same
+--- * relay sees when EMP burst occur, so the crew may lower the shields to avoid damage
+--- * engineering won't get bored during fights anyways
+---
+--- As a GM, if you really want to challenge your crew, take a faster and more agile ship or add more lasers. :)
+---
+--- @deprecated Not sure if i will leave it in
+--- @param self
+--- @param things CpuShip|table[CpuShip]
+--- @param config table
+---   @field onDestruction function(mission,enemy) called when an enemy was destroyed
+---   @field onPlayerHitByEmpBurst function(enemy,player,damage)
+--- @return Mission
 Missions.destroyRagingMiner = function(self, things, config)
     local cronId = "raging_miner_" .. Util.randomUuid()
 

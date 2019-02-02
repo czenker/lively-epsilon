@@ -1,6 +1,6 @@
 BrokerUpgrade = BrokerUpgrade or {}
 
---
+
 -- * name
 -- * onInstall
 -- * id
@@ -10,6 +10,18 @@ BrokerUpgrade = BrokerUpgrade or {}
 -- * unique
 -- * requiredUpgrade
 BrokerUpgrade = {
+    --- an upgrade that can be bought
+    --- @param self
+    --- @param config table
+    ---   @field name string (mandatory)
+    ---   @field onInstall function gets the `upgrade` and the `player` as arguments.
+    ---   @field id string|nil
+    ---   @field description string|function|nil
+    ---   @field installMessage string|function|nil
+    ---   @field price number (default: `0`)
+    ---   @field unique boolean (default: `false`)
+    ---   @field requiredUpgrade string|BrokerUpgrade|nil
+    --- @return BrokerUpgrade
     new = function(self, config)
         config = config or {}
         if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
@@ -31,8 +43,19 @@ BrokerUpgrade = {
         if not isNil(requiredUpgrade) and not isString(requiredUpgrade) and not BrokerUpgrade:isUpgrade(requiredUpgrade) then error("Expected requiredUpgrade to be an Upgrade or id, but got " .. typeInspect(requiredUpgrade), 2) end
 
         return {
-            getId = function() return id end,
-            getName = function() return name end,
+            --- get the id of the upgrade
+            --- @internal
+            --- @param self
+            --- @return string
+            getId = function(self) return id end,
+            --- get the name of this upgrade
+            --- @param self
+            --- @return string
+            getName = function(self) return name end,
+            --- install the upgrade on the player
+            --- @param self
+            --- @param player PlayerSpaceship
+            --- @return BrokerUpgrade
             install = function(self, player)
                 if not isEePlayer(player) then error("Expected player, but got " .. typeInspect(player), 2) end
                 local success, msg = self:canBeInstalled(player)
@@ -43,8 +66,16 @@ BrokerUpgrade = {
                 if Player:hasUpgradeTracker(player) then
                     player:addUpgrade(self)
                 end
+                return self
             end,
-            getPrice = function(self, player) return price end,
+            --- get the price of the upgrade
+            --- @param self
+            --- @return number
+            getPrice = function(self) return price end,
+            --- check if the upgrade can be installed on the player
+            --- @param self
+            --- @param player PlayerSpaceship
+            --- @return boolean
             canBeInstalled = function(self, player)
                 if not isEePlayer(player) then error("Expected player, but got " .. typeInspect(player), 2) end
                 local success, msg = true, nil
@@ -82,6 +113,10 @@ BrokerUpgrade = {
 
                 return success, msg
             end,
+            --- get the description of the upgrade
+            --- @param self
+            --- @param player PlayerSpaceship
+            --- @return nil|string
             getDescription = function(self, player)
                 if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(description) then
@@ -90,6 +125,10 @@ BrokerUpgrade = {
                     return description
                 end
             end,
+            --- get the install message of the upgrade
+            --- @param self
+            --- @param player PlayerSpaceship
+            --- @return nil|string
             getInstallMessage = function(self, player)
                 if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(installMessage) then
@@ -98,11 +137,19 @@ BrokerUpgrade = {
                     return installMessage
                 end
             end,
+            --- get the id of the required upgrade
+            --- @param self
+            --- @return string|nil
             getRequiredUpgradeString = function(self)
                 return config.requiredUpgrade
             end,
         }
     end,
+
+    --- check if the given thing is a BrokerUpgrade
+    --- @param self
+    --- @param thing any
+    --- @return boolean
     isUpgrade = function(self, thing)
         return isTable(thing) and
                 isFunction(thing.getId) and

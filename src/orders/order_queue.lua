@@ -2,6 +2,8 @@ Ship = Ship or {}
 Fleet = Fleet or {}
 
 local createOrderQueue = function(label, validator, cronIdFunc)
+    --- @param self
+    --- @param object
     return function(self, object)
         if not validator(object) then error("Expected " .. label .. ", but got " .. typeInspect(object), 2) end
 
@@ -63,6 +65,10 @@ local createOrderQueue = function(label, validator, cronIdFunc)
             end
         end
 
+        --- add an order that is executed after all other orders
+        --- @param self
+        --- @param order Order
+        --- @return self
         object.addOrder = function(self, order)
             if not Order:isOrder(order) then error("Expected an order, but got " .. typeInspect(order), 2) end
             table.insert(orderQueue, order)
@@ -71,8 +77,12 @@ local createOrderQueue = function(label, validator, cronIdFunc)
                 Cron.regular(cronId, tick, 0.1, 0.1)
                 tick()
             end
+            return self
         end
 
+        --- abort the current order
+        --- @param self
+        --- @return self
         object.abortCurrentOrder = function(self)
             if currentOrder ~= nil then
                 logInfo("Excuting order for " .. cronId .. " was aborted because of a request to do so")
@@ -80,12 +90,21 @@ local createOrderQueue = function(label, validator, cronIdFunc)
             else
                 logDebug("No current order to stop for " .. cronId)
             end
+            return self
         end
 
-        object.flushOrders = function()
+        --- remove all orders that would be executed after the current one
+        --- @param self
+        --- @return self
+        object.flushOrders = function(self)
             orderQueue = {}
+            return self
         end
 
+        --- abort all orders and start executing the given order
+        --- @param self
+        --- @param order Order
+        --- @return self
         object.forceOrderNow = function(self, order)
             if not Order:isOrder(order) then error("Expected an order, but got " .. typeInspect(order), 2) end
 
@@ -93,16 +112,38 @@ local createOrderQueue = function(label, validator, cronIdFunc)
             self:abortCurrentOrder()
             self:addOrder(order)
         end
+
+        return object
     end
 end
 
+--- adds an OrderQueue to the ship
+--- @param self
+--- @param object CpuShip
+--- @return CpuShip
 Ship.withOrderQueue = createOrderQueue("Ship", isEeShip, function(ship) return ship:getCallSign() .. "_order_queue" end)
+
+--- check if the given thing is a ship with order queue
+--- @param self
+--- @param ship any
+--- @return boolean
 Ship.hasOrderQueue = function(self, ship)
     return isEeShip(ship) and
-            isFunction(ship.addOrder)
+            isFunction(ship.addOrder) and
+            isFunction(ship.abortCurrentOrder) and
+            isFunction(ship.flushOrders) and
+            isFunction(ship.forceOrderNow)
 end
 
+--- adds an OrderQueue to the fleet
+--- @param self
+--- @param object Fleet
+--- @return Fleet
 Fleet.withOrderQueue = createOrderQueue("Fleet", function(thing) return Fleet:isFleet(thing) end, function(fleet) return fleet:getId() .. "_order_queue" end)
+--- check if the thing is a fleet with an orderQueue
+--- @param self
+--- @param fleet any
+--- @return boolean
 Fleet.hasOrderQueue = function(self, fleet)
     return Fleet:isFleet(fleet) and
             isFunction(fleet.addOrder)

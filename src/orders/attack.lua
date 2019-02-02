@@ -1,5 +1,15 @@
 Order = Order or {}
 
+--- order to attack an enemy
+--- @param self
+--- @param enemy ShipTemplateBased
+--- @param config table
+---   @field ignoreEnemies boolean (default: `true`)
+---   @field onExecution function the callback when the order is started to being executed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onCompletion function the callback when the order is completed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
+---   @field onAbort function the callback when the order is aborted. Gets the `OrderObject`, a `string` reason and the `CpuShip` or `Fleet` that executed the order.
+---   @field delayAfter number how many seconds to wait before executing the next order
+--- @return OrderObject
 Order.attack = function(self, enemy, config)
     if not isEeShipTemplateBased(enemy) then error("Expected to get a shipTemplateBased, but got " .. typeInspect(enemy), 2) end
     config = config or {}
@@ -9,10 +19,15 @@ Order.attack = function(self, enemy, config)
 
     local order = Order:_generic(config)
 
+    --- get the enemy that is attacked
+    --- @param self
+    --- @return ShipTemplateBased
     order.getEnemy = function(self)
         return enemy
     end
 
+    --- get the executor for a ship
+    --- @internal
     order.getShipExecutor = function()
         return {
             go = function(self, ship)
@@ -34,6 +49,8 @@ Order.attack = function(self, enemy, config)
         }
     end
 
+    --- get the executor for a fleet
+    --- @internal
     order.getFleetExecutor = function()
         return {
             go = function(self, fleet)

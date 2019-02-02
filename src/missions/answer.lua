@@ -1,13 +1,27 @@
 Missions = Missions or {}
 
--- Someone asks a question and the crew needs to give the correct answer.
--- How they come to the conclusion does not really matter. It could be a riddle, something to observe, a reward by the GM after role playing or they might even guess the correct answer.
---
--- - correctAnswer
--- - wrongAnswers
--- - backLabel
--- - correctAnswerResponse
--- - wrongAnswerResponse
+--- Someone asks a question and the crew needs to give the correct answer.
+---
+--- How they come to the conclusion does not really matter. It could be a riddle, something to observe, a reward by the GM after role playing or they might even guess the correct answer.
+---
+--- @param self
+--- @param commable ShipTemplateBased where to give the answer
+--- @param question string|function
+--- @param playerSays string|function
+--- @param config table
+---   @field acceptCondition function gets `self` as arguments. should return `true` or `false` whether the mission can be accepted
+---   @field onAccept function gets `self` as argument
+---   @field onDecline function gets `self` as argument
+---   @field onStart function gets `self` as argument
+---   @field correctAnswer string|function|nil
+---   @field wrongAnswers table[string]|function
+---   @field backLabel string|nil|function the label if you do not want to give an answer right now
+---   @field correctAnswerResponse string|function what is said when the answer is correct
+---   @field wrongAnswerResponse string|function what is said when the answer is wrong
+---   @field onSuccess function gets `self` as argument
+---   @field onFailure function gets `self` as argument
+---   @field onEnd function gets `self` as argument
+--- @return Mission
 Missions.answer = function(self, commable, question, playerSays, config)
     if not isEeShipTemplateBased(commable) then error("Expected commable to be a ship or station, but got " .. typeInspect(commable), 2) end
     if not ShipTemplateBased:hasComms(commable) then error("Expected commable to have comms, but it does not.", 2) end
@@ -175,6 +189,9 @@ Missions.answer = function(self, commable, question, playerSays, config)
         end,
     })
 
+    --- get the place where to give the answer
+    --- @param self
+    --- @return ShipTemplateBased
     mission.getCommable = function(self)
         return commable
     end
