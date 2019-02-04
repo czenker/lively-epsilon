@@ -18,28 +18,18 @@ end
 
 -- creates a mock universe
 function withUniverse(func)
-    local universe = {
-        knownObjects = {},
-        players = {},
-        add = function(self, ...)
-            for _,thing in pairs({...}) do
-                if isFunction(thing.getPosition) then
-                    thing.getObjectsInRange = getObjectsInRange
-                end
-                table.insert(self.knownObjects, thing)
-                if isEePlayer(thing) then
-                    table.insert(self.players, thing)
-                end
-            end
-        end,
-        destroy = function()
-            _G.getObjectsInRadius = nil
-        end,
+    local knownObjects = {}
+    local knownObjectsByType = {}
+    local backup = {
+        getObjectsInRadius = _G.getObjectsInRadius,
+        getPlayerShip = _G.getPlayerShip,
+        addGMFunction = _G.addGMFunction,
+        removeGMFunction = _G.removeGMFunction,
     }
 
     _G.getObjectsInRadius = function(x, y, radius)
         local ret = {}
-        for _, thing in pairs(universe.knownObjects) do
+        for _, thing in pairs(knownObjects) do
             if isFunction(thing.isValid) and thing:isValid() and isFunction(thing.getPosition) then
                 local xt, yt = thing:getPosition()
                 if distance(xt, yt, x, y) <= radius then
@@ -51,9 +41,62 @@ function withUniverse(func)
         return ret
     end
 
-    _G.getPlayerShip = function(id)
-        if id == -1 then return universe.players[1] else return universe.players[id] end
+    for _,thing in pairs({
+        --"SpaceObject",
+        --"ShipTemplateBasedObject",
+        --"SpaceShip",
+        "SpaceStation",
+        "CpuShip",
+        "PlayerSpaceship",
+        "Artifact",
+        "Asteroid",
+        "WarpJammer",
+        "ScanProbe",
+        "SupplyDrop",
+        "WormHole",
+        "Planet",
+        "Mine",
+        "Nebula",
+    }) do
+        local original = _G[thing]
+        if original == nil then error(thing .. " does not exist. Did you include the mocks?", 2) end
+
+        backup[thing] = _G[thing]
+        _G[thing] = function()
+            print(thing .. "() called")
+            local obj = original()
+            table.insert(knownObjects, obj)
+            knownObjectsByType[obj.typeName] = knownObjectsByType[obj.typeName] or {}
+            table.insert(knownObjectsByType[obj.typeName], obj)
+
+            if isFunction(obj.getObjectsInRange) then
+                obj.getObjectsInRange = function(self, radius)
+                    local x, y = self:getPosition()
+                    return getObjectsInRadius(x, y, radius)
+                end
+            end
+
+            return obj
+        end
     end
 
-    func(universe)
+    _G.getPlayerShip = function(id)
+        local players = knownObjectsByType["PlayerSpaceship"]
+        if id == -1 then return players[1] else return players[id] end
+    end
+
+    _G.addGMFunction = function() end
+    _G.removeGMFunction = function() end
+
+    local success, error = pcall(func)
+
+    for name, func in pairs(backup) do
+        _G[name] = func
+    end
+
+    if not success then
+        error(error)
+    else
+        return error
+    end
 end

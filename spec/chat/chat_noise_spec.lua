@@ -31,12 +31,10 @@ insulate("Chatter", function()
 
     describe("Noise", function()
         it("works with a chat with filters", function()
-            withUniverse(function(universe)
+            withUniverse(function()
                 local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
                 local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
                 local station = SpaceStation():setCallSign("station"):setPosition(0, 1000)
-
-                universe:add(player, ship, station)
 
                 local chat = Chatter:newFactory(2, function(thisStation, thisShip)
                     return {
@@ -63,15 +61,13 @@ insulate("Chatter", function()
             end)
         end)
         it("works in a complex scenario", function()
-            withUniverse(function(universe)
+            withUniverse(function()
                 local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
                 local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
                 local station = SpaceStation():setCallSign("station"):setPosition(0, 1000)
                 local filterStation = function(thing) return thing == station end
                 local filterShip = function(thing) return thing == ship end
                 local filterShipOrStation = function(thing) return filterStation(thing) or filterShip(thing) end
-
-                universe:add(player, ship, station)
 
                 -- mock chatter to easily track which chats we have seen
                 local chat1 = { {ship, "one"} }
@@ -156,11 +152,11 @@ insulate("Chatter", function()
         end)
 
         it("allows to remove chat factories", function()
-            withUniverse(function(universe)
+            withUniverse(function()
                 local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
                 local ship = CpuShip():setCallSign("ship"):setPosition(1000, 0)
 
-                universe:add(player, ship)
+                print(typeInspect(player:getObjectsInRange(10000)))
 
                 local chat1 = Chatter:newFactory(1, function(thisShip)
                     return {

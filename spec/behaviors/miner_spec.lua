@@ -28,9 +28,7 @@ insulate("Ship:behaveAsMiner()", function()
 
     describe("functionality", function()
         it("does basically work :)", function()
-            withUniverse(function(universe)
-                finally(universe.destroy)
-
+            withUniverse(function()
                 local station = mockValidStation()
                 local miner = mockValidMiner()
                 local asteroid = Asteroid()
@@ -38,8 +36,6 @@ insulate("Ship:behaveAsMiner()", function()
                 station:setPosition(0, 0)
                 miner:setPosition(0, 0)
                 asteroid:setPosition(1000, 0)
-
-                universe:add(station, miner, asteroid)
 
                 local whenMinedCalled = 0
                 local asteroidMinedCalled = 0
@@ -166,20 +162,14 @@ insulate("Ship:behaveAsMiner()", function()
         end)
 
         it("does not mine more asteroids when a maximum time has run out", function()
-            withUniverse(function(universe)
-                finally(universe.destroy)
-
+            withUniverse(function()
                 local station = mockValidStation()
                 local miner = mockValidMiner()
                 local asteroid1 = Asteroid()
-                local asteroid2 = Asteroid()
 
                 station:setPosition(0, 0)
                 miner:setPosition(0, 0)
                 asteroid1:setPosition(1000, 0)
-                asteroid2:setPosition(2000, 0)
-
-                universe:add(station, miner, asteroid1)
 
                 local whenMinedCalled = 0
                 Ship:behaveAsMiner(miner, station, function()
@@ -194,7 +184,8 @@ insulate("Ship:behaveAsMiner()", function()
 
                 for i=1,999 do Cron.tick(1) end
 
-                universe:add(asteroid2) -- create a second asteroid to potentially mine
+                local asteroid2 = Asteroid()
+                asteroid2:setPosition(2000, 0)
 
                 -- it cares out its order first
                 miner:setPosition(asteroid1:getPosition())
@@ -208,9 +199,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
 
         it("warns when there are no mineable asteroids around the station", function()
-            withUniverse(function(universe) withLogCatcher(function(logs)
-                finally(universe.destroy)
-
+            withUniverse(function() withLogCatcher(function(logs)
                 local station = mockValidStation():setCallSign("Home")
                 local miner = mockValidMiner():setCallSign("Dummy")
                 local asteroid = Asteroid()
@@ -219,8 +208,6 @@ insulate("Ship:behaveAsMiner()", function()
                 miner:setPosition(0, 0)
                 miner:setDockedAt(station)
                 asteroid:setPosition(99999, 0)
-
-                universe:add(station, miner, asteroid)
 
                 local whenMinedCalled = 0
                 Ship:behaveAsMiner(miner, station, function()
@@ -248,9 +235,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
 
         it("idles when home base is destroyed", function()
-            withUniverse(function(universe) withLogCatcher(function(logs)
-                finally(universe.destroy)
-
+            withUniverse(function() withLogCatcher(function(logs)
                 local station = mockValidStation():setCallSign("Home")
                 local miner = mockValidMiner():setCallSign("Dummy")
                 local asteroid = Asteroid()
@@ -259,8 +244,6 @@ insulate("Ship:behaveAsMiner()", function()
                 miner:setPosition(0, 0)
                 miner:setDockedAt(station)
                 asteroid:setPosition(1000, 0)
-
-                universe:add(station, miner, asteroid)
 
                 Ship:behaveAsMiner(miner, station, function()
                     return {
@@ -286,8 +269,7 @@ insulate("Ship:behaveAsMiner()", function()
     end)
     describe("GM interaction", function()
         it("can change the mined asteroid", function()
-            withUniverse(function(universe)
-                finally(universe.destroy)
+            withUniverse(function()
 
                 local station = mockValidStation()
                 local miner = mockValidMiner()
@@ -299,8 +281,6 @@ insulate("Ship:behaveAsMiner()", function()
                 miner:setDockedAt(station)
                 asteroid1:setPosition(1000, 0)
                 asteroid2:setPosition(99999, 0)
-
-                universe:add(station, miner, asteroid1, asteroid2)
 
                 local whenMinedCalled = 0
                 Ship:behaveAsMiner(miner, station, function()
@@ -359,9 +339,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
 
         it("can issue custom orders and reset them using the Idle order", function()
-            withUniverse(function(universe)
-                finally(universe.destroy)
-
+            withUniverse(function()
                 local station = mockValidStation()
                 local otherStation = SpaceStation()
                 local miner = mockValidMiner()
@@ -371,8 +349,6 @@ insulate("Ship:behaveAsMiner()", function()
                 miner:setPosition(0, 0)
                 miner:setDockedAt(station)
                 asteroid:setPosition(1000, 0)
-
-                universe:add(station, otherStation, miner, asteroid)
 
                 local whenMinedCalled = 0
                 Ship:behaveAsMiner(miner, station, function()
@@ -424,9 +400,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
 
         it("can force a miner to go home", function()
-            withUniverse(function(universe)
-                finally(universe.destroy)
-
+            withUniverse(function()
                 local station = mockValidStation()
                 local miner = mockValidMiner()
                 local asteroid = Asteroid()
@@ -434,8 +408,6 @@ insulate("Ship:behaveAsMiner()", function()
                 station:setPosition(0, 0)
                 miner:setPosition(1000, 0)
                 asteroid:setPosition(1000, 0)
-
-                universe:add(station, miner, asteroid)
 
                 local headingHomeCalled = 0
                 Ship:behaveAsMiner(miner, station, function()
@@ -447,7 +419,6 @@ insulate("Ship:behaveAsMiner()", function()
                 })
 
                 local asteroid2 = Asteroid()
-                universe:add(asteroid2)
                 asteroid2:setPosition(2000, 0)
 
                 for i=1,20 do Cron.tick(1) end
