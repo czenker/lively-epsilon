@@ -44,7 +44,7 @@ notifications:
 deploy:
   provider: pages
   skip-cleanup: true
-  local-dir: /docs/_build/
+  local-dir: docs/_build/
   target-branch: documentation
   keep-history: false
   github-token: $GITHUB_TOKEN
