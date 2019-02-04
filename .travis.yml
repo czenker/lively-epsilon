@@ -34,7 +34,6 @@ after_success:
 branches:
   except:
     - gh-pages
-    - documentation
 
 notifications:
   email:
@@ -45,7 +44,7 @@ deploy:
   provider: pages
   skip-cleanup: true
   local-dir: docs/_build/
-  target-branch: documentation
+  target-branch: gh-pages
   keep-history: false
   github-token: $GITHUB_TOKEN
   on:
