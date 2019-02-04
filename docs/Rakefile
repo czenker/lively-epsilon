@@ -1,0 +1,48 @@
+require 'tilt'
+require 'asciidoctor'
+
+version = `git describe HEAD`
+if version == "" then version = "dev" end
+date = `git log -1 --format=%ci | grep -o '^\\S*'`
+
+desc 'Render the documentation'
+
+task :clean do
+    FileUtils.rm_rf('_build')
+    FileUtils.rm_rf('reference.adoc')
+end
+
+directory "_build"
+
+file "reference.adoc" do |t|
+    sh "LUA_PATH=\"$LUA_PATH;../?.lua\" lua \"reference.lua\" \"#{t.name}\""
+end
+
+file "_build/index.html" => "index.adoc" do |t|
+    Asciidoctor.render_file t.prerequisites.first,
+        :to_file => t.name,
+        :in_place => true,
+        :backend => 'html5',
+        :mkdirs => true,
+        :safe => :safe,
+        :attributes => {
+            'revnumber' => version,
+            'revdate' => date,
+        }
+end
+
+file "_build/reference.html" => "reference.adoc" do |t|
+    Asciidoctor.render_file t.prerequisites.first,
+        :to_file => t.name,
+        :in_place => true,
+        :backend => 'html5',
+        :mkdirs => true,
+        :safe => :safe,
+        :attributes => {
+            'revnumber' => version,
+            'revdate' => date,
+        }
+end
+
+task :default => [:clean, "_build", "_build/index.html", "_build/reference.html"] do
+end

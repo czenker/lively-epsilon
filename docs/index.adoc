@@ -1,0 +1,24 @@
+:attribute-missing: warn
+:attribute-undefined: drop
+:source-highlighter: coderay
+
+:toc: left
+:toclevels: 2
+:icons: font
+
+= Lively Epsilon Documenation
+
+Lively Epsilon is a plugin framework for https://daid.github.io/EmptyEpsilon/[Empty Epsilon(EE)] that
+aims to fill the space with artificial life.
+
+If you are into writing missions this framework might help you create an intriguing universe full of life
+that your crew will be eager to explore. You as a Game Master can focus on your plot lines without needing
+to entertain all stations at all times.
+
+Think about flying through the galaxy and watching traders ship goods from one station to another,
+law-enforcement ships scanning ships, stations answering docking requests of NPCs or just two pilots
+having a chat through comms. There is a lot to explore in that galaxy.
+
+== Reference
+
+Read the link:reference.html[API reference].

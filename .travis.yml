@@ -8,6 +8,7 @@ before_install:
   - pip install hererocks
   - hererocks lua_install -rlatest -l${LUA}
   - export PATH=$PATH:$PWD/lua_install/bin # Add directory with all installed binaries to PATH
+  - gem install bundler
 
 install:
 #  - luarocks install luacheck
@@ -15,11 +16,16 @@ install:
   - luarocks install luacov
 #  - luarocks install luacov-coveralls
   - wget "https://raw.githubusercontent.com/daid/EmptyEpsilon/${EE_BRANCH}/scripts/utils.lua" -O utils.lua
+  - bundle install --gemfile=docs/Gemfile
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
 #  - busted --verbose --coverage test/
+  - cd $TRAVIS_BUILD_DIR
   - busted --verbose --coverage
+  - cd $TRAVIS_BUILD_DIR/docs
+  - rake
+  - cd $TRAVIS_BUILD_DIR
 
 after_success:
 #  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
@@ -28,8 +34,19 @@ after_success:
 branches:
   except:
     - gh-pages
+    - documentation
 
 notifications:
   email:
     on_success: change
     on_failure: always
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local-dir: /docs/_build/
+  target-branch: documentation
+  keep-history: false
+  github-token: $GITHUB_TOKEN
+  on:
+    branch: master

@@ -7,4 +7,5 @@
 
 luacov.*.out
 utils.lua
-docs/reference.*
+docs/reference.adoc
+docs/_build
