@@ -124,6 +124,23 @@ Util = {
         return math.cos(angle / 180 * math.pi) * length, math.sin(angle / 180 * math.pi) * length
     end,
 
+    --- add a vector with the given direction an length to the point
+    --- @param x number
+    --- @param y number
+    --- @param angle number
+    --- @param length number
+    --- @return number,number
+    addVector = function(x, y, angle, length)
+        if isEeObject(x) then
+            length = angle
+            angle = y
+            x, y = x:getPosition()
+        end
+        local dx, dy = Util.vectorFromAngle(angle, length)
+
+        return x + dx, y + dy
+    end,
+
     --- calculates the angle of a given vector
     --- @param dx number
     --- @param dy number
