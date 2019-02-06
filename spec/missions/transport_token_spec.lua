@@ -4,7 +4,7 @@ insulate("Missions", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("transportToken()", function()
+    describe(":transportToken()", function()
         it("should create a valid Mission", function()
             local from = SpaceStation()
             local to = SpaceStation()

@@ -10,7 +10,7 @@ insulate("Player", function()
         noActiveMissions = "You have no active missions",
     }
 
-    describe("withMissionDisplay()", function()
+    describe(":withMissionDisplay()", function()
         it("creates a valid mission display", function()
             local player = PlayerSpaceship()
             Player:withMenu(player)

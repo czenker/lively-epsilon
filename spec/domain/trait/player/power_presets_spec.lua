@@ -12,7 +12,7 @@ insulate("Player", function()
         labelStoreItem = "Store",
     }
 
-    describe("withPowerPresets()", function()
+    describe(":withPowerPresets()", function()
         it("works with default parameters", function()
             local player = PlayerSpaceship()
             Player:withMenu(player, {backLabel = "Back"})

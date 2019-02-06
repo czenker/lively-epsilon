@@ -11,7 +11,7 @@ insulate("Comms", function()
         acceptScreen = function() end,
     }
 
-    describe("missionBrokerFactory()", function()
+    describe(":missionBrokerFactory()", function()
         it("should create a valid Comms.reply", function()
             local missionComms = Comms:missionBrokerFactory(requiredConfig)
 

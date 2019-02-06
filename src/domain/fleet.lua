@@ -1,7 +1,5 @@
 Fleet = Fleet or {}
 
-local formationDistance = 700
-
 -- translate the result of getOrder into a method call to set the exact same order
 local getOrderToSetOrder = function(ship)
     if not isEeShip(ship) then error("Expected a ship, but got " .. typeInspect(ship), 2) end
@@ -37,11 +35,78 @@ local getOrderToSetOrder = function(ship)
     end
 end
 
+local formations = {
+    row = function()
+        local formationDistance = 700
+
+        return function(currentShips, order, orderA, orderB, orderC)
+            local nextLeft = -1 * formationDistance
+            local nextRight = formationDistance
+            local leader
+
+            for i, ship in ipairs(currentShips) do
+                if ship:isValid() then
+                    if not leader then
+                        leader = ship
+                        leader[order](leader, orderA, orderB, orderC)
+                        ship.formationOffsetX = 0
+                        ship.formationOffsetY = 0
+                    else
+                        if i % 2 == 0 then
+                            ship.formationOffsetX = 0
+                            ship.formationOffsetY = nextLeft
+                            nextLeft = nextLeft - formationDistance
+                        else
+                            ship.formationOffsetX = 0
+                            ship.formationOffsetY = nextRight
+                            nextRight = nextRight + formationDistance
+                        end
+
+                        if ship:getOrder() == "Idle" or ship:getOrder() == "Fly in formation" or ship:getOrder() == "Roaming" then
+                            -- do not change order of wingman that have a different order given by the GM
+                            ship:orderFlyFormation(leader, ship.formationOffsetX, ship.formationOffsetY)
+                        end
+                    end
+                end
+            end
+        end
+    end,
+    circle = function()
+        local formationDistance = 500
+        return function(currentShips, order, orderA, orderB, orderC)
+            local leader
+            local numberWingmen = #currentShips - 1
+
+            for i, ship in ipairs(currentShips) do
+                if ship:isValid() then
+                    if not leader then
+                        leader = ship
+                        leader[order](leader, orderA, orderB, orderC)
+                        ship.formationOffsetX = 0
+                        ship.formationOffsetY = 0
+                    else
+                        if ship.formationOffsetX == nil or ship.formationOffsetY == nil then
+                            local angle = -45 + (i-1) / numberWingmen * 360
+                            ship.formationOffsetX, ship.formationOffsetY = Util.vectorFromAngle(angle, formationDistance)
+                        end
+
+                        if ship:getOrder() == "Idle" or ship:getOrder() == "Fly in formation" or ship:getOrder() == "Roaming" then
+                            -- do not change order of wingman that have a different order given by the GM
+                            ship:orderFlyFormation(leader, ship.formationOffsetX, ship.formationOffsetY)
+                        end
+                    end
+                end
+            end
+        end
+    end,
+}
+
 --- creates a new fleet
 --- @param self
 --- @param ships table[CpuShip]
 --- @param config table
 ---   @field id string (optional)
+---   @field formation string (default: `row`) row, circle
 --- @return FleetObject
 Fleet.new = function(self, ships, config)
     if not isTable(ships) then error("Exptected ships to be a table, but got " .. typeInspect(ships), 2) end
@@ -57,6 +122,9 @@ Fleet.new = function(self, ships, config)
     if not isString(id) then
         error("Expected id to be a string, but " .. typeInspect(id) .. " given.", 2)
     end
+    config.formation = config.formation or "row"
+    if not isString(config.formation) then error("Expected formation to be a string, but got " .. typeInspect(config.formation), 2) end
+    if formations[config.formation] == nil then error("Expected a valid formation, but got " .. config.formation, 2) end
 
     local currentShips = {}
     local lastShipCount
@@ -64,37 +132,7 @@ Fleet.new = function(self, ships, config)
 
     -- reset the flight formation.
     -- could be called initially or because a ship in fleet was destroyed
-    local arrangeFormation = function()
-        local nextLeft = -1 * formationDistance
-        local nextRight = formationDistance
-        local leader
-
-        for i, ship in ipairs(currentShips) do
-            if ship:isValid() then
-                if not leader then
-                    leader = ship
-                    leader[order](leader, orderA, orderB, orderC)
-                    ship.formationOffsetX = 0
-                    ship.formationOffsetY = 0
-                else
-                    if i%2 == 0 then
-                        ship.formationOffsetX = 0
-                        ship.formationOffsetY = nextLeft
-                        nextLeft = nextLeft - formationDistance
-                    else
-                        ship.formationOffsetX = 0
-                        ship.formationOffsetY = nextRight
-                        nextRight = nextRight + formationDistance
-                    end
-
-                    if ship:getOrder() == "Idle" or ship:getOrder() == "Fly in formation" or ship:getOrder() == "Roaming" then
-                        -- do not change order of wingman that have a different order given by the GM
-                        ship:orderFlyFormation(leader, ship.formationOffsetX, ship.formationOffsetY)
-                    end
-                end
-            end
-        end
-    end
+    local arrangeFormation = formations[config.formation]()
 
     local fleet = {
         --- get the id of the fleet
@@ -168,14 +206,14 @@ Fleet.new = function(self, ships, config)
 
     lastShipCount = fleet:countShips()
 
-    arrangeFormation()
+    arrangeFormation(currentShips, order, orderA, orderB, orderC)
 
     Cron.regular(function(self)
         local count = fleet:countShips()
         if count == 0 then -- if all ships in the fleet are destroyed
             Cron.abort(self)
         elseif lastShipCount ~= count then -- if a ship in the fleet was just destroyed
-            arrangeFormation()
+            arrangeFormation(currentShips, order, orderA, orderB, orderC)
             lastShipCount = count
         else -- check that every ship follows the correct orders
             for i, ship in ipairs(currentShips) do

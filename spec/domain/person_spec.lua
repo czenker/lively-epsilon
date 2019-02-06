@@ -4,7 +4,7 @@ insulate("Person", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("byName()", function()
+    describe(":byName()", function()
         it("should create a valid Person object by name", function()
             local person = Person:byName("John Doe")
 

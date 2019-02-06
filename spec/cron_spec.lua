@@ -4,7 +4,7 @@ insulate("Cron", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("once()", function()
+    describe(":once()", function()
         it("will call a function after a certain time", function()
             local called = false
             Cron.once(function() called = true end, 5)
@@ -148,7 +148,7 @@ insulate("Cron", function()
 
     end)
 
-    describe("regular()", function()
+    describe(":regular()", function()
         it("will call a function at a regular interval", function()
             local called = 0
             Cron.regular("foobar", function() called = called + 1 end, 2)
@@ -306,7 +306,7 @@ insulate("Cron", function()
         end)
     end)
 
-    describe("getDelay()", function()
+    describe(":getDelay()", function()
         it("returns nil for an undefined cron", function()
             assert.is_nil(Cron.getDelay("doesnotexist"))
         end)
@@ -342,7 +342,7 @@ insulate("Cron", function()
         end)
     end)
 
-    describe("setDelay()", function()
+    describe(":setDelay()", function()
         it("fails silently when an unknown Cron is set", function()
             Cron.setDelay("doesnotexist", 5)
             assert.is_nil(Cron.getDelay("doesnotexist"))
@@ -381,7 +381,7 @@ insulate("Cron", function()
         end)
     end)
 
-    describe("addDelay()", function()
+    describe(":addDelay()", function()
         it("fails silently when an unknown Cron is set", function()
             Cron.addDelay("doesnotexist", 5)
             assert.is_nil(Cron.getDelay("doesnotexist"))
@@ -421,7 +421,7 @@ insulate("Cron", function()
     end)
 
 
-    describe("now()", function()
+    describe(":now()", function()
         it("gives the current time", function()
             local now = Cron.now()
             assert.is_true(isNumber(now))

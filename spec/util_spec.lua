@@ -4,7 +4,7 @@ insulate("Util", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("size()", function()
+    describe(":size()", function()
         it("correctly determines size of an empty table", function()
             assert.is.same(Util.size({}), 0)
         end)
@@ -31,7 +31,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("isNumericTable()", function()
+    describe(":isNumericTable()", function()
         it("returns true on empty table", function()
             assert.is_true(Util.isNumericTable({}))
         end)
@@ -49,7 +49,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("random()", function()
+    describe(":random()", function()
         it("returns nil if list is empty", function()
             assert.is_nil(Util.random({}))
         end)
@@ -108,7 +108,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("randomSort()", function()
+    describe(":randomSort()", function()
         it("randomly sorts a numeric list", function()
             local input = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
             local output = Util.randomSort(input)
@@ -148,7 +148,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("onVector", function()
+    describe(":onVector()", function()
         it("returns point 1 when ratio is 0", function()
             local x, y = Util.onVector(1000, 2000, 3000, 4000, 0)
             assert.is_same({1000, 2000}, {x, y})
@@ -179,7 +179,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("randomUuid()", function()
+    describe(":randomUuid()", function()
         it("should return a 16 digit hex", function()
             local uuid = Util.randomUuid()
             assert.not_nil(uuid:match("^([0-9a-f]+)$"))
@@ -193,7 +193,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("deepCopy()", function()
+    describe(":deepCopy()", function()
         it("should copy primitive types", function()
             local thing = {
                 foo = "bar",
@@ -229,7 +229,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("mkString()", function()
+    describe(":mkString()", function()
         describe("with lastSeparator parameter", function()
             it("should return an empty string if table is empty", function()
                 local table = {}
@@ -271,7 +271,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("round()", function()
+    describe(":round()", function()
         it("rounds mathematically correct for positive numbers", function()
             assert.is_same(42, Util.round(42))
             assert.is_same(42, Util.round(42.1))
@@ -309,7 +309,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("mergeTables()", function()
+    describe(":mergeTables()", function()
         it("returns a new table where all items and from the second are present", function()
             local a = {a = 1, b = 2}
             local b = {c = 3, d = 4}
@@ -347,7 +347,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("appendTables()", function()
+    describe(":appendTables()", function()
         it("returns a new table where all the items of all tables are present", function()
             local a = {1, 2}
             local b = {3, 4}
@@ -392,7 +392,7 @@ insulate("Util", function()
 
     end)
 
-    describe("vectorFromAngle()", function()
+    describe(":vectorFromAngle()", function()
         it ("has the x axis for 0 degree", function()
             local x, y = Util.vectorFromAngle(0, 1000)
 
@@ -413,7 +413,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("addVector()", function()
+    describe(":addVector()", function()
         it("returns the point when adding a vector of zero length", function()
             local x, y = Util.addVector(0, 0, 180, 0)
             assert.is_same({0, 0}, {x, y})
@@ -445,7 +445,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("angleFromVector()", function()
+    describe(":angleFromVector()", function()
         it ("has the x axis for 0 degree", function()
             local angle, distance = Util.angleFromVector(1000, 0)
 
@@ -466,7 +466,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("heading()", function()
+    describe(":heading()", function()
         it("takes positive y axis as 180°", function()
             local one, two = CpuShip(), CpuShip()
             one:setPosition(0, 0)
@@ -489,7 +489,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("angleDiff()", function()
+    describe(":angleDiff()", function()
         it("returns correct results", function()
             assert.is_same(20, Util.angleDiff(10, 30))
             assert.is_same(-20, Util.angleDiff(30, 10))
@@ -498,7 +498,7 @@ insulate("Util", function()
         end)
     end)
 
-    describe("map()", function()
+    describe(":map()", function()
         it("maps values and retains keys", function()
             local input = {a=1, b=2, c=3}
             local output = Util.map(input, function(value) return value+1 end)

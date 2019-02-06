@@ -10,7 +10,7 @@ insulate("Mission", function()
         return mission
     end
 
-    describe("withBroker()", function()
+    describe(":withBroker()", function()
         it("should create a valid Mission with story", function()
             local mission = missionMock()
             Mission:withBroker(mission, "Hello World")
@@ -116,7 +116,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("accept()", function()
+    describe(":accept()", function()
         it("can be called if MissionBroker is set", function()
             local mission = missionWithBrokerMock()
             local station = SpaceStation()
@@ -145,7 +145,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("getMissionBroker()", function()
+    describe(":getMissionBroker()", function()
         it("returns the set MissionBroker", function()
             local mission = missionWithBrokerMock()
             local station = SpaceStation()

@@ -4,7 +4,7 @@ insulate("Missions", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("transportProduct()", function()
+    describe(":transportProduct()", function()
         local from = SpaceStation()
         local to = SpaceStation()
         local product = productMock()

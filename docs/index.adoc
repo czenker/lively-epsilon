@@ -6,7 +6,7 @@
 :toclevels: 2
 :icons: font
 
-= Lively Epsilon Documenation
+= Lively Epsilon Documentation
 
 Lively Epsilon is a plugin framework for https://daid.github.io/EmptyEpsilon/[Empty Epsilon(EE)] that
 aims to fill the space with artificial life.
@@ -22,3 +22,7 @@ having a chat through comms. There is a lot to explore in that galaxy.
 == Reference
 
 Read the link:reference.html[API reference].
+
+== Spec
+
+Read the link:spec.html[Specification].

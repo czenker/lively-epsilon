@@ -4,7 +4,7 @@ insulate("Missions", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("crewForRent()", function()
+    describe(":crewForRent()", function()
         it("should create a valid Mission with one ship", function()
             local ship = CpuShip()
             local mission = Missions:crewForRent(ship)
@@ -128,7 +128,7 @@ insulate("Missions", function()
                 assert.is_same(0, mission:getRepairCrewCount())
             end)
         end)
-        describe("onCrewReady()", function()
+        describe(":onCrewReady()", function()
             it("is called when the crew can be picked up again", function()
                 local onCrewReadyCalled = 0
                 local player = PlayerSpaceship()

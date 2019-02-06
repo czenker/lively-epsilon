@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe("scan()", function()
+    describe(":scan()", function()
         it("should create a valid Mission with one ship", function()
             local mission = Missions:scan(CpuShip())
 
@@ -257,7 +257,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDestruction()", function()
+    describe(":onDestruction()", function()
         it("is called when a target is destroyed", function()
             local target1 = CpuShip()
             local target2 = CpuShip()
@@ -292,7 +292,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onScan()", function()
+    describe(":onScan()", function()
         it("is called each time a target is scanned", function()
             local target1 = CpuShip()
             local target2 = CpuShip()

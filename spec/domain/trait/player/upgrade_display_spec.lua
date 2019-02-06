@@ -10,7 +10,7 @@ insulate("Player", function()
         noUpgrades = "You have no upgrades installed.",
     }
 
-    describe("withUpgradeDisplay()", function()
+    describe(":withUpgradeDisplay()", function()
         it("creates a valid upgrade display", function()
             local player = PlayerSpaceship()
             Player:withMenu(player)

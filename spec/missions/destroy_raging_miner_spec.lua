@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe("destroyRagingMiner()", function()
+    describe(":destroyRagingMiner()", function()
         it("should create a valid Mission with one ship", function()
             local mission = Missions:destroyRagingMiner(CpuShip())
 
@@ -147,7 +147,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDestruction()", function()
+    describe(":onDestruction()", function()
         it("is called each time an enemy is destroyed", function()
             local enemy1 = CpuShip()
             local enemy2 = CpuShip()

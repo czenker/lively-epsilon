@@ -4,7 +4,7 @@ insulate("Product", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("new()", function()
+    describe(":new()", function()
         it("returns a valid Product", function()
             local product = Product:new("Fake")
 
@@ -40,7 +40,7 @@ insulate("Product", function()
         end)
     end)
 
-    describe("toId()", function()
+    describe(":toId()", function()
         it("returns string if a string was given", function()
             assert.is_same("foobar", Product:toId("foobar"))
         end)

@@ -12,7 +12,7 @@ insulate("BrokerUpgrade", function()
         }, config or {}))
     end
 
-    describe("new()", function()
+    describe(":new()", function()
         it("returns a valid BrokerUpgrade", function()
             local upgrade = upgradeMock()
             assert.is_true(BrokerUpgrade:isUpgrade(upgrade))
@@ -92,9 +92,9 @@ insulate("BrokerUpgrade", function()
         end)
 
 
-        describe("canBeInstalled()", function()
+        describe(":canBeInstalled()", function()
             local player = PlayerSpaceship()
-            canBeInstalledCalled = 0
+            local canBeInstalledCalled = 0
             local upgrade
             upgrade = upgradeMock({canBeInstalled = function(callBrokerUpgrade, callPlayer)
                 canBeInstalledCalled = canBeInstalledCalled + 1
@@ -162,10 +162,10 @@ insulate("BrokerUpgrade", function()
             end)
         end)
 
-        describe("install()", function()
+        describe(":install()", function()
             local player = PlayerSpaceship()
             installCalled = 0
-            canBeInstalledCalled = 0
+            local canBeInstalledCalled = 0
             local upgrade
             upgrade = upgradeMock({
                 onInstall = function(callBrokerUpgrade, callPlayer)

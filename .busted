@@ -4,5 +4,12 @@ return {
         ROOT = {
             "spec/",
         },
-    }
+    },
+    default = {
+    },
+    integration = {
+        output = "busted/log_tests_handler.lua",
+        Xoutput = ".tests.log.json",
+        coverage = true,
+    },
 }

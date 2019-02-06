@@ -36,7 +36,7 @@ insulate("Mission", function()
         return mission
     end
 
-    describe("new()", function()
+    describe(":new()", function()
         it("should create a valid Mission", function()
             local mission = Mission:new()
 
@@ -84,7 +84,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("getId()", function()
+    describe(":getId()", function()
         it("is set at random if none is given", function()
             local mission = Mission:new()
 
@@ -100,7 +100,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("getState()", function()
+    describe(":getState()", function()
         local new = "new"
         local accepted = "accepted"
         local started = "started"
@@ -128,14 +128,14 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("canBeAccepted()", function()
+    describe(":canBeAccepted()", function()
         it("is true when no config is set", function()
             local mission = newMission()
             assert.is_true(mission:canBeAccepted())
         end)
     end)
 
-    describe("accept()", function()
+    describe(":accept()", function()
         it ("switches to \"accepted\" if no callback is set", function()
             local mission = newMission()
 
@@ -170,7 +170,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("decline()", function()
+    describe(":decline()", function()
         it ("calls the onDecline callback", function()
             local callbackCalled = false
             local mission
@@ -190,7 +190,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("start()", function()
+    describe(":start()", function()
         it ("calls the onStart callback", function()
             local callbackCalled = false
             local mission
@@ -210,7 +210,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("fail()", function()
+    describe(":fail()", function()
         it ("calls the onFailure callback and then the onEnd callback", function()
             local onFailure = false
             local onEndCalled = false
@@ -246,7 +246,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("success()", function()
+    describe(":success()", function()
         it ("calls the onSuccess callback and then the onEnd callback", function()
             local onSuccessCalled = false
             local onEndCalled = false

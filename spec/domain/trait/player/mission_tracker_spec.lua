@@ -4,7 +4,7 @@ insulate("Player", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("withMissionTracker()", function()
+    describe(":withMissionTracker()", function()
         it("creates a valid mission tracker", function()
             local player = PlayerSpaceship()
             Player:withMissionTracker(player)
@@ -24,7 +24,7 @@ insulate("Player", function()
         end)
     end)
 
-    describe("addMission()", function()
+    describe(":addMission()", function()
         it("adds a mission", function()
             local player = PlayerSpaceship()
             Player:withMissionTracker(player)
@@ -44,7 +44,7 @@ insulate("Player", function()
         end)
     end)
 
-    describe("getStartedMissions()", function()
+    describe(":getStartedMissions()", function()
         it("returns all started missions", function()
             local player = PlayerSpaceship()
             Player:withMissionTracker(player)

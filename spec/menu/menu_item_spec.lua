@@ -4,7 +4,7 @@ insulate("Menu", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("newItem()", function()
+    describe(":newItem()", function()
         it("works when all parameters are given", function()
             local item = Menu:newItem("Label", function() return "Hello World" end, 100)
 

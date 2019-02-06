@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe("destroy()", function()
+    describe(":destroy()", function()
         it("should create a valid Mission with one ship", function()
             local mission = Missions:destroy(CpuShip())
 
@@ -250,7 +250,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDestruction()", function()
+    describe(":onDestruction()", function()
         it("is called each time an enemy is destroyed", function()
             local enemy1 = SpaceStation()
             local enemy2 = CpuShip()
@@ -313,7 +313,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onApproach()", function()
+    describe(":onApproach()", function()
         it("is called when the player first enters 10u around the enemy", function()
             local onApproachCalled = 0
             local enemy = SpaceStation()

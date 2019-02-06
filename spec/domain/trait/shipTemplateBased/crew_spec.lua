@@ -4,7 +4,7 @@ insulate("ShipTemplateBased", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("withCrew()", function()
+    describe(":withCrew()", function()
         it("should create a crew", function()
             local station = SpaceStation()
 

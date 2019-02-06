@@ -4,7 +4,7 @@ insulate("Missions", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("visit()", function()
+    describe(":visit()", function()
         it("should create a valid Mission", function()
             local station = SpaceStation()
             local mission = Missions:visit(station, to)

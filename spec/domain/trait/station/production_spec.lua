@@ -4,7 +4,7 @@ insulate("Station", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("withProduction()", function()
+    describe(":withProduction()", function()
         local power = Product:new("Power Cells", {id="power"})
         local ore = Product:new("Iron Ore", {id="ore"})
         local glue = Product:new("Super Glue", {id="glue"})

@@ -4,7 +4,7 @@ insulate("ShipTemplateBased", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("withStorageRooms()", function()
+    describe(":withStorageRooms()", function()
         local product = Product:new("Power Cells", {id="power"})
         local station = SpaceStation()
 

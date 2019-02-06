@@ -4,7 +4,7 @@ insulate("Tools", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("storyComms()", function()
+    describe(":storyComms()", function()
         insulate("valid call", function()
             require "init"
             require "spec.mocks"

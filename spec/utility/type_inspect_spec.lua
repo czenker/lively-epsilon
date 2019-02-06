@@ -1,4 +1,4 @@
-insulate("typeInspect", function()
+insulate("typeInspect()", function()
 
     require "init"
     require "spec.mocks"

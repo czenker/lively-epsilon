@@ -11,7 +11,7 @@ insulate("Player", function()
         emptyStorage = "Your storage is empty.",
     }
 
-    describe("withStorageDisplay()", function()
+    describe(":withStorageDisplay()", function()
         it("creates a valid storage display", function()
             local player = PlayerSpaceship()
             Player:withMenu(player)

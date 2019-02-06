@@ -6,7 +6,7 @@ insulate("ShipTemplateBased", function()
 
     local player = PlayerSpaceship()
 
-    describe("withComms()", function()
+    describe(":withComms()", function()
         it("causes hasComms() to be true", function()
             local station = SpaceStation()
 
@@ -63,7 +63,7 @@ insulate("ShipTemplateBased", function()
         end)
     end)
 
-    describe("setHailText()", function()
+    describe(":setHailText()", function()
         local station = SpaceStation()
         ShipTemplateBased:withComms(station)
 
@@ -95,7 +95,7 @@ insulate("ShipTemplateBased", function()
         end)
     end)
 
-    describe("addComms()", function()
+    describe(":addComms()", function()
         it("allows to be called with a reply", function()
             local station = SpaceStation()
             ShipTemplateBased:withComms(station)
@@ -144,7 +144,7 @@ insulate("ShipTemplateBased", function()
         end)
     end)
 
-    describe("getComms()", function()
+    describe(":getComms()", function()
         it("returns all replies from the constructor and addComms()", function()
             local reply1 = commsScreenReplyMock()
             local reply2 = commsScreenReplyMock()
@@ -184,7 +184,7 @@ insulate("ShipTemplateBased", function()
         end)
     end)
 
-    describe("removeComms()", function()
+    describe(":removeComms()", function()
         it("allows to remove a comms that has been added before", function()
             local station = SpaceStation()
             local reply = commsScreenReplyMock()
@@ -211,7 +211,7 @@ insulate("ShipTemplateBased", function()
         end)
     end)
 
-    describe("overrideComms()", function()
+    describe(":overrideComms()", function()
         it("allows to permanently override comms", function()
             local station = SpaceStation()
 

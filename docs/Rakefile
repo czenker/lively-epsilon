@@ -10,12 +10,18 @@ desc 'Render the documentation'
 task :clean do
     FileUtils.rm_rf('_build')
     FileUtils.rm_rf('reference.adoc')
+    FileUtils.rm_rf('spec.adoc')
 end
 
 directory "_build"
 
 file "reference.adoc" do |t|
-    sh "LUA_PATH=\"$LUA_PATH;../?.lua\" lua \"reference.lua\" \"#{t.name}\""
+    sh "eval $(luarocks path) && LUA_PATH=\"$LUA_PATH;../?.lua\" lua \"reference.lua\" \"#{t.name}\""
+end
+
+file "spec.adoc" do |t|
+    puts ENV['LUA_PATH']
+    sh "eval $(luarocks path) && LUA_PATH=\"$LUA_PATH;../?.lua\" lua \"spec.lua\" ../.tests.log.json \"#{t.name}\""
 end
 
 file "_build/index.html" => "index.adoc" do |t|
@@ -44,5 +50,20 @@ file "_build/reference.html" => "reference.adoc" do |t|
         }
 end
 
-task :default => [:clean, "_build", "_build/index.html", "_build/reference.html"] do
+file "_build/spec.html" => "spec.adoc" do |t|
+    Asciidoctor.render_file t.prerequisites.first,
+        :to_file => "docs/" + t.name,
+        :in_place => true,
+        :backend => 'html5',
+        :mkdirs => true,
+        :safe => :safe,
+        :base_dir => File.expand_path(File.dirname(File.dirname(__FILE__))),
+        :attributes => {
+            'revnumber' => version,
+            'revdate' => date,
+            'rootdir' => File.expand_path(File.dirname(File.dirname(__FILE__))),
+        }
+end
+
+task :default => [:clean, "_build", "_build/index.html", "_build/reference.html", "_build/spec.html"] do
 end

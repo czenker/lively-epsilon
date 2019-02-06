@@ -14,6 +14,7 @@ install:
 #  - luarocks install luacheck
   - luarocks install busted
   - luarocks install luacov
+  - luarocks install dkjson
 #  - luarocks install luacov-coveralls
   - wget "https://raw.githubusercontent.com/daid/EmptyEpsilon/${EE_BRANCH}/scripts/utils.lua" -O utils.lua
   - bundle install --gemfile=docs/Gemfile
@@ -22,7 +23,7 @@ script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
 #  - busted --verbose --coverage test/
   - cd $TRAVIS_BUILD_DIR
-  - busted --verbose --coverage
+  - busted --run=integration
   - cd $TRAVIS_BUILD_DIR/docs
   - rake
   - cd $TRAVIS_BUILD_DIR

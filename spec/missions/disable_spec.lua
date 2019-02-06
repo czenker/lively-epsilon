@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe("disable()", function()
+    describe(":disable()", function()
         it("should create a valid Mission with one ship", function()
             local mission = Missions:disable(CpuShip())
 
@@ -25,7 +25,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("getTarget()", function()
+    describe(":getTarget()", function()
         it("returns the target when no function is used", function()
             local ship = CpuShip()
             local mission = Missions:disable(ship)
@@ -45,7 +45,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onApproach()", function()
+    describe(":onApproach()", function()
         it("is called when the player first enters 10u around the target", function()
             local onApproachCalled = 0
             local onApproachArg1 = nil
@@ -86,7 +86,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDestruction()", function()
+    describe(":onDestruction()", function()
         it("is called when ship is completely destroyed", function()
             local onDestructionCalled = 0
             local onDestructionArg1 = nil
@@ -114,7 +114,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onSurrender()", function()
+    describe(":onSurrender()", function()
         it("disabled impulse engine is necessary for surrender", function()
             local onSurrenderCalled = 0
             local onSurrenderArg1 = nil

@@ -4,7 +4,7 @@ insulate("Station", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("withMerchant()", function()
+    describe(":withMerchant()", function()
         local product = Product:new("Power Cells", {id="power"})
 
         describe("when configuring a bought product", function()

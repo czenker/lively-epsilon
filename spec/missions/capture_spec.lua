@@ -6,7 +6,7 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe("capture()", function()
+    describe(":capture()", function()
         it("should create a valid Mission with one ship", function()
             local ship = CpuShip()
             local mission = Missions:capture(ship)
@@ -63,7 +63,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onApproach()", function()
+    describe(":onApproach()", function()
         it("is called when the player first enters around the bearer", function()
             local onApproachCalled = 0
             local bearer = SpaceStation()
@@ -112,7 +112,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onBearerDestruction()", function()
+    describe(":onBearerDestruction()", function()
         it("is called when the bearer is destroyed", function()
             local onBearerDestructionCalled = 0
             local bearer = SpaceStation()
@@ -176,7 +176,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onItemDestruction()", function()
+    describe(":onItemDestruction()", function()
         it("is called when the item is destroyed and the player is too far", function()
             local onItemDestructionCalled = 0
             local mission
@@ -213,7 +213,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onPickup()", function()
+    describe(":onPickup()", function()
         it("is called when the item is destroyed and the player is close enough", function()
             local onPickupCalled = 0
             local mission
@@ -248,7 +248,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDropOff()", function()
+    describe(":onDropOff()", function()
         it("is called when the player returns the collected item", function()
             local onDropOffCalled = 0
             local mission
@@ -292,7 +292,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe("onDropOffTargetDestroyed()", function()
+    describe(":onDropOffTargetDestroyed()", function()
         it("is called", function()
             local onDropOffTargetDestroyedCalled = 0
             local mission

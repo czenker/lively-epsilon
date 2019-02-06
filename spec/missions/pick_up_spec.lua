@@ -6,7 +6,7 @@ insulate("Missions:pickUp", function()
 
     local player = PlayerSpaceship()
 
-    describe("pickUp()", function()
+    describe(":pickUp()", function()
         it("should create a valid Mission with an artifact", function()
             local artifact = Artifact()
             local mission = Missions:pickUp(artifact)

@@ -8,4 +8,5 @@
 luacov.*.out
 utils.lua
 docs/reference.adoc
+docs/spec.adoc
 docs/_build

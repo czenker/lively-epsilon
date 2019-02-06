@@ -4,7 +4,7 @@ insulate("Narrative", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("newRepository()", function()
+    describe(":newRepository()", function()
         it("creates a valid repository", function()
             local repo = Narrative:newRepository()
             assert.is_true(Narrative:isRepository(repo))
@@ -45,7 +45,7 @@ insulate("Narrative", function()
         end)
     end)
 
-    describe("countNarratives()", function()
+    describe(":countNarratives()", function()
         it("returns 0 if a repo has no narratives", function()
             local repo = Narrative:newRepository()
 
@@ -61,7 +61,7 @@ insulate("Narrative", function()
         end)
     end)
 
-    describe("addStation()", function()
+    describe(":addStation()", function()
         it("allows to add a station", function()
             local repo = Narrative:newRepository()
             local station = SpaceStation()
@@ -84,7 +84,7 @@ insulate("Narrative", function()
         end)
     end)
 
-    describe("countStations()", function()
+    describe(":countStations()", function()
         it("returns 0 if a repo has no stations assigned", function()
             local repo = Narrative:newRepository()
 
@@ -100,7 +100,7 @@ insulate("Narrative", function()
         end)
     end)
 
-    describe("findOne()", function()
+    describe(":findOne()", function()
         it("returns a narrative with concrete sources and destinations", function()
             local repo = Narrative:newRepository()
             repo:addNarrative(narrativeMock())

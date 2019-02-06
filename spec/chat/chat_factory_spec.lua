@@ -4,7 +4,7 @@ insulate("Chatter", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("newFactory()", function()
+    describe(":newFactory()", function()
         it("should create a valid chat", function()
             local chat = Chatter:newFactory(1, function(one)
                 return {

@@ -4,7 +4,7 @@ insulate("Comms", function()
     require "spec.mocks"
     require "spec.asserts"
 
-    describe("reply()", function()
+    describe(":reply()", function()
         it("can create a reply", function()
             local reply = Comms.reply("Foobar", function() end)
 
@@ -36,7 +36,7 @@ insulate("Comms", function()
         end)
     end)
 
-    describe("screen()", function()
+    describe(":screen()", function()
         it("can create a comms screen that it validates", function()
             local screen = Comms.screen("Hello World", {
                 Comms.reply("One", function() end),

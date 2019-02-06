@@ -451,7 +451,7 @@ insulate("Ship:behaveAsMiner()", function()
         end)
     end)
 
-    describe("behaveAsMiner()", function()
+    describe(":behaveAsMiner()", function()
         it("fails if ship is not a ship", function()
             local station = mockValidStation()
             assert.has_error(function()
