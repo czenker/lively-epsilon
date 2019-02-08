@@ -50,6 +50,10 @@ local isolateTestFunction = function(filePath, startAt)
     error("Could not an end in file " .. filePath .. " with indent level " .. targetIndent)
 end
 
+local slug = function(name)
+    return name:lower():gsub("[^%w]", "-"):gsub("%-+", "-"):gsub("^%-+", ""):gsub("%-+$", "")
+end
+
 ---
 --- Ok, lets go
 
@@ -79,7 +83,7 @@ for i, entry in ipairs(data) do
         name = name,
         file = entry.file,
         line = entry.line,
-        slug = name:lower():gsub("[^%w]", "-"):gsub("%-+", "-"),
+        slug = slug(name),
     })
     processedTests = processedTests + 1
 end
@@ -118,6 +122,7 @@ for _, group in pairs(keys) do
     local tests = groups[group]
     table.sort(tests, function(a, b) return a.name < b.name end)
 
+    indexFile:write("[[" .. slug(group) .. "]]\n")
     indexFile:write("== " .. group, "\n\n")
     for _, entry in pairs(tests) do
         local from, to = isolateTestFunction(entry.file, entry.line)

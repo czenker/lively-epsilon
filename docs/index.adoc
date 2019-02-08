@@ -19,10 +19,17 @@ Think about flying through the galaxy and watching traders ship goods from one s
 law-enforcement ships scanning ships, stations answering docking requests of NPCs or just two pilots
 having a chat through comms. There is a lot to explore in that galaxy.
 
-== Reference
+== Documentation
 
-Read the link:reference.html[API reference].
+There are multiple documentations available targeted at different target audiences:
 
-== Spec
+* The link:guide.html[Guide] is the document to start with if you want to get an overview of the framework
+and the features it offers. It contains lots of examples that you can copy for your own scenarios.
+* The link:reference.html[API Reference] describes the API of Lively Epsilon in more depth. It is automatically
+generated from docblocks in the source code and thus should typically be more up-to-date than the guide.
+* The link:spec.html[Specification] contains all Spec Tests that are run against the framework regularly.
+It describes which of the features of the framework are intentional and you might find one or the other hidden
+gem in there.
 
-Read the link:spec.html[Specification].
+If you find anything that is wrong in here, missing documentation or typos, please open an
+link:https://github.com/czenker/lively-epsilon/issues[Issue] or a link:https://github.com/czenker/lively-epsilon/pulls[Pull Request].

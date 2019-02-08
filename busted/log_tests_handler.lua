@@ -14,7 +14,7 @@ local output = function(options)
             local data = {}
 
             for _, el in pairs(handler.successes) do
-                if el.trace.what == "Lua" then
+                if el.trace.what == "Lua" and el.trace.short_src:sub(1,5) == "spec/" then
                     local name = el.name
                     local fileName = el.trace.short_src
                     local fromLine = el.trace.currentline

@@ -1,6 +1,7 @@
 local noop = function(self) return self end
 
 function _G.getLongRangeRadarRange() return 30000 end
+function _G.getObjectsInRadius() return {} end
 
 local function mergeObjects(...)
     local merged = Util.mergeTables(table.unpack({...}))
@@ -44,13 +45,14 @@ function SpaceObject()
         isFriendly = function(self, other) return self:getFactionId() == other:getFactionId() end,
         setDescription = noop,
         setDescriptionForScanState = noop,
-        getDescription = noop,
+        getDescription = function(self) return "" end,
         setDescriptions = noop,
         setScanningParameters = noop,
         setRadarSignatureInfo = noop,
         getRadarSignatureGravity = function(self) return 1 end,
         getRadarSignatureElectrical = function(self) return 1 end,
         getRadarSignatureBiological = function(self) return 1 end,
+        sendCommsMessage = function(self) return self end,
     }
 
     setmetatable(obj, {

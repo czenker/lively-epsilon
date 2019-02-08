@@ -63,7 +63,6 @@ function withUniverse(func)
 
         backup[thing] = _G[thing]
         _G[thing] = function()
-            print(thing .. "() called")
             local obj = original()
             table.insert(knownObjects, obj)
             knownObjectsByType[obj.typeName] = knownObjectsByType[obj.typeName] or {}

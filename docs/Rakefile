@@ -37,6 +37,19 @@ file "_build/index.html" => "index.adoc" do |t|
         }
 end
 
+file "_build/guide.html" => "guide.adoc" do |t|
+    Asciidoctor.render_file t.prerequisites.first,
+        :to_file => t.name,
+        :in_place => true,
+        :backend => 'html5',
+        :mkdirs => true,
+        :safe => :safe,
+        :attributes => {
+            'revnumber' => version,
+            'revdate' => date,
+        }
+end
+
 file "_build/reference.html" => "reference.adoc" do |t|
     Asciidoctor.render_file t.prerequisites.first,
         :to_file => t.name,
@@ -65,5 +78,5 @@ file "_build/spec.html" => "spec.adoc" do |t|
         }
 end
 
-task :default => [:clean, "_build", "_build/index.html", "_build/reference.html", "_build/spec.html"] do
+task :default => [:clean, "_build", "_build/index.html", "_build/guide.html", "_build/reference.html", "_build/spec.html"] do
 end

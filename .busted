@@ -3,6 +3,7 @@ return {
         verbose = true,
         ROOT = {
             "spec/",
+            "docs/examples/",
         },
     },
     default = {
