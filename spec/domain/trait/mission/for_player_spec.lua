@@ -1,4 +1,4 @@
-insulate("Mission", function()
+insulate("Mission:forPlayer()", function()
 
     require "init"
     require "spec.mocks"
@@ -12,33 +12,31 @@ insulate("Mission", function()
 
     local player = PlayerSpaceship()
 
-    describe(":forPlayer()", function()
-        it("should create a valid Mission with player", function()
-            local mission = missionMock()
-            Mission:forPlayer(mission, player)
+    it("should create a valid Mission with player", function()
+        local mission = missionMock()
+        Mission:forPlayer(mission, player)
 
-            assert.is_true(Mission:isPlayerMission(mission))
-        end)
+        assert.is_true(Mission:isPlayerMission(mission))
+    end)
 
-        it("fails if no mission is given", function()
-            local mission = missionMock()
+    it("fails if no mission is given", function()
+        local mission = missionMock()
 
-            assert.has_error(function() Mission:forPlayer(nil, player) end)
-        end)
+        assert.has_error(function() Mission:forPlayer(nil, player) end)
+    end)
 
-        it("fails if the mission is already a player mission", function()
-            local mission = missionMock()
-            Mission:forPlayer(mission, player)
+    it("fails if the mission is already a player mission", function()
+        local mission = missionMock()
+        Mission:forPlayer(mission, player)
 
-            assert.has_error(function() Mission:forPlayer(mission, player) end)
-        end)
+        assert.has_error(function() Mission:forPlayer(mission, player) end)
+    end)
 
-        it("fails if the mission has been accepted already", function()
-            local mission = missionMock()
-            mission:accept()
+    it("fails if the mission has been accepted already", function()
+        local mission = missionMock()
+        mission:accept()
 
-            assert.has_error(function() Mission:forPlayer(mission, player) end)
-        end)
+        assert.has_error(function() Mission:forPlayer(mission, player) end)
     end)
 
     describe(":accept()", function()

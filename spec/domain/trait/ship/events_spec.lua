@@ -1,4 +1,4 @@
-insulate("Ship:withEvents", function()
+insulate("Ship:withEvents()", function()
 
     require "init"
     require "spec.mocks"
@@ -28,7 +28,7 @@ insulate("Ship:withEvents", function()
         assert.is_same(1, called)
     end)
 
-    describe("onDocking", function()
+    describe("config.onDocking", function()
         it("is called when the ship docks a station", function()
             local called = 0
             local station = SpaceStation()
@@ -142,7 +142,7 @@ insulate("Ship:withEvents", function()
         end)
     end)
 
-    describe("onUndocking", function()
+    describe("config.onUndocking", function()
         it("is called when the ship undocks a station", function()
             local called = 0
             local station = SpaceStation()
@@ -266,7 +266,7 @@ insulate("Ship:withEvents", function()
     end)
 
 
-    describe("onDockInitiation", function()
+    describe("config.onDockInitiation", function()
         it("is called when the ship approaches a station with the intention of docking", function()
             local called = 0
             local station = SpaceStation()

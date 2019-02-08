@@ -1,4 +1,4 @@
-insulate("Missions", function()
+insulate("Missions:disable()", function()
 
     require "init"
     require "spec.mocks"
@@ -6,23 +6,21 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe(":disable()", function()
-        it("should create a valid Mission with one ship", function()
-            local mission = Missions:disable(CpuShip())
+    it("should create a valid Mission with one ship", function()
+        local mission = Missions:disable(CpuShip())
 
-            assert.is_true(Mission:isMission(mission))
-        end)
-        it("should create a valid Mission with a function returning a ship", function()
-            local mission = Missions:disable(function() return CpuShip() end)
+        assert.is_true(Mission:isMission(mission))
+    end)
+    it("should create a valid Mission with a function returning a ship", function()
+        local mission = Missions:disable(function() return CpuShip() end)
 
-            assert.is_true(Mission:isMission(mission))
-        end)
-        it("fails if no valid ship is given", function()
-            assert.has_error(function() Missions:disable(nil) end)
-            assert.has_error(function() Missions:disable(personMock()) end)
-            assert.has_error(function() Missions:disable(42) end)
-            assert.has_error(function() Missions:disable(SpaceStation()) end)
-        end)
+        assert.is_true(Mission:isMission(mission))
+    end)
+    it("fails if no valid ship is given", function()
+        assert.has_error(function() Missions:disable(nil) end)
+        assert.has_error(function() Missions:disable(personMock()) end)
+        assert.has_error(function() Missions:disable(42) end)
+        assert.has_error(function() Missions:disable(SpaceStation()) end)
     end)
 
     describe(":getTarget()", function()
@@ -45,7 +43,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onApproach()", function()
+    describe("config.onApproach", function()
         it("is called when the player first enters 10u around the target", function()
             local onApproachCalled = 0
             local onApproachArg1 = nil
@@ -86,7 +84,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onDestruction()", function()
+    describe("config.onDestruction", function()
         it("is called when ship is completely destroyed", function()
             local onDestructionCalled = 0
             local onDestructionArg1 = nil
@@ -114,7 +112,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onSurrender()", function()
+    describe("config.onSurrender", function()
         it("disabled impulse engine is necessary for surrender", function()
             local onSurrenderCalled = 0
             local onSurrenderArg1 = nil
@@ -273,7 +271,7 @@ insulate("Missions", function()
         end)
     end)
 
-    it("successful mission", function()
+    it("can run a successful mission", function()
         local ship = CpuShip()
         local player = PlayerSpaceship()
         local mission

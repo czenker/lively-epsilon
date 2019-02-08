@@ -1,4 +1,4 @@
-insulate("Mission", function()
+insulate("Mission:withBroker()", function()
 
     require "init"
     require "spec.mocks"
@@ -10,52 +10,50 @@ insulate("Mission", function()
         return mission
     end
 
-    describe(":withBroker()", function()
-        it("should create a valid Mission with story", function()
-            local mission = missionMock()
-            Mission:withBroker(mission, "Hello World")
+    it("should create a valid Mission with story", function()
+        local mission = missionMock()
+        Mission:withBroker(mission, "Hello World")
 
-            assert.is_true(Mission:isBrokerMission(mission))
-        end)
-
-        it("fails if no mission is given", function()
-            local mission = missionMock()
-
-            assert.has_error(function() Mission:withBroker(nil, "Hello World") end)
-        end)
-
-        it("fails if the mission is already a story mission", function()
-            local mission = missionMock()
-            Mission:withBroker(mission, "Hello World")
-
-            assert.has_error(function() Mission:withBroker(mission, "Hello World") end)
-        end)
-
-        it("fails if no title is given", function()
-            local mission = missionMock()
-
-            assert.has_error(function() Mission:withBroker(mission) end)
-        end)
-
-        it("fails if the config is not a table", function()
-            local mission = missionMock()
-
-            assert.has_error(function() Mission:withBroker(mission, "Hello World", "thisBreaks") end)
-        end)
-
-        it("fails if the description is a number", function()
-            assert.has_error(function() missionWithBrokerMock({description = 42}) end)
-        end)
-
-        it("fails if the mission has been accepted already", function()
-            local mission = missionMock()
-            mission:accept()
-
-            assert.has_error(function() Mission:withBroker(mission, "Hello World") end)
-        end)
+        assert.is_true(Mission:isBrokerMission(mission))
     end)
 
-    describe("getTitle", function()
+    it("fails if no mission is given", function()
+        local mission = missionMock()
+
+        assert.has_error(function() Mission:withBroker(nil, "Hello World") end)
+    end)
+
+    it("fails if the mission is already a story mission", function()
+        local mission = missionMock()
+        Mission:withBroker(mission, "Hello World")
+
+        assert.has_error(function() Mission:withBroker(mission, "Hello World") end)
+    end)
+
+    it("fails if no title is given", function()
+        local mission = missionMock()
+
+        assert.has_error(function() Mission:withBroker(mission) end)
+    end)
+
+    it("fails if the config is not a table", function()
+        local mission = missionMock()
+
+        assert.has_error(function() Mission:withBroker(mission, "Hello World", "thisBreaks") end)
+    end)
+
+    it("fails if the description is a number", function()
+        assert.has_error(function() missionWithBrokerMock({description = 42}) end)
+    end)
+
+    it("fails if the mission has been accepted already", function()
+        local mission = missionMock()
+        mission:accept()
+
+        assert.has_error(function() Mission:withBroker(mission, "Hello World") end)
+    end)
+
+    describe(":getTitle()", function()
         it("returns the title if it is a string", function()
             local title = "Hello World"
             local mission = missionMock()
@@ -76,7 +74,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("getDescription", function()
+    describe(":getDescription()", function()
         it("returns the description if it is a string", function()
             local description = "This is a mission"
             local mission = missionWithBrokerMock({description = description})
@@ -96,7 +94,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("getAcceptMessage", function()
+    describe(":getAcceptMessage()", function()
         it("returns the message if it is a string", function()
             local message = "Thanks for taking that mission"
             local mission = missionWithBrokerMock({acceptMessage = message })
@@ -155,7 +153,7 @@ insulate("Mission", function()
             assert.is_same(station, mission:getMissionBroker())
         end)
     end)
-    describe("getHint(), setHint()", function()
+    describe(":getHint(), :setHint()", function()
         it("returns nil by default", function()
             local mission = missionWithBrokerMock()
 

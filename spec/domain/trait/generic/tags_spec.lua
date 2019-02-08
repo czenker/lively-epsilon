@@ -1,29 +1,27 @@
-insulate("Generic", function()
+insulate("Generic:withTags()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withTags()", function()
-        it("creates a valid tagged object", function()
-            local station = SpaceStation()
-            Generic:withTags(station)
+    it("creates a valid tagged object", function()
+        local station = SpaceStation()
+        Generic:withTags(station)
 
-            assert.is_true(Generic:hasTags(station))
-        end)
-        it("allows to set tags in the constructor", function()
-            local station = SpaceStation()
-            Generic:withTags(station, "foo", "bar", "baz")
+        assert.is_true(Generic:hasTags(station))
+    end)
+    it("allows to set tags in the constructor", function()
+        local station = SpaceStation()
+        Generic:withTags(station, "foo", "bar", "baz")
 
-            assert.is_true(Generic:hasTags(station))
-            assert.is_same(3, Util.size(station:getTags()))
-        end)
-        it("fails if the first argument is a number", function()
-            assert.has_error(function() Generic:withTags(42) end)
-        end)
-        it("fails if a tag is not a string", function()
-            assert.has_error(function() Generic:withTags(station, "foo", "bar", 42) end)
-        end)
+        assert.is_true(Generic:hasTags(station))
+        assert.is_same(3, Util.size(station:getTags()))
+    end)
+    it("fails if the first argument is a number", function()
+        assert.has_error(function() Generic:withTags(42) end)
+    end)
+    it("fails if a tag is not a string", function()
+        assert.has_error(function() Generic:withTags(station, "foo", "bar", 42) end)
     end)
 
     describe(":getTags()", function()

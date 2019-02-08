@@ -1,4 +1,4 @@
-insulate("Comms", function()
+insulate("Comms:merchantFactory()", function()
 
     require "init"
     require "spec.mocks"
@@ -15,19 +15,17 @@ insulate("Comms", function()
         sellProductConfirmScreen = function() end,
     }
 
-    describe(":merchantFactory()", function()
-        it("should create a valid Comms.reply", function()
-            local merchantComms = Comms:merchantFactory(requiredConfig)
+    it("should create a valid Comms.reply", function()
+        local merchantComms = Comms:merchantFactory(requiredConfig)
 
-            assert.is_true(Comms:isReply(merchantComms))
-        end)
-        it("fails if any of the required configs is missing", function()
-            for k, _ in pairs(requiredConfig) do
-                local config = Util.deepCopy(requiredConfig)
-                config[k] = nil
+        assert.is_true(Comms:isReply(merchantComms))
+    end)
+    it("fails if any of the required configs is missing", function()
+        for k, _ in pairs(requiredConfig) do
+            local config = Util.deepCopy(requiredConfig)
+            config[k] = nil
 
-                assert.has_error(function() Comms:merchantFactory(config) end)
-            end
-        end)
+            assert.has_error(function() Comms:merchantFactory(config) end)
+        end
     end)
 end)

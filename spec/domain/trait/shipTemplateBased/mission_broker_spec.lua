@@ -1,52 +1,50 @@
-insulate("ShipTemplateBased", function()
+insulate("ShipTemplateBased:withMissionBroker()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withMissionBroker()", function()
-        it("causes hasMissionBroker() to be true", function()
-            local station = SpaceStation()
-            ShipTemplateBased:withMissionBroker(station)
+    it("causes hasMissionBroker() to be true", function()
+        local station = SpaceStation()
+        ShipTemplateBased:withMissionBroker(station)
 
-            assert.is_true(ShipTemplateBased:hasMissionBroker(station))
-        end)
+        assert.is_true(ShipTemplateBased:hasMissionBroker(station))
+    end)
 
-        it("fails if first argument is not a SpaceObject", function()
-            assert.has_error(function() ShipTemplateBased:withMissionBroker(42) end)
-        end)
+    it("fails if first argument is not a SpaceObject", function()
+        assert.has_error(function() ShipTemplateBased:withMissionBroker(42) end)
+    end)
 
-        it("fails if first argument is already a SpaceObject with broker", function()
-            local station = SpaceStation()
-            ShipTemplateBased:withMissionBroker(station)
+    it("fails if first argument is already a SpaceObject with broker", function()
+        local station = SpaceStation()
+        ShipTemplateBased:withMissionBroker(station)
 
-            assert.has_error(function() ShipTemplateBased:withMissionBroker(station) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withMissionBroker(station) end)
+    end)
 
-        it("fails if second argument is not a table", function()
-            local station = SpaceStation()
+    it("fails if second argument is not a table", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withMissionBroker(station, 42) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withMissionBroker(station, 42) end)
+    end)
 
-        it("allows to set missions", function()
-            local station = SpaceStation()
+    it("allows to set missions", function()
+        local station = SpaceStation()
 
-            ShipTemplateBased:withMissionBroker(station, {missions = {missionWithBrokerMock(), missionWithBrokerMock(), missionWithBrokerMock()}})
-            assert.is_same(3, Util.size(station:getMissions()))
-        end)
+        ShipTemplateBased:withMissionBroker(station, {missions = {missionWithBrokerMock(), missionWithBrokerMock(), missionWithBrokerMock()}})
+        assert.is_same(3, Util.size(station:getMissions()))
+    end)
 
-        it("fails if missions is a number", function()
-            local station = SpaceStation()
+    it("fails if missions is a number", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = 42}) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = 42}) end)
+    end)
 
-        it("fails if any of the missions is not a mission with broker", function()
-            local station = SpaceStation()
+    it("fails if any of the missions is not a mission with broker", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = {missionMock}}) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withMissionBroker(station, {missions = {missionMock}}) end)
     end)
 
     describe(":addMission()", function()

@@ -1,4 +1,4 @@
-insulate("Missions", function()
+insulate("Missions:capture()", function()
 
     require "init"
     require "spec.mocks"
@@ -6,113 +6,109 @@ insulate("Missions", function()
 
     local player = PlayerSpaceship()
 
-    describe(":capture()", function()
-        it("should create a valid Mission with one ship", function()
-            local ship = CpuShip()
-            local mission = Missions:capture(ship)
+    it("should create a valid Mission with one ship", function()
+        local ship = CpuShip()
+        local mission = Missions:capture(ship)
 
-            assert.is_true(Mission:isMission(mission))
-            assert.is_same(ship, mission:getBearer())
-            assert.is_nil(mission:getItemObject())
-        end)
-        it("should create a valid Mission with one station", function()
-            local station = SpaceStation()
-            local mission = Missions:capture(station)
+        assert.is_true(Mission:isMission(mission))
+        assert.is_same(ship, mission:getBearer())
+        assert.is_nil(mission:getItemObject())
+    end)
+    it("should create a valid Mission with one station", function()
+        local station = SpaceStation()
+        local mission = Missions:capture(station)
 
-            assert.is_true(Mission:isMission(mission))
-            assert.is_same(station, mission:getBearer())
-            assert.is_nil(mission:getItemObject())
-        end)
-        it("should fail if a person is given instead of a bearer", function()
-            assert.has_error(function() Missions:capture(personMock()) end)
-        end)
-        it("should fail if nil is given instead of a bearer", function()
-            assert.has_error(function() Missions:capture(nil) end)
-        end)
+        assert.is_true(Mission:isMission(mission))
+        assert.is_same(station, mission:getBearer())
+        assert.is_nil(mission:getItemObject())
+    end)
+    it("should fail if a person is given instead of a bearer", function()
+        assert.has_error(function() Missions:capture(personMock()) end)
+    end)
+    it("should fail if nil is given instead of a bearer", function()
+        assert.has_error(function() Missions:capture(nil) end)
+    end)
 
-        it("should create a valid Mission if a callback function is given that returns one ship", function()
-            local ship = CpuShip()
-            local mission = Missions:capture(function() return ship end)
-            assert.is_true(Mission:isMission(mission))
-            mission:setPlayer(player)
+    it("should create a valid Mission if a callback function is given that returns one ship", function()
+        local ship = CpuShip()
+        local mission = Missions:capture(function() return ship end)
+        assert.is_true(Mission:isMission(mission))
+        mission:setPlayer(player)
+        mission:accept()
+        mission:start()
+
+        assert.is_same(ship, mission:getBearer())
+        assert.is_nil(mission:getItemObject())
+    end)
+    it("fails if a call back function is given, but returns a person", function()
+        local mission = Missions:capture(function() return personMock() end)
+        mission:setPlayer(player)
+        assert.has_error(function()
             mission:accept()
             mission:start()
-
-            assert.is_same(ship, mission:getBearer())
-            assert.is_nil(mission:getItemObject())
         end)
-        it("fails if a call back function is given, but returns a person", function()
-            local mission = Missions:capture(function() return personMock() end)
-            mission:setPlayer(player)
-            assert.has_error(function()
-                mission:accept()
-                mission:start()
-            end)
-        end)
-        it("fails if a call back function is given, but returns a person", function()
-            local mission = Missions:capture(function() return nil end)
-            mission:setPlayer(player)
-            assert.has_error(function()
-                mission:accept()
-                mission:start()
-            end)
-        end)
-
-        it("fails if second parameter is a number", function()
-            assert.has_error(function() Missions:capture(CpuShip(), 3) end)
+    end)
+    it("fails if a call back function is given, but returns a person", function()
+        local mission = Missions:capture(function() return nil end)
+        mission:setPlayer(player)
+        assert.has_error(function()
+            mission:accept()
+            mission:start()
         end)
     end)
 
-    describe(":onApproach()", function()
-        it("is called when the player first enters around the bearer", function()
-            local onApproachCalled = 0
-            local bearer = SpaceStation()
-            local mission
-            mission = Missions:capture(bearer, {
-                approachDistance = 10000,
-                onApproach = function(callMission, callEnemy)
-                    onApproachCalled = onApproachCalled + 1
-                    assert.is_same(mission, callMission)
-                    assert.is_same(bearer, callEnemy)
-                end,
-            })
-
-            player:setPosition(20000, 0)
-            bearer:setPosition(0, 0)
-
-            mission:setPlayer(player)
-            mission:accept()
-            mission:start()
-
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(0, onApproachCalled)
-
-            player:setPosition(10001, 0)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(0, onApproachCalled)
-
-            player:setPosition(9999, 0)
-            Cron.tick(1)
-            assert.is_same(1, onApproachCalled)
-
-            Cron.tick(1)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(1, onApproachCalled)
-
-            player:setPosition(10001, 0)
-            Cron.tick(1)
-            Cron.tick(1)
-            player:setPosition(9999, 0)
-            Cron.tick(1)
-            Cron.tick(1)
-            assert.is_same(1, onApproachCalled)
-        end)
+    it("fails if second parameter is a number", function()
+        assert.has_error(function() Missions:capture(CpuShip(), 3) end)
     end)
 
-    describe(":onBearerDestruction()", function()
+    it("config.onApproach is called when the player first enters around the bearer", function()
+        local onApproachCalled = 0
+        local bearer = SpaceStation()
+        local mission
+        mission = Missions:capture(bearer, {
+            approachDistance = 10000,
+            onApproach = function(callMission, callEnemy)
+                onApproachCalled = onApproachCalled + 1
+                assert.is_same(mission, callMission)
+                assert.is_same(bearer, callEnemy)
+            end,
+        })
+
+        player:setPosition(20000, 0)
+        bearer:setPosition(0, 0)
+
+        mission:setPlayer(player)
+        mission:accept()
+        mission:start()
+
+        Cron.tick(1)
+        Cron.tick(1)
+        assert.is_same(0, onApproachCalled)
+
+        player:setPosition(10001, 0)
+        Cron.tick(1)
+        Cron.tick(1)
+        assert.is_same(0, onApproachCalled)
+
+        player:setPosition(9999, 0)
+        Cron.tick(1)
+        assert.is_same(1, onApproachCalled)
+
+        Cron.tick(1)
+        Cron.tick(1)
+        Cron.tick(1)
+        assert.is_same(1, onApproachCalled)
+
+        player:setPosition(10001, 0)
+        Cron.tick(1)
+        Cron.tick(1)
+        player:setPosition(9999, 0)
+        Cron.tick(1)
+        Cron.tick(1)
+        assert.is_same(1, onApproachCalled)
+    end)
+
+    describe("config.onBearerDestruction", function()
         it("is called when the bearer is destroyed", function()
             local onBearerDestructionCalled = 0
             local bearer = SpaceStation()
@@ -176,7 +172,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onItemDestruction()", function()
+    describe("config.onItemDestruction", function()
         it("is called when the item is destroyed and the player is too far", function()
             local onItemDestructionCalled = 0
             local mission
@@ -213,7 +209,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onPickup()", function()
+    describe("config.onPickup", function()
         it("is called when the item is destroyed and the player is close enough", function()
             local onPickupCalled = 0
             local mission
@@ -248,7 +244,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onDropOff()", function()
+    describe("config.onDropOff", function()
         it("is called when the player returns the collected item", function()
             local onDropOffCalled = 0
             local mission
@@ -292,7 +288,7 @@ insulate("Missions", function()
         end)
     end)
 
-    describe(":onDropOffTargetDestroyed()", function()
+    describe("config.onDropOffTargetDestroyed", function()
         it("is called", function()
             local onDropOffTargetDestroyedCalled = 0
             local mission
@@ -330,7 +326,7 @@ insulate("Missions", function()
     end)
 
 
-    it("successful mission without drop off point", function()
+    it("can run a successful mission without drop off point", function()
         local mission = Missions:capture(SpaceStation())
 
         mission:getBearer():setPosition(0,0)
@@ -348,7 +344,7 @@ insulate("Missions", function()
         assert.is_same("successful", mission:getState())
     end)
 
-    it("successful mission with drop off point", function()
+    it("can run a successful mission with drop off point", function()
         local mission = Missions:capture(SpaceStation(), {
             dropOffTarget = SpaceStation()
         })

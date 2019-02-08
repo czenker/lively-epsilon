@@ -1,27 +1,25 @@
-insulate("Player", function()
+insulate("Player:withUpgradeTracker()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withUpgradeTracker()", function()
-        it("creates a valid upgrade tracker", function()
-            local player = PlayerSpaceship()
-            Player:withUpgradeTracker(player)
+    it("creates a valid upgrade tracker", function()
+        local player = PlayerSpaceship()
+        Player:withUpgradeTracker(player)
 
-            assert.is_true(Player:hasUpgradeTracker(player))
-        end)
+        assert.is_true(Player:hasUpgradeTracker(player))
+    end)
 
-        it("fails if the first argument is not a player", function()
-            assert.has_error(function() Player:withUpgradeTracker(42) end)
-        end)
+    it("fails if the first argument is not a player", function()
+        assert.has_error(function() Player:withUpgradeTracker(42) end)
+    end)
 
-        it("fails if the first argument is already an upgrade tracker player", function()
-            local player = PlayerSpaceship()
-            Player:withUpgradeTracker(player)
+    it("fails if the first argument is already an upgrade tracker player", function()
+        local player = PlayerSpaceship()
+        Player:withUpgradeTracker(player)
 
-            assert.has_error(function() Player:withUpgradeTracker(player) end)
-        end)
+        assert.has_error(function() Player:withUpgradeTracker(player) end)
     end)
 
     describe(":addUpgrade()", function()

@@ -1,27 +1,25 @@
-insulate("Player", function()
+insulate("Player:withMissionTracker()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withMissionTracker()", function()
-        it("creates a valid mission tracker", function()
-            local player = PlayerSpaceship()
-            Player:withMissionTracker(player)
+    it("creates a valid mission tracker", function()
+        local player = PlayerSpaceship()
+        Player:withMissionTracker(player)
 
-            assert.is_true(Player:hasMissionTracker(player))
-        end)
+        assert.is_true(Player:hasMissionTracker(player))
+    end)
 
-        it("fails if the first argument is not a player", function()
-            assert.has_error(function() Player:withMissionTracker(42) end)
-        end)
+    it("fails if the first argument is not a player", function()
+        assert.has_error(function() Player:withMissionTracker(42) end)
+    end)
 
-        it("fails if the first argument is already a mission tracker player", function()
-            local player = PlayerSpaceship()
-            Player:withMissionTracker(player)
+    it("fails if the first argument is already a mission tracker player", function()
+        local player = PlayerSpaceship()
+        Player:withMissionTracker(player)
 
-            assert.has_error(function() Player:withMissionTracker(player) end)
-        end)
+        assert.has_error(function() Player:withMissionTracker(player) end)
     end)
 
     describe(":addMission()", function()

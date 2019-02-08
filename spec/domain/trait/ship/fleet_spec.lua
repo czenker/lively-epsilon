@@ -1,4 +1,4 @@
-insulate("Station", function()
+insulate("Ship:withFleet()", function()
 
     require "init"
     require "spec.mocks"
@@ -20,32 +20,30 @@ insulate("Station", function()
     end
 
 
-    describe(":withFleet()", function()
-        it("should create a ship with fleet", function()
-            local ship = CpuShip()
-            local fleet = fleetMock({ship})
-            Ship:withFleet(ship, fleet)
+    it("should create a ship with fleet", function()
+        local ship = CpuShip()
+        local fleet = fleetMock({ship})
+        Ship:withFleet(ship, fleet)
 
-            assert.is_true(Ship:hasFleet(ship))
-        end)
-        it("fails when no ship is given", function()
-            local ship = CpuShip()
-            local fleet = fleetMock({ship})
+        assert.is_true(Ship:hasFleet(ship))
+    end)
+    it("fails when no ship is given", function()
+        local ship = CpuShip()
+        local fleet = fleetMock({ship})
 
-            assert.has_error(function() Ship:withFleet(42, fleet) end)
-        end)
-        it("fails when no fleet is given", function()
-            local ship = CpuShip()
+        assert.has_error(function() Ship:withFleet(42, fleet) end)
+    end)
+    it("fails when no fleet is given", function()
+        local ship = CpuShip()
 
-            assert.has_error(function() Ship:withFleet(ship, 42) end)
-        end)
-        it("fails if ship already has a fleet", function()
-            local ship = CpuShip()
-            local fleet = fleetMock({ship})
-            Ship:withFleet(ship, fleet)
+        assert.has_error(function() Ship:withFleet(ship, 42) end)
+    end)
+    it("fails if ship already has a fleet", function()
+        local ship = CpuShip()
+        local fleet = fleetMock({ship})
+        Ship:withFleet(ship, fleet)
 
-            assert.has_error(function() Ship:withFleet(ship, fleet) end)
-        end)
+        assert.has_error(function() Ship:withFleet(ship, fleet) end)
     end)
 
     describe(":getFleet()", function()

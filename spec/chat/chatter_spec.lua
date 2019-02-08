@@ -18,7 +18,7 @@ local function mockPlayers(...)
     end
 end
 
-insulate("Chatter", function()
+insulate("Chatter:new()", function()
 
     require "init"
     require "spec.mocks"
@@ -30,18 +30,16 @@ insulate("Chatter", function()
         for i=1,20 do Cron.tick(1) end
     end)
 
-    describe(":new()", function()
-        it("creates a valid chatter", function()
-            local chatter = Chatter:new()
-            assert.is_true(Chatter:isChatter(chatter))
+    it("creates a valid chatter", function()
+        local chatter = Chatter:new()
+        assert.is_true(Chatter:isChatter(chatter))
+    end)
+    it("fails when config is not a table", function()
+        assert.has_error(function()
+            Chatter:new(42)
         end)
-        it("fails when config is not a table", function()
-            assert.has_error(function()
-                Chatter:new(42)
-            end)
-            assert.has_error(function()
-                Chatter:new("foo")
-            end)
+        assert.has_error(function()
+            Chatter:new("foo")
         end)
     end)
 

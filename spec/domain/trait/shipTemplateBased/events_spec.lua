@@ -1,4 +1,4 @@
-insulate("ShipTemplateBased:withEvents", function()
+insulate("ShipTemplateBased:withEvents()", function()
 
     require "init"
     require "spec.mocks"
@@ -10,7 +10,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
     end)
 
-    describe("onDestruction", function()
+    describe("config.onDestruction", function()
         it("is called when the shipTemplateBased is destroyed", function()
             local called = 0
             local station = SpaceStation()
@@ -70,7 +70,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
     end)
 
-    describe("onEnemyDetection", function()
+    describe("config.onEnemyDetection", function()
         it("does only trigger when an enemy moves into range", function()
             local called = 0
             local station = SpaceStation()
@@ -206,7 +206,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
     end)
 
-    describe("onEnemyClear", function()
+    describe("config.onEnemyClear", function()
         it("does only trigger when an enemy moves out of range", function()
             local called = 0
             local station = SpaceStation()
@@ -341,7 +341,7 @@ insulate("ShipTemplateBased:withEvents", function()
         end)
     end)
 
-    describe("onBeingAttacked", function()
+    describe("config.onBeingAttacked", function()
 
         it("is called when the shipTemplateBased looses shield and enemy is close", function()
             local called = 0

@@ -1,17 +1,15 @@
-insulate("Narrative", function()
+insulate("Narrative:newRepository()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":newRepository()", function()
-        it("creates a valid repository", function()
-            local repo = Narrative:newRepository()
-            assert.is_true(Narrative:isRepository(repo))
-        end)
+    it("creates a valid repository", function()
+        local repo = Narrative:newRepository()
+        assert.is_true(Narrative:isRepository(repo))
     end)
 
-    describe("addNarrative(narrativeMock())", function()
+    describe(":addNarrative()", function()
         it("allows to add a new narrative", function()
             local repo = Narrative:newRepository()
             repo:addNarrative(narrativeMock())

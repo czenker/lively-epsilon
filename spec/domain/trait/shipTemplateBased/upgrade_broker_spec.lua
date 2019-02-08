@@ -1,52 +1,50 @@
-insulate("ShipTemplateBased", function()
+insulate("ShipTemplateBased:withUpgradeBroker()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withUpgradeBroker()", function()
-        it("causes hasUpgradeBroker() to be true", function()
-            local station = SpaceStation()
-            ShipTemplateBased:withUpgradeBroker(station)
+    it("causes hasUpgradeBroker() to be true", function()
+        local station = SpaceStation()
+        ShipTemplateBased:withUpgradeBroker(station)
 
-            assert.is_true(ShipTemplateBased:hasUpgradeBroker(station))
-        end)
+        assert.is_true(ShipTemplateBased:hasUpgradeBroker(station))
+    end)
 
-        it("fails if first argument is not a SpaceObject", function()
-            assert.has_error(function() ShipTemplateBased:withUpgradeBroker(42) end)
-        end)
+    it("fails if first argument is not a SpaceObject", function()
+        assert.has_error(function() ShipTemplateBased:withUpgradeBroker(42) end)
+    end)
 
-        it("fails if first argument is already a SpaceObject with broker", function()
-            local station = SpaceStation()
-            ShipTemplateBased:withUpgradeBroker(station)
+    it("fails if first argument is already a SpaceObject with broker", function()
+        local station = SpaceStation()
+        ShipTemplateBased:withUpgradeBroker(station)
 
-            assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station) end)
+    end)
 
-        it("fails if second argument is not a table", function()
-            local station = SpaceStation()
+    it("fails if second argument is not a table", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, 42) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, 42) end)
+    end)
 
-        it("allows to set upgrades", function()
-            local station = SpaceStation()
+    it("allows to set upgrades", function()
+        local station = SpaceStation()
 
-            ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgradeMock(), upgradeMock(), upgradeMock()}})
-            assert.is_same(3, Util.size(station:getUpgrades()))
-        end)
+        ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgradeMock(), upgradeMock(), upgradeMock()}})
+        assert.is_same(3, Util.size(station:getUpgrades()))
+    end)
 
-        it("fails if upgrades is a number", function()
-            local station = SpaceStation()
+    it("fails if upgrades is a number", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, {upgrades = 42}) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, {upgrades = 42}) end)
+    end)
 
-        it("fails if any of the upgrades is not a upgrade with broker", function()
-            local station = SpaceStation()
+    it("fails if any of the upgrades is not a upgrade with broker", function()
+        local station = SpaceStation()
 
-            assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgradeMock}}) end)
-        end)
+        assert.has_error(function() ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgradeMock}}) end)
     end)
 
     describe(":addUpgrade()", function()

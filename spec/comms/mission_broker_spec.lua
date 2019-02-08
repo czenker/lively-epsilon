@@ -1,4 +1,4 @@
-insulate("Comms", function()
+insulate("Comms:missionBrokerFactory()", function()
 
     require "init"
     require "spec.mocks"
@@ -11,19 +11,17 @@ insulate("Comms", function()
         acceptScreen = function() end,
     }
 
-    describe(":missionBrokerFactory()", function()
-        it("should create a valid Comms.reply", function()
-            local missionComms = Comms:missionBrokerFactory(requiredConfig)
+    it("should create a valid Comms.reply", function()
+        local missionComms = Comms:missionBrokerFactory(requiredConfig)
 
-            assert.is_true(Comms:isReply(missionComms))
-        end)
-        it("fails if any of the required configs is missing", function()
-            for k, _ in pairs(requiredConfig) do
-                local config = Util.deepCopy(requiredConfig)
-                config[k] = nil
+        assert.is_true(Comms:isReply(missionComms))
+    end)
+    it("fails if any of the required configs is missing", function()
+        for k, _ in pairs(requiredConfig) do
+            local config = Util.deepCopy(requiredConfig)
+            config[k] = nil
 
-                assert.has_error(function() Comms:missionBrokerFactory(config) end)
-            end
-        end)
+            assert.has_error(function() Comms:missionBrokerFactory(config) end)
+        end
     end)
 end)

@@ -1,79 +1,77 @@
-insulate("Player", function()
+insulate("Player:withMenu()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":withMenu()", function()
-        it("creates a valid menu", function()
-            local player = PlayerSpaceship()
-            Player:withMenu(player)
+    it("creates a valid menu", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
 
-            assert.is_true(Player:hasMenu(player))
+        assert.is_true(Player:hasMenu(player))
+    end)
+
+    it("fails if the first argument is not a player", function()
+        assert.has_error(function() Player:withMenu(42) end)
+    end)
+
+    it("fails if the first argument already has menus", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
+
+        assert.has_error(function() Player:withMenu(player) end)
+    end)
+
+    it("draws submenus", function()
+        -- test setup
+        local player = PlayerSpaceship()
+        Player:withMenu(player, {
+            backLabel = "Back",
+        })
+
+        local submenu = mockSubmenu("Submenu", function(menu)
+            menu:addItem(mockMenuLabel("You are in a submenu"))
         end)
 
-        it("fails if the first argument is not a player", function()
-            assert.has_error(function() Player:withMenu(42) end)
-        end)
+        player:addScienceMenuItem(submenu)
+        player:addScienceMenuItem(mockMenuLabel("Original Item"))
+        assert.is_true(player:hasButton("science", "Submenu"))
+        assert.is_true(player:hasButton("science", "Original Item"))
+        assert.is_false(player:hasButton("science", "Back"))
 
-        it("fails if the first argument already has menus", function()
-            local player = PlayerSpaceship()
-            Player:withMenu(player)
+        player:clickButton("science", "Submenu")
+        assert.is_false(player:hasButton("science", "Submenu"))
+        assert.is_false(player:hasButton("science", "Original Item"))
+        assert.is_true(player:hasButton("science", "You are in a submenu"))
 
-            assert.has_error(function() Player:withMenu(player) end)
-        end)
+        -- there should ALWAYS! be a back button so the player can go back to the main menu
+        assert.is_true(player:hasButton("science", "Back"))
 
-        it("draws submenus", function()
-            -- test setup
-            local player = PlayerSpaceship()
-            Player:withMenu(player, {
-                backLabel = "Back",
-            })
+        player:clickButton("science", "Back")
+        assert.is_true(player:hasButton("science", "Submenu"))
+        assert.is_true(player:hasButton("science", "Original Item"))
+        assert.is_false(player:hasButton("science", "You are in a submenu"))
+        assert.is_false(player:hasButton("science", "Back"))
+    end)
 
-            local submenu = mockSubmenu("Submenu", function(menu)
-                menu:addItem(mockMenuLabel("You are in a submenu"))
-            end)
+    it("triggers callbacks on click", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
 
-            player:addScienceMenuItem(submenu)
-            player:addScienceMenuItem(mockMenuLabel("Original Item"))
-            assert.is_true(player:hasButton("science", "Submenu"))
-            assert.is_true(player:hasButton("science", "Original Item"))
-            assert.is_false(player:hasButton("science", "Back"))
+        local called, callArg1, callArg2 = 0, nil, nil
+        player:addRelayMenuItem("function", Menu:newItem("Callback", function(arg1, arg2)
+            called = called + 1
+            callArg1 = arg1
+            callArg2 = arg2
+        end))
 
-            player:clickButton("science", "Submenu")
-            assert.is_false(player:hasButton("science", "Submenu"))
-            assert.is_false(player:hasButton("science", "Original Item"))
-            assert.is_true(player:hasButton("science", "You are in a submenu"))
-
-            -- there should ALWAYS! be a back button so the player can go back to the main menu
-            assert.is_true(player:hasButton("science", "Back"))
-
-            player:clickButton("science", "Back")
-            assert.is_true(player:hasButton("science", "Submenu"))
-            assert.is_true(player:hasButton("science", "Original Item"))
-            assert.is_false(player:hasButton("science", "You are in a submenu"))
-            assert.is_false(player:hasButton("science", "Back"))
-        end)
-
-        it("triggers callbacks on click", function()
-            local player = PlayerSpaceship()
-            Player:withMenu(player)
-
-            local called, callArg1, callArg2 = 0, nil, nil
-            player:addRelayMenuItem("function", Menu:newItem("Callback", function(arg1, arg2)
-                called = called + 1
-                callArg1 = arg1
-                callArg2 = arg2
-            end))
-
-            assert.is_same(0, called)
-            assert.is_nil(callArg1)
-            assert.is_nil(callArg2)
-            player:clickButton("relay", "Callback")
-            assert.is_same(1, called)
-            assert.is_same(player, callArg1)
-            assert.is_same("relay", callArg2)
-        end)
+        assert.is_same(0, called)
+        assert.is_nil(callArg1)
+        assert.is_nil(callArg2)
+        player:clickButton("relay", "Callback")
+        assert.is_same(1, called)
+        assert.is_same(player, callArg1)
+        assert.is_same("relay", callArg2)
     end)
     describe("addHelmsMenuItem(), removeHelmsMenuItem(), drawHelmsMenu()", function()
         it("adds and removes menu items", function()

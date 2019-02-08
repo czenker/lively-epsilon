@@ -1,4 +1,4 @@
-insulate("Mission", function()
+insulate("Mission:new()", function()
 
     require "init"
     require "spec.mocks"
@@ -36,52 +36,50 @@ insulate("Mission", function()
         return mission
     end
 
-    describe(":new()", function()
-        it("should create a valid Mission", function()
-            local mission = Mission:new()
+    it("should create a valid Mission", function()
+        local mission = Mission:new()
 
-            assert.is_true(Mission:isMission(mission))
-        end)
+        assert.is_true(Mission:isMission(mission))
+    end)
 
-        it("allows to give config", function()
-            local id = "foobar"
-            local mission = Mission:new({id = id})
+    it("allows to give config", function()
+        local id = "foobar"
+        local mission = Mission:new({id = id})
 
-            assert.is_same(id, mission:getId())
-            assert.is_true(Mission:isMission(mission))
-        end)
+        assert.is_same(id, mission:getId())
+        assert.is_true(Mission:isMission(mission))
+    end)
 
-        it("fails if the config is not a table", function()
-            assert.has_error(function() Mission:new("thisBreaks") end)
-        end)
+    it("fails if the config is not a table", function()
+        assert.has_error(function() Mission:new("thisBreaks") end)
+    end)
 
-        it("fails if acceptCondition is not a function", function()
-            assert.has_error(function() Mission:new({acceptCondition = 42}) end)
-        end)
+    it("fails if acceptCondition is not a function", function()
+        assert.has_error(function() Mission:new({acceptCondition = 42}) end)
+    end)
 
-        it("fails if onAccept is not a function", function()
-            assert.has_error(function() Mission:new({onAccept = 42}) end)
-        end)
+    it("fails if onAccept is not a function", function()
+        assert.has_error(function() Mission:new({onAccept = 42}) end)
+    end)
 
-        it("fails if onDecline is not a function", function()
-            assert.has_error(function() Mission:new({onDecline = 42}) end)
-        end)
+    it("fails if onDecline is not a function", function()
+        assert.has_error(function() Mission:new({onDecline = 42}) end)
+    end)
 
-        it("fails if onStart is not a function", function()
-            assert.has_error(function() Mission:new({onStart = 42}) end)
-        end)
+    it("fails if onStart is not a function", function()
+        assert.has_error(function() Mission:new({onStart = 42}) end)
+    end)
 
-        it("fails if onSuccess is not a function", function()
-            assert.has_error(function() Mission:new({onSuccess = 42}) end)
-        end)
+    it("fails if onSuccess is not a function", function()
+        assert.has_error(function() Mission:new({onSuccess = 42}) end)
+    end)
 
-        it("fails if onFailure is not a function", function()
-            assert.has_error(function() Mission:new({onFailure = 42}) end)
-        end)
+    it("fails if onFailure is not a function", function()
+        assert.has_error(function() Mission:new({onFailure = 42}) end)
+    end)
 
-        it("fails if onEnd is not a function", function()
-            assert.has_error(function() Mission:new({onEnd = 42}) end)
-        end)
+    it("fails if onEnd is not a function", function()
+        assert.has_error(function() Mission:new({onEnd = 42}) end)
     end)
 
     describe(":getId()", function()
@@ -282,7 +280,7 @@ insulate("Mission", function()
         end)
     end)
 
-    describe("state machine should work correctly", function()
+    describe("state machine", function()
         local testData = {
             {newMission(),        "accept",  true},
             {newMission(),        "decline", true},
@@ -317,8 +315,18 @@ insulate("Mission", function()
         }
 
         for _, test in pairs(testData) do
-            local success, error = pcall(test[1][test[2]], test[1])
-            assert.is_same(test[3], success, test[1]:getState() .. " -> " .. test[2])
+            local mission, funcName, success = table.unpack(test)
+            if success then
+                it("allows to call " .. funcName .. " on a mission in state " .. mission:getState(), function()
+                    mission[funcName](mission) -- it should not error
+                end)
+            else
+                it("prevents calls to " .. funcName .. " on a mission in state " .. mission:getState(), function()
+                    assert.has_error(function()
+                        mission[funcName](mission)
+                    end)
+                end)
+            end
         end
 
     end)
