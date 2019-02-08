@@ -96,12 +96,12 @@ indexFile:write(":icons: font", "\n")
 indexFile:write("\n")
 indexFile:write("= Lively Epsilon Specification", "\n")
 indexFile:write("\n")
-indexFile:write("This document shows intentional specifications of the components provided by Lively Epsilon.", "\n")
-indexFile:write("[WARNING]", "\n")
-indexFile:write("====\n")
-indexFile:write("The State of documentation is not the best at the moment. The Spec descriptions sometimes do not sufficiently specify the component that they are documenting.", "\n")
---indexFile:write("Better have a look at the code examples when needed.", "\n")
-indexFile:write("====\n\n")
+indexFile:write("This document shows intentional specifications of the components provided by Lively Epsilon.", "\n\n")
+indexFile:write(
+        "The following are code examples that are run as tests. So they sometimes use mocks that you could see in the code\n",
+        "examples. Statements starting with `assert` are assumptions on the code that follows. Their name should be self-explanatory.",
+        "\n\n"
+)
 indexFile:write("[WARNING]", "\n")
 indexFile:write("====\n")
 indexFile:write("The documentation also documents internal functions. Please check if a method is supposed to be used in the link:reference.html[API reference] before using it.", "\n")
@@ -120,20 +120,25 @@ for _, group in pairs(keys) do
 
     indexFile:write("== " .. group, "\n\n")
     for _, entry in pairs(tests) do
-        indexFile:write("* " .. entry.name)
+        local from, to = isolateTestFunction(entry.file, entry.line)
+        if to - from < 2 then error("Expected test \"" .. entry.name .. "\" in file " .. entry.file .. " at line " .. from .. " to have at least two lines.") end
+
+        indexFile:write("[[" .. entry.slug .. "]]\n")
+        indexFile:write("+++ <details><summary> +++\n")
+        indexFile:write(entry.name .. "\n")
+        indexFile:write("+++ </summary><div> +++\n")
+        indexFile:write("[source,lua]\n----\n")
+        indexFile:write("include::{rootdir}/", entry.file, "[lines=", from+1, "..", to-1, ", indent=0]\n")
+        indexFile:write("----\n")
+        indexFile:write("+++ </div></details> +++\n\n")
+
         --indexFile:write(" <<", entry.slug, ", ^[Code]^>>")
         indexFile:write("\n")
     end
     indexFile:write("\n")
 
     --for _, entry in pairs(tests) do
-    --    local from, to = isolateTestFunction(entry.file, entry.line)
-    --    if to - from < 2 then error("Expected test \"" .. entry.name .. "\" in file " .. entry.file .. " at line " .. from .. " to have at least two lines.") end
-    --
-    --    indexFile:write("[[" .. entry.slug .. "]]\n")
-    --    indexFile:write(entry.name .. "::\n[source,lua]\n----\n")
-    --    indexFile:write("include::{rootdir}/", entry.file, "[lines=", from+1, "..", to-1, ", indent=0]\n")
-    --    indexFile:write("----\n\n")
+
     --end
 end
 

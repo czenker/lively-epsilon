@@ -1,4 +1,4 @@
-insulate("Station", function()
+insulate("Ship", function()
 
     require "init"
     require "spec.mocks"
@@ -61,7 +61,7 @@ insulate("Station", function()
             assert.is_same(person2, ship:getCrewAtPosition("captain"))
         end)
     end)
-    describe("withCaptain(), getCaptain()", function()
+    describe(":withCaptain(), getCaptain()", function()
         it("sets the captain", function()
             local person = personMock()
             local ship = CpuShip()
