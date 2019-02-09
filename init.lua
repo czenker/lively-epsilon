@@ -59,6 +59,7 @@ local myPackages = {
     "lively_epsilon/src/orders/fly_to.lua",
     "lively_epsilon/src/orders/order_queue.lua",
     "lively_epsilon/src/orders/roaming.lua",
+    "lively_epsilon/src/orders/use.lua",
 
     "lively_epsilon/src/domain/player.lua",
     "lively_epsilon/src/domain/trait/player/menu.lua",

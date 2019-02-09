@@ -24,7 +24,7 @@ Ship.withFleet = function(self, ship, fleet)
     --- check if the current ship is leader of a fleet
     --- @param self
     --- @return boolean
-    ship.isFleetLeader = function(self) return fleet:getLeader():isValid() and fleet:getLeader():getCallSign() == self:getCallSign() end
+    ship.isFleetLeader = function(self) return fleet:getLeader():isValid() and fleet:getLeader() == self end
 
     return ship
 end

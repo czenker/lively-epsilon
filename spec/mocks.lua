@@ -455,10 +455,17 @@ function Mine()
     })
 end
 function WormHole()
+    local targetX, targetY = 0, 0
+
     return mergeObjects(SpaceObject(), {
         typeName = "WormHole",
-        setTargetPosition = noop,
-        getTargetPosition = noop,
+        setTargetPosition = function(self, x, y)
+            targetX, targetY = x, y
+            return self
+        end,
+        getTargetPosition = function(self)
+            return targetX, targetY
+        end,
         onTeleportation = noop,
     })
 end

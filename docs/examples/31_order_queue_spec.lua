@@ -97,4 +97,18 @@ insulate("documentation on OrderQueue", function()
         ship:addOrder(Order:defend())
         -- end::defend[]
     end)
+    it("use", function()
+        -- tag::use[]
+        local ship = CpuShip():setFaction("Human Navy")
+        local ship2 = CpuShip():setFaction("Human Navy")
+        local ship3 = CpuShip():setFaction("Human Navy")
+        local wormHole = WormHole:setPosition(10000, 0):setTargetPosition(99999)
+
+        local fleet = Fleet:new({ ship, ship2, ship3 })
+        Fleet:withOrderQueue(fleet)
+
+        fleet:addOrder(Order:use(wormHole))
+        fleet:addOrder(Order:flyTo(99999, 99999))
+        -- end::use[]
+    end)
 end)

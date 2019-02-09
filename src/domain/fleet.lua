@@ -218,7 +218,7 @@ Fleet.new = function(self, ships, config)
         else -- check that every ship follows the correct orders
             for i, ship in ipairs(currentShips) do
                 if ship:isValid() then
-                    if ship:getCallSign() == fleet:getLeader():getCallSign() then
+                    if ship:isFleetLeader() then
                         -- permanently read if the GM has changed the leaders order
                         order, orderA, orderB, orderC = getOrderToSetOrder(ship)
                     elseif ship:getOrder() == "Idle" or ship:getOrder() == "Roaming" then

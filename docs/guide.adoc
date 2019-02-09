@@ -352,6 +352,22 @@ have never been enemies anywhere around.
 
 Read more on this topic in the link:reference.html#order-defend[Reference] and the link:spec.html#order-defend[Specification].
 
+==== use
+
+Make a `Ship` or `Fleet` take a WormHole. This is rather straight forward for ships, but the behavior is
+more complex for ``Fleet``s. The ships will jump to the target on their own, but wait on the other side
+until all ships have arrived.
+
+[source,lua,indent=0]
+----
+include::examples/31_order_queue_spec.lua[tag=use]
+----
+
+There is a point right in front of the WormHole, where the ships will break up their formation to fly into the
+WormHole. The configuration callback `onBreakUp` will be called at that moment.
+
+Read more on this topic in the link:reference.html#order-use[Reference] and the link:spec.html#order-use[Specification].
+
 === Comms
 
 // === Narrative
@@ -394,7 +410,7 @@ to the top, a higher number will move it to the bottom.
 
 [source,lua,indent=0]
 ----
-include::examples/30_menu_spec.lua[tag=basic]
+include::examples/30_menu_spec.lua[tag=priority]
 ----
 
 ==== Pagination
