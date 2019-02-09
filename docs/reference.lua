@@ -27,7 +27,6 @@ local returnValues = {
     Chatter_new = Chatter:new(),
     Chatter_newFactory = Chatter:newFactory(1, function() end),
     Chatter_newNoise = Chatter:newNoise(Chatter:new()),
-    Comms_screen = Comms.screen("", {}),
     Player_withMenu = Player:withMenu(PlayerSpaceship()),
     Player_withMissionTracker = Player:withMissionTracker(PlayerSpaceship()),
     Player_withStorage = Player:withStorage(PlayerSpaceship()),
@@ -61,6 +60,8 @@ local returnValues = {
     Missions_transportToken = Missions:transportToken(SpaceStation(), SpaceStation()),
     Missions_visit = Missions:visit(SpaceStation()),
     Translator_new = Translator:new(),
+    Comms_newReply = Comms:newReply(""),
+    Comms_newScreen = Comms:newScreen(""),
 }
 
 local data = {

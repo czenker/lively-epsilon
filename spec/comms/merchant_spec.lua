@@ -15,7 +15,7 @@ insulate("Comms:merchantFactory()", function()
         sellProductConfirmScreen = function() end,
     }
 
-    it("should create a valid Comms.reply", function()
+    it("should create a valid Comms:newReply", function()
         local merchantComms = Comms:merchantFactory(requiredConfig)
 
         assert.is_true(Comms:isReply(merchantComms))

@@ -67,36 +67,36 @@ Missions.answer = function(self, commable, question, playerSays, config)
     local mission
 
     local correctScreen = function(answer)
-        return function(station, player)
+        return function(self, station, player)
             local responseText = config.correctAnswerResponse
             if isFunction(config.correctAnswerResponse) then
                 userCallback(config.correctAnswerResponse, mission, answer, player)
             end
 
             mission:success()
-            return Comms.screen(responseText)
+            return Comms:newScreen(responseText)
         end
     end
     local wrongScreen = function(answer)
-        return function(station, player)
+        return function(self, station, player)
             local responseText = config.wrongAnswerResponse
             if isFunction(config.wrongAnswerResponse) then
                 userCallback(config.wrongAnswerResponse, mission, answer, player)
             end
 
             mission:fail()
-            return Comms.screen(responseText)
+            return Comms:newScreen(responseText)
         end
     end
 
-    local questionScreen = function(station, player)
+    local questionScreen = function(self, station, player)
         local questionText
         if isFunction(question) then
             questionText = question(mission, player)
         elseif isString(question) then
             questionText = question
         end
-        local screen = Comms.screen(questionText)
+        local screen = Comms:newScreen(questionText)
 
         -- add all the wrong answers
         local wrongAnswers = {}
@@ -113,7 +113,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         local replies = {}
         for i, answer in pairs(wrongAnswers) do
             if isString(answer) then
-                table.insert(replies, Comms.reply(answer, wrongScreen(answer)))
+                table.insert(replies, Comms:newReply(answer, wrongScreen(answer)))
             else
                 logError("Ignoring answer " .. i .. ", because it was expected to be a string, but got " .. typeInspect(answer))
             end
@@ -131,7 +131,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
             end
         end
         if isString(correctAnswer) then
-            table.insert(replies, Comms.reply(correctAnswer, correctScreen(correctAnswer)))
+            table.insert(replies, Comms:newReply(correctAnswer, correctScreen(correctAnswer)))
         end
 
         -- give it a good shuffle
@@ -149,11 +149,11 @@ Missions.answer = function(self, commable, question, playerSays, config)
             end
         end
         if isString(backLabel) then
-            table.insert(replies, Comms.reply(backLabel))
+            table.insert(replies, Comms:newReply(backLabel))
         end
 
         for _,reply in pairs(replies) do
-            screen:withReply(reply)
+            screen:addReply(reply)
         end
 
         return screen
@@ -178,7 +178,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
                 if not commable:isValid() then mission:fail() end
             end, 1)
 
-            commable:addComms(Comms.reply(playerText, questionScreen), commsId)
+            commable:addComms(Comms:newReply(playerText, questionScreen), commsId)
         end,
         onSuccess = config.onSuccess,
         onFailure = config.onFailure,

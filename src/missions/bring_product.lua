@@ -47,7 +47,7 @@ Missions.bringProduct = function(self, station, config)
             local sellProductMenu
             sellProductMenu = function(amount)
                 amount = amount or 0
-                return function(comms_target, comms_source)
+                return function(self, comms_target, comms_source)
                     if amount > 0 then
                         if not Player:hasStorage(comms_source) then
                             logWarning("Player Ship has no storage, but an action to sell " .. product:getName() .. " was called. Probably an issue in your comms script.")
@@ -69,7 +69,7 @@ Missions.bringProduct = function(self, station, config)
                         if isFunction(config.onDelivery) then config.onDelivery(mission, amount, comms_source) end
                     end
 
-                    local screen = Comms.screen()
+                    local screen = Comms:newScreen()
 
                     if broughtAmount >= totalAmount then
                         config.successScreen(mission, screen, comms_source)
@@ -93,7 +93,7 @@ Missions.bringProduct = function(self, station, config)
                 end
             end
 
-            local reply = Comms.reply(config.commsLabel, sellProductMenu())
+            local reply = Comms:newReply(config.commsLabel, sellProductMenu())
             station:addComms(reply, commsId)
         end,
         onSuccess = config.onSuccess,

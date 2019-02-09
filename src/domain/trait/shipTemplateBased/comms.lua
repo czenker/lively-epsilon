@@ -95,11 +95,12 @@ ShipTemplateBased.withComms = function (self, spaceObject, config)
                     hailText = nil
                 end
             end
-            return Comms.screen(hailText, howPlayerCanReact)
+            return Comms:newScreen(hailText, howPlayerCanReact)
         end
     end
 
     --- temporarily override comms
+    --- @internal
     --- @param self
     --- @param screen CommsScreen
     --- @param once boolean (default: `false`)

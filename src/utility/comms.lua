@@ -1,34 +1,35 @@
 -- Helpers to create Comms conversations
 Comms = Comms or {}
 
---- add text to the screen
---- @param screen CommsScreen
---- @param text string
---- @return CommsScreen
-local addText = function(screen, text)
-    screen.npcSays = screen.npcSays .. (text or "")
-    return screen
-end
-
---- add a reply to the screen
---- @param screen CommsScreen
---- @param reply CommsReply
---- @return CommsScreen
-local withReply = function(screen, reply)
-    if not Comms:isReply(reply) then
-        return error("The given thing is not a valid CommsReply", 2)
-    end
-    table.insert(screen.howPlayerCanReact, reply)
-    return screen
-end
-
 --- creates a CommsScreen
+--- @param self
 --- @param npcSays string what the NPC says (aka longish text)
 --- @param howPlayerCanReact table[CommsReply] possible answers of the player
 --- @return CommsScreen
-Comms.screen = function(npcSays, howPlayerCanReact)
+Comms.newScreen = function(self, npcSays, howPlayerCanReact)
     npcSays = npcSays or ""
     howPlayerCanReact = howPlayerCanReact or {}
+
+    --- add text to the screen
+    --- @param self
+    --- @param text string
+    --- @return CommsScreen
+    local addText = function(self, text)
+        npcSays = npcSays .. (text or "")
+        return self
+    end
+
+    --- add a reply to the screen
+    --- @param self
+    --- @param reply CommsReply
+    --- @return CommsScreen
+    local addReply = function(self, reply)
+        if not Comms:isReply(reply) then
+            return error("The given thing is not a valid CommsReply", 2)
+        end
+        table.insert(howPlayerCanReact, reply)
+        return self
+    end
 
     if not isString(npcSays) then
         error("First parameter of newScreen has to be a string, but got " .. typeInspect(npcSays), 2)
@@ -43,12 +44,18 @@ Comms.screen = function(npcSays, howPlayerCanReact)
         end
     end
 
-
     return {
-        npcSays = npcSays,
-        howPlayerCanReact = howPlayerCanReact,
-        withReply = withReply,
-        addText = addText
+        --- @internal
+        --- @param self
+        --- @return string
+        getWhatNpcSays = function(self) return npcSays end,
+
+        --- @internal
+        --- @param self
+        --- @return table[CommsReply]
+        getHowPlayerCanReact = function(self) return howPlayerCanReact end,
+        addReply = addReply,
+        addText = addText,
     }
 end
 
@@ -57,46 +64,67 @@ end
 --- @param thing any
 --- @return boolean
 Comms.isScreen = function(self, thing)
-    if not isTable(thing) or not (isFunction(thing.npcSays) or isString(thing.npcSays)) or not isTable(thing.howPlayerCanReact) then
-        return false
-    end
-    for k, v in ipairs(thing.howPlayerCanReact) do
-        if not Comms:isReply(v) then
-            return false
-        end
-    end
-    return true
+    return isTable(thing) and
+        isFunction(thing.getWhatNpcSays) and
+        isFunction(thing.getHowPlayerCanReact) and
+        isFunction(thing.addReply) and
+        isFunction(thing.addText)
 end
 
 --- creates a CommsReply
+--- @param self
 --- @param playerSays string|function the short statement from the players
 --- @param nextScreen nil|function get the next screen that should be displayed to the players
 --- @param condition nil|function the condition under which this option should be displayed
 --- @return CommsReply
-Comms.reply = function(playerSays, nextScreen, condition)
+Comms.newReply = function(self, playerSays, nextScreen, condition)
 
-    if not isFunction(playerSays) and not isString(playerSays) then
-        error("First parameter of newReply has to be a string of function, but got " .. typeInspect(playerSays), 2)
-    end
-    if not isFunction(nextScreen) and not isNil(nextScreen) then
-        error("Second parameter of newReply has to be a function, but got " .. typeInspect(nextScreen), 2)
-    end
-    condition = condition or function() return true end
-    if not isFunction(condition) then
-        error("Third parameter of newReply has to be a function, but got " .. typeInspect(condition), 2)
-    end
-
-    local pSays
+    local getWhatPlayerSays
     if isString(playerSays) then
-        pSays = function(station, player) return playerSays end
+        --- @internal
+        --- @param self
+        --- @param station ShipTemplateBased
+        --- @param player PlayerSpaceship
+        getWhatPlayerSays = function(self, station, player) return playerSays end
+    elseif isFunction(playerSays) then
+        getWhatPlayerSays = playerSays
     else
-        pSays = playerSays
+        error("Expected playerSays to be a string or function, but got " .. typeInspect(playerSays), 2)
+    end
+
+    local getNextScreen
+    if isNil(nextScreen) or Comms:isScreen(nextScreen) then
+        --- @internal
+        --- @param self
+        --- @param station ShipTemplateBased
+        --- @param player PlayerSpaceship
+        getNextScreen = function(self, station, player) return nextScreen end
+    elseif isFunction(nextScreen) then
+        getNextScreen = nextScreen
+    else
+        error("Expected nextScreen to be nil or a function, but got " .. typeInspect(nextScreen), 2)
+    end
+
+    local checkCondition
+    if isNil(condition) then
+        --- check if this option is supposed to be displayed
+        --- @internal
+        --- @param self
+        --- @param station ShipTemplateBased
+        --- @param player PlayerSpaceship
+        checkCondition = function(self, station, player)
+            return true
+        end
+    elseif isFunction(condition) then
+        checkCondition = condition
+    else
+        error("Expected condition to be nil or a function, but got " .. typeInspect(condition), 2)
     end
 
     return {
-        playerSays = pSays,
-        nextScreen = nextScreen,
-        condition = condition
+        getWhatPlayerSays = getWhatPlayerSays,
+        getNextScreen = getNextScreen,
+        checkCondition = checkCondition,
     }
 end
 
@@ -105,5 +133,8 @@ end
 --- @param thing any
 --- @return boolean
 Comms.isReply = function(self, thing)
-    return isTable(thing) and isFunction(thing.playerSays) and (isFunction(thing.nextScreen) or isNil(thing.nextScreen))
+    return isTable(thing) and
+            isFunction(thing.getWhatPlayerSays) and
+            isFunction(thing.getNextScreen) and
+            isFunction(thing.checkCondition)
 end

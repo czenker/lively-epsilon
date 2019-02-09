@@ -33,6 +33,7 @@ function SpaceObject()
         getPosition = function() return positionX, positionY end,
         setPosition = function(self, x, y) positionX, positionY = x, y; return self end,
         getObjectsInRange = function(self) return {} end,
+        areEnemiesInRange = noop,
         setReputationPoints = function(self, amount) reputationPoints = amount; return self end,
         getReputationPoints = function(self) return reputationPoints end,
         takeReputationPoints = function(self, amount) reputationPoints = math.max(0, reputationPoints - amount); return self end,
@@ -53,6 +54,9 @@ function SpaceObject()
         getRadarSignatureElectrical = function(self) return 1 end,
         getRadarSignatureBiological = function(self) return 1 end,
         sendCommsMessage = function(self) return self end,
+        openCommsTo = function(self, player)
+            player:commandOpenTextComm(self)
+        end,
     }
 
     setmetatable(obj, {
@@ -295,6 +299,8 @@ function PlayerSpaceship()
         end
     end
     local lastCustomMessage = {}
+    local currentCommsScreen = nil
+    local currentCommsTarget = nil
 
     local player = {
         typeName = "PlayerSpaceship",
@@ -347,6 +353,58 @@ function PlayerSpaceship()
         commandSetSystemPowerRequest = function(self, system, power) return self:setSystemPower(system, power) end,
         commandSetSystemCoolantRequest = function(self, system, coolant) return self:setSystemCoolant(system, coolant) end,
         addToShipLog = noop,
+        commandOpenTextComm = function(self, target)
+            currentCommsScreen = target:getComms(self)
+            currentCommsTarget = target
+            return self
+        end,
+        commandCloseTextComm = function(self)
+            currentCommsScreen = nil
+            currentCommsTarget = nil
+            return self
+        end,
+        hasComms = function(self, label)
+            if currentCommsScreen == nil then error("There is currently no comms open.", 2) end
+            for _, reply in pairs(currentCommsScreen:getHowPlayerCanReact()) do
+                if reply:getWhatPlayerSays(currentCommsTarget, self) == label and reply:checkCondition(currentCommsTarget, self) == true then
+                    return true
+                end
+            end
+            return false
+        end,
+        selectComms = function(self, label)
+            if currentCommsScreen == nil then error("There is currently no comms open.", 2) end
+            local labels = {}
+            for _, reply in pairs(currentCommsScreen:getHowPlayerCanReact()) do
+                local theLabel = reply:getWhatPlayerSays(currentCommsTarget, self)
+                table.insert(labels, theLabel)
+                if theLabel == label then
+                    if not reply:checkCondition(currentCommsTarget, self) then
+                        error("The button labeled \"" .. label .. "\" exists, but is not displayed, because the display condition is not met.", 2)
+                    else
+                        local next = reply:getNextScreen(currentCommsTarget, self)
+                        if Comms:isScreen(next) then
+                            currentCommsScreen = next
+                            return
+                        elseif isNil(next) then
+                            currentCommsScreen = target:getComms(self)
+                            return
+                        else
+                            error("Expected comms labeled \"" .. label .. "\" to return a screen or nil, but got " .. typeInspect(next), 2)
+                        end
+                    end
+                end
+            end
+
+            error("Did not find a Reply labeled \"" .. label .. "\". Valid labels: " .. Util.mkString(Util.map(labels, function(el) return "\"" .. el .. "\"" end), ", ", " and "))
+        end,
+        getCurrentCommsScreen = function(self)
+            return currentCommsScreen
+        end,
+        getCurrentCommsText = function(self)
+            if currentCommsScreen == nil then error("There is currently no comms open.", 2) end
+            return currentCommsScreen:getWhatNpcSays(currentCommsTarget, self)
+        end,
     }
 
     setmetatable(player, {
@@ -520,10 +578,10 @@ function successfulMissionWithBrokerMock(broker, player)
 end
 
 function commsScreenMock()
-    return Comms.screen("Hi there, stranger.")
+    return Comms:newScreen("Hi there, stranger.")
 end
 function commsScreenReplyMock()
-    return Comms.reply("Click me", nil)
+    return Comms:newReply("Click me", nil)
 end
 
 function narrativeMock(name)

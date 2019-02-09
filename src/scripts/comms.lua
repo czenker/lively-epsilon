@@ -2,17 +2,18 @@ require "lively_epsilon/src/utility/lua.lua"
 require "lively_epsilon/src/domain/trait/shipTemplateBased/comms.lua"
 
 local function printScreen(screen)
-    if screen.npcSays ~= nil then
-        setCommsMessage(screen.npcSays)
+    local whatNpcSays = screen:getWhatNpcSays(comms_target, player)
+    if whatNpcSays ~= nil and whatNpcSays ~= "" then
+        setCommsMessage(whatNpcSays)
     end
-    for _, reaction in pairs(screen.howPlayerCanReact) do
-        local visible = reaction.condition(comms_target, player)
+    for _, reaction in pairs(screen:getHowPlayerCanReact()) do
+        local visible = reaction:checkCondition(comms_target, player)
         if visible then
-            local playerSays = reaction.playerSays(comms_target, player)
+            local playerSays = reaction:getWhatPlayerSays(comms_target, player)
             local goToNextScreen = function()
-                if isFunction(reaction.nextScreen) then
-                    local screen = reaction.nextScreen(comms_target, player)
-                    printScreen(screen)
+                local nextScreen = reaction:getNextScreen(comms_target, player)
+                if nextScreen ~= nil then
+                    printScreen(nextScreen)
                 else
                     printScreen(comms_target:getComms(player))
                 end

@@ -74,6 +74,14 @@ function withUniverse(func)
                     return getObjectsInRadius(x, y, radius)
                 end
             end
+            if isFunction(obj.areEnemiesInRange) then
+                obj.areEnemiesInRange = function(self, radius)
+                    for _, obj in pairs(self:getObjectsInRange(radius)) do
+                        if obj:isEnemy(self) then return true end
+                    end
+                    return false
+                end
+            end
 
             return obj
         end
@@ -87,15 +95,15 @@ function withUniverse(func)
     _G.addGMFunction = function() end
     _G.removeGMFunction = function() end
 
-    local success, error = pcall(func)
+    local success, err = pcall(func)
 
     for name, func in pairs(backup) do
         _G[name] = func
     end
 
     if not success then
-        error(error)
+        error(err)
     else
-        return error
+        return err
     end
 end

@@ -370,6 +370,39 @@ Read more on this topic in the link:reference.html#order-use[Reference] and the 
 
 === Comms
 
+The `Comms` Component allows to describe communication screens.
+
+[source,lua,indent=0]
+----
+include::examples/30_comms_spec.lua[tag=basic]
+----
+
+`setHailText` sets the text the ship or station "says" when the player contacts them. With `addComms` you
+can add new Replies that the players can click. `Comms:newReply` takes three arguments – only the first one
+is mandatory. The first argument is the Label (aka "the thing the players say"), the second a `Screen` that
+will be shown when this reply is selected. If you leave the second argument out the main screen will be shown
+when this reply is selected. The third argument is a function that gets the `Comms`, the hailed `ship` and the `player`
+as arguments and should return `true` if this reply should be displayed.
+
+The first two arguments can also be functions::
+[source,lua,indent=0]
+----
+include::examples/30_comms_spec.lua[tag=reply-functions]
+----
+
+The `Comms:newScreen` function allows you to create nested communications. Here is a complex snippet
+to create a "Guess a number" game in comms
+
+[source,lua,indent=0]
+----
+include::examples/30_comms_spec.lua[tag=guess-my-number]
+----
+
+Read more on `Comms:newScreen` and `Comms:newReply` this topic in the link:reference.html#comms-newreply[Reference] and the link:spec.html#comms-newreply[Specification].
+
+
+=== Comms.storyComms
+
 // === Narrative
 
 === Menu
