@@ -1,5 +1,5 @@
 return {
-    default = {
+    _all = {
         verbose = true,
         ROOT = {
             "spec/",

@@ -36,22 +36,22 @@ insulate("documentation on OrderQueue", function()
         -- end::loop[]
 
         assert.is_same("Fly towards", ship:getOrder())
-        assert.is_same({1000, 0}, {ship:getOrderTargetLocation()})
+        assert.is_same({5000, 0}, {ship:getOrderTargetLocation()})
 
-        ship:setPosition(1000, 0)
+        ship:setPosition(5000, 0)
         Cron.tick(1)
         assert.is_same("Fly towards", ship:getOrder())
-        assert.is_same({0, 0}, {ship:getOrderTargetLocation()})
+        assert.is_same({-5000, 0}, {ship:getOrderTargetLocation()})
 
-        ship:setPosition(0, 0)
+        ship:setPosition(-5000, 0)
         Cron.tick(1)
         assert.is_same("Fly towards", ship:getOrder())
-        assert.is_same({1000, 0}, {ship:getOrderTargetLocation()})
+        assert.is_same({5000, 0}, {ship:getOrderTargetLocation()})
 
-        ship:setPosition(1000, 0)
+        ship:setPosition(5000, 0)
         Cron.tick(1)
         assert.is_same("Fly towards", ship:getOrder())
-        assert.is_same({0, 0}, {ship:getOrderTargetLocation()})
+        assert.is_same({-5000, 0}, {ship:getOrderTargetLocation()})
     end)
     it("flyTo", function()
         -- tag::flyTo[]
@@ -102,7 +102,7 @@ insulate("documentation on OrderQueue", function()
         local ship = CpuShip():setFaction("Human Navy")
         local ship2 = CpuShip():setFaction("Human Navy")
         local ship3 = CpuShip():setFaction("Human Navy")
-        local wormHole = WormHole:setPosition(10000, 0):setTargetPosition(99999)
+        local wormHole = WormHole():setPosition(10000, 0):setTargetPosition(99999, 0)
 
         local fleet = Fleet:new({ ship, ship2, ship3 })
         Fleet:withOrderQueue(fleet)
