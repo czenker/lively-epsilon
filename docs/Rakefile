@@ -78,5 +78,9 @@ file "_build/spec.html" => "spec.adoc" do |t|
         }
 end
 
-task :default => [:clean, "_build", "_build/index.html", "_build/guide.html", "_build/reference.html", "_build/spec.html"] do
+task :assets do
+    sh "cp -R assets _build/assets"
+end
+
+task :default => [:clean, "_build", "_build/index.html", "_build/guide.html", "_build/reference.html", "_build/spec.html", "assets"] do
 end
