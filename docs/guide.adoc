@@ -16,7 +16,13 @@ WARNING: This document is Work in Progress. The given information should be corr
 
 TODO: functional approach
 
+If you want to use the framework you should already be familiar with writing missions
+for EE.
+
 == Getting Started
+
+Checkout this repo into the ``scripts`` folder of your EE installation or just download the zip from
+Github and extract.
 
 [source,lua,indent=0]
 ----
@@ -488,7 +494,10 @@ include::examples/30_menu_spec.lua[tag=pagination-configuration]
 
 ==== Upgrade Tracker & Display
 
+[[playerspaceship-storage]]
 === PlayerSpaceship Storage
+
+==== Storage Tracker
 
 === Crew
 
@@ -533,21 +542,129 @@ It works with any object.
 include::examples/21_tags_spec.lua[tag=object]
 ----
 
+=== Products
+
+A product is a representation of something that can be bought, sold, produced or loaded and is used in multiple
+places in Lively Epsilon.
+
+It is fairly easy to create a new product.
+
+[source,lua,indent=0]
+----
+include::examples/40_product_spec.lua[tag=basic]
+----
+
+The size is of a product is only used for tracking the storage space need in a `PlayerSpaceship`. Bigger items
+should have a bigger size.
+
+Everything apart of the name is optional to make it easy to create unique products.
+
+[source,lua,indent=0]
+----
+include::examples/40_product_spec.lua[tag=mission-item]
+----
+
+Read more on Products in the link:reference.html#product[Reference] and the link:spec.html#product-new[Specification].
+
+
 === Storage
+
+There are two concepts for defining storage inside Lively Epsilon. This describes the one that is used for
+non-player ships. You can imaging the concept as "storage rooms": For every product there is a storage room
+for this product only. If the station can not store any more of product `A`, it can still store product `B`,
+because there is a different storage room for it.
+
+This concept is also used for non-player spaceships.
+
+Using the `withStorageRooms` function lets you define the maximum storage capacity.
+
+[source,lua,indent=0]
+----
+include::examples/41_storage_spec.lua[tag=basic]
+----
+
+NOTE: Modifying a product storage beyond its minimum or maximum capacity does not cause any kind of error.
+It will just create products out of thin vacuum or make products disappear in an invisible pocket-sized black hole.
+This is to ease scripting for you and not having to take care of multiple error conditions.
+
+Read more on Storage in the link:reference.html#shiptemplatebased-withstoragerooms[Reference] and the link:spec.html#shiptemplatebased-withstoragerooms[Specification].
 
 === Production
 
+Stations with a storage can transform products into other products or even create products from nothing
+(like solar energy) or convert products into nothing (like used up energy).
+
+[source,lua,indent=0]
+----
+include::examples/42_production_spec.lua[tag=basic]
+----
+
+The station will continue producing unless there are not enough resources or the storage of the product is full.
+
+Combining this with the Merchant can help you create a simple economy that the players can help running.
+
+Read more on Production in the link:reference.html#station-withproduction[Reference] and the link:spec.html#station-withproduction[Specification].
+
 === Merchant & Comms
+
+Having a storage is of course in itself not useful, but stations can have a merchant
+that buys or sells goods.
+
+[source,lua,indent=0]
+----
+include::examples/43_merchant_spec.lua[tag=basic]
+----
+
+Configuring ``buyingLimit`` and ``sellingLimit`` is optional. If left blank the station
+will sell and buy all of its stock. In any other case it will only sell if it got
+more than ``sellingLimit`` units in store and buy if it got less than ``buyingLimit`` units
+in store.
+
+Configuring the merchant will allow any non-enemy ship (including the player) to
+buy or sell from the station.
+
+Read more on Merchants in the link:reference.html#station-withmerchant[Reference] and the link:spec.html#station-withmerchant[Specification].
+
+==== Merchant Comms
+
+
+=== Traders
+
+A trader is assigned to one station and buys one resource on behalf of the station from a different station.
+So what you need is a station that sells some product, a station that buys that product and a trader assigned to
+the second one.
+
+[source,lua,indent=0]
+----
+include::examples/44_trader_spec.lua[tag=basic]
+----
+
+This trader will try to find a station close to its home base ``buyer`` that sells power, buy it and bring
+it back to its home station.
+
+NOTE: Unlike economist nowadays, traders in Lively Epsilon are not trying to maximize their profits. They
+will just buy anything regardless of its price.
+
+Read more on Traders in the link:reference.html#ship-behaveasbuyer[Reference] and the link:spec.html#ship-behaveasbuyer[Specification].
 
 === Miner
 
-=== Patrol
+A miner is a ship that will seek out Asteroids close to its home base, mine them and
+unload the products at its home base.
+
+[source,lua,indent=0]
+----
+include::examples/45_miner_spec.lua[tag=basic]
+----
+
+Using the callback you can determine which resources the miner finds when it has mined an asteroid. Products
+the ship or its home base can not store will be silently discarded.
+
+Read more on Miners in the link:reference.html#ship-behaveasminer[Reference] and the link:spec.html#ship-behaveasminer[Specification].
 
 === Chatter
 
 ==== Chat Noise & Chat Factory
-
-
 
 == Development
 

@@ -207,7 +207,6 @@ Comms.merchantFactory = function(self, config)
         end
     end
 
-
     -- don't ask me why, but if this is defined with its declaration it will be an empty table in the callbacks...
     defaultCallbackConfig = {
         linkToMainScreen = mainMenu,
