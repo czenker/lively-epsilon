@@ -664,7 +664,76 @@ Read more on Miners in the link:reference.html#ship-behaveasminer[Reference] and
 
 === Chatter
 
+Chatter is a component to wrap ambient noise and limit its range. You would typically not use it to relay
+important information to the players but make the surrounding appear more alive. They will pop up in the log
+of the `Relay` station. By default the range that Chatter is received is `1.5` times the radar range, but you
+can change it with the `maxRange` option.
+
+[source,lua,indent=0]
+----
+include::examples/50_chatter_spec.lua[tag=basic]
+----
+
+You typically do not need more than one `Chatter` object in your scenario. Except when you want to relay different
+conversations at different distances.
+
+The Chatter component is also able to send conversations.
+
+[source,lua,indent=0]
+----
+include::examples/50_chatter_spec.lua[tag=converse]
+----
+
+Every line of the conversation will be send with a slight delay depending on how long the actual line was.
+It should roughly match the reading speed of an average person. If one of the partners is destroyed, the
+conversation will be aborted. And if one the partners is out of range the players will just read part of the
+conversation.
+
+Read more on Chatter in the link:reference.html#chatter-new[Reference] and the link:spec.html#chatter-new[Specification].
+
 ==== Chat Noise & Chat Factory
+
+Chat Noise is a concept to allow random chats around the universe that is not triggered by certain actions
+but randomly occurring to keep the players engaged. You can use it to entertain the crew or hide secret
+messages in it.
+
+You can add multiple `ChatFactories` to `ChatNoise` that describe chats that the player could randomly
+receive at certain intervals. Chats could only be run if there are a certain amount of `Stations` and `Ships`
+close to the player.
+
+Let's start with a simple example by adding only one `ChatFactory` to our `ChatNoise`
+
+[source,lua,indent=0]
+----
+include::examples/50_chatter_spec.lua[tag=noise-intro]
+----
+<1> The first parameter (`1`) denotes that the function expects one valid station or ship.
+<2> The return value is a valid object to be used as argument for the `converse` function.
+
+`ChatterNoise` selects a random `CpuShip` or `SpaceStation` in the vicinity of the player and gives
+it as argument to the function.
+
+It is also possible to have multiple participants in a conversation. This will select two distinct ``CpuShip``s
+or ``SpaceStation``s and give it as arguments to the function.
+
+[source,lua,indent=0]
+----
+include::examples/50_chatter_spec.lua[tag=noise-two]
+----
+
+To have more control over what is selected as arguments you can use the `filter` option and have a function
+that returns `true` if the given argument is a valid candidate for the `ChatFactory`.
+
+[source,lua,indent=0]
+----
+include::examples/50_chatter_spec.lua[tag=noise-filter]
+----
+<1> filter functions get all other selected arguments as additional arguments in inverse order.
+
+This chat would only run if there are a `CpuShip` and a friendly `SpaceStation` close to the player.
+
+Read more on ChatterNoise and ChatterFactory in the link:reference.html#chatter-newnoise[Reference] and the link:spec.html#chatter-newnoise[Specification].
+
 
 == Development
 

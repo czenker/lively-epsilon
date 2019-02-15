@@ -88,7 +88,7 @@ function withUniverse(func)
     end
 
     _G.getPlayerShip = function(id)
-        local players = knownObjectsByType["PlayerSpaceship"]
+        local players = knownObjectsByType["PlayerSpaceship"] or {}
         if id == -1 then return players[1] else return players[id] end
     end
 
