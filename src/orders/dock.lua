@@ -3,6 +3,9 @@ Order = Order or {}
 --- @param self
 --- @param station SpaceStation
 --- @param config table
+---   @field waitForRepair boolean (default: `true`) if the `CpuShip` or `Fleet` should wait until hull damage is repaired. It does not prevent the station from repairing the ship if it supports it. The ship will just not wait until it is fully repaired.
+---   @field waitForMissileRestock boolean (default: `true`) if the `CpuShip` or `Fleet` should wait until missiles are restocked. It does not prevent the station from restocking the ship, but it will just not wait until it is fully restocked.
+---   @field waitForShieldRecharge boolean (default: `true`) if the `CpuShip` or `Fleet` should wait until the shields are fully recharged. It does not prevent the station from recharging the ship, but it will just not wait until it is fully recharged.
 ---   @field onExecution function the callback when the order is started to being executed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
 ---   @field onCompletion function the callback when the order is completed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
 ---   @field onAbort function the callback when the order is aborted. Gets the `OrderObject`, a `string` reason and the `CpuShip` or `Fleet` that executed the order.
@@ -11,6 +14,12 @@ Order = Order or {}
 Order.dock = function(self, station, config)
     if not isEeStation(station) then error("Expected to get a station, but got " .. typeInspect(station), 2) end
     config = config or {}
+    config.waitForRepair = (config.waitForRepair == nil and true) or config.waitForRepair
+    if not isBoolean(config.waitForRepair) then error("Expected waitForRepair to be boolean, but got " .. typeInspect(config.waitForRepair), 2) end
+    config.waitForMissileRestock = (config.waitForMissileRestock == nil and true) or config.waitForMissileRestock
+    if not isBoolean(config.waitForMissileRestock) then error("Expected waitForMissileRestock to be boolean, but got " .. typeInspect(config.waitForMissileRestock), 2) end
+    config.waitForShieldRecharge = (config.waitForShieldRecharge == nil and true) or config.waitForShieldRecharge
+    if not isBoolean(config.waitForShieldRecharge) then error("Expected waitForShieldRecharge to be boolean, but got " .. typeInspect(config.waitForShieldRecharge), 2) end
     local order = Order:_generic(config)
 
     --- get the station to dock to
@@ -59,19 +68,23 @@ Order.dock = function(self, station, config)
 
     -- returns true if a ship is repaired, recharged and refilled on missiles
     local function isReady(ship)
-        if station:getRepairDocked() and ship:getHull() < ship:getHullMax() then
+        if config.waitForRepair and station:getRepairDocked() and ship:getHull() < ship:getHullMax() then
             return false
         end
         -- @see CpuShip::update
-        for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
-            if ship:getWeaponStorageMax(weapon) > ship:getWeaponStorage(weapon) then return false end
+        if config.waitForMissileRestock then
+            for _, weapon in pairs({"hvli", "homing", "mine", "nuke", "emp"}) do
+                if ship:getWeaponStorageMax(weapon) > ship:getWeaponStorage(weapon) then return false end
+            end
         end
-        local shields, shieldsMax = 0, 0
-        for i=0,ship:getShieldCount()-1 do
-            shields = shields + ship:getShieldLevel(i)
-            shieldsMax = shieldsMax + ship:getShieldMax(i)
+        if config.waitForShieldRecharge then
+            local shields, shieldsMax = 0, 0
+            for i=0,ship:getShieldCount()-1 do
+                shields = shields + ship:getShieldLevel(i)
+                shieldsMax = shieldsMax + ship:getShieldMax(i)
+            end
+            if shields < shieldsMax then return false end
         end
-        if shields < shieldsMax then return false end
         return true
     end
 

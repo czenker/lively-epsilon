@@ -223,6 +223,28 @@ insulate("Order:dock()", function()
         Cron.tick(1)
         assert.is_true(completed)
     end)
+    it("does not wait for repairs, when waitForRepair is false", function()
+        local ship = CpuShip():setHullMax(100):setHull(50)
+
+        local station = SpaceStation()
+        station:setRepairDocked(true)
+
+        Ship:withOrderQueue(ship)
+        local completed = false
+        ship:addOrder(Order:dock(station, {
+            waitForRepair = false,
+            onCompletion = function() completed = true end,
+        }))
+
+        -- ship not docked
+        Cron.tick(1)
+        assert.is_false(completed)
+
+        -- ship docked
+        ship:setDockedAt(station)
+        Cron.tick(1)
+        assert.is_true(completed)
+    end)
 
     it("waits for missiles to be refilled", function()
         local ship = CpuShip():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0)
@@ -246,6 +268,28 @@ insulate("Order:dock()", function()
 
         -- ship docked and refilled
         ship:setWeaponStorage("homing", 8)
+        Cron.tick(1)
+        assert.is_true(completed)
+    end)
+
+    it("does not wait for missiles, when waitForMissileRestock is false", function()
+        local ship = CpuShip():setWeaponStorageMax("homing", 8):setWeaponStorage("homing", 0)
+
+        local station = SpaceStation()
+
+        Ship:withOrderQueue(ship)
+        local completed = false
+        ship:addOrder(Order:dock(station, {
+            waitForMissileRestock = false,
+            onCompletion = function() completed = true end,
+        }))
+
+        -- ship not docked
+        Cron.tick(1)
+        assert.is_false(completed)
+
+        -- ship docked but no missiles
+        ship:setDockedAt(station)
         Cron.tick(1)
         assert.is_true(completed)
     end)
@@ -275,6 +319,29 @@ insulate("Order:dock()", function()
         Cron.tick(1)
         assert.is_true(completed)
     end)
+
+    it("does not wait for shields to recharge, when waitForShieldRecharge is false", function()
+        local ship = CpuShip():setShieldsMax(100, 50, 10):setShields(20, 50, 0)
+
+        local station = SpaceStation()
+
+        Ship:withOrderQueue(ship)
+        local completed = false
+        ship:addOrder(Order:dock(station, {
+            waitForShieldRecharge = false,
+            onCompletion = function() completed = true end,
+        }))
+
+        -- ship not docked
+        Cron.tick(1)
+        assert.is_false(completed)
+
+        -- ship docked but low shields
+        ship:setDockedAt(station)
+        Cron.tick(1)
+        assert.is_true(completed)
+    end)
+
     it("repairs a docked fleet if the station is friendly and supports it", function()
         local ship1 = CpuShip():setHullMax(100):setHull(50)
         local ship2 = CpuShip():setHullMax(100):setHull(50)
