@@ -74,7 +74,6 @@ local myPackages = {
     "lively_epsilon/src/domain/broker_upgrade.lua",
 
     "lively_epsilon/src/behaviors/miner.lua",
-    "lively_epsilon/src/behaviors/patrol.lua",
     "lively_epsilon/src/behaviors/trader.lua",
 
     "lively_epsilon/src/missions/answer.lua",
@@ -89,9 +88,6 @@ local myPackages = {
     "lively_epsilon/src/missions/transport_token.lua",
     "lively_epsilon/src/missions/transport_product.lua",
     "lively_epsilon/src/missions/visit.lua",
-
-    "lively_epsilon/src/narrative/repository.lua",
-    "lively_epsilon/src/narrative/runner.lua",
 
     "lively_epsilon/src/tools/story_comms.lua",
     "lively_epsilon/src/tools/comms.lua",
