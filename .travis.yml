@@ -21,12 +21,12 @@ install:
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec
-#  - busted --verbose --coverage test/
   - cd $TRAVIS_BUILD_DIR
   - busted --run=integration
   - cd $TRAVIS_BUILD_DIR/docs
   - rake
   - cd $TRAVIS_BUILD_DIR
+  - ./create_release.sh
 
 after_success:
 #  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
@@ -42,11 +42,19 @@ notifications:
     on_failure: always
 
 deploy:
-  provider: pages
-  skip-cleanup: true
-  local-dir: docs/_build/
-  target-branch: gh-pages
-  keep-history: false
-  github-token: $GITHUB_TOKEN
-  on:
-    branch: master
+  - provider: pages
+    skip-cleanup: true
+    local-dir: docs/_build/
+    target-branch: gh-pages
+    keep-history: false
+    github-token: $GITHUB_TOKEN
+    on:
+      branch: master
+
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file: "release-*"
+    skip_cleanup: true
+    on:
+      tags: true
