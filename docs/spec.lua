@@ -117,13 +117,28 @@ for k, _ in pairs(groups) do
     table.insert(keys, k)
 end
 table.sort(keys)
+local lastHeading1
 
 for _, group in pairs(keys) do
     local tests = groups[group]
     table.sort(tests, function(a, b) return a.name < b.name end)
 
+    local idx = group:find("%:")
+    local heading
+    if idx == nil then
+        heading = "Other"
+    else
+        heading = group:sub(1, idx-1)
+    end
+    if heading ~= lastHeading1 then
+        indexFile:write("[[" .. slug(heading) .. "]]\n")
+        indexFile:write("== " .. heading, "\n\n")
+
+        lastHeading1 = heading
+    end
+
     indexFile:write("[[" .. slug(group) .. "]]\n")
-    indexFile:write("== " .. group, "\n\n")
+    indexFile:write("=== " .. group, "\n\n")
     for _, entry in pairs(tests) do
         local from, to = isolateTestFunction(entry.file, entry.line)
         if to - from < 2 then error("Expected test \"" .. entry.name .. "\" in file " .. entry.file .. " at line " .. from .. " to have at least two lines.") end
