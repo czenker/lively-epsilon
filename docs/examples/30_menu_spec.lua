@@ -17,7 +17,7 @@ insulate("documentation on Menu", function()
 
             player:addScienceMenuItem("ships", Menu:newItem("Ships", function()
                 local submenu = Menu:new()
-                Menu:newItem("Ships")
+                submenu:addItem(Menu:newItem("Ships"))
                 for _, ship in pairs(player:getObjectsInRange(30000)) do
                     if ship.typeName == "CpuShip" and ship:isValid() then
                         submenu:addItem(Menu:newItem(ship:getCallSign(), function()
