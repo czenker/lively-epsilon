@@ -1,5 +1,17 @@
 Translator = Translator or {}
 
+local transliterate = function(s)
+    -- TODO: potentially slow and should support more languages
+    s = s:gsub("ä", "ae")
+    s = s:gsub("ö", "oe")
+    s = s:gsub("ü", "ue")
+    s = s:gsub("Ä", "Ae")
+    s = s:gsub("Ö", "Oe")
+    s = s:gsub("Ü", "Ue")
+    s = s:gsub("ß", "ss")
+    return s
+end
+
 --- create a new Translator
 --- @param self
 --- @param defaultLocale string (default: `en`)
@@ -87,7 +99,7 @@ Translator.new = function(self, defaultLocale)
                             return message
                         end
                     else
-                        return trans
+                        return transliterate(trans)
                     end
                 end
             end

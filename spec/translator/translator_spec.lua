@@ -231,6 +231,13 @@ insulate("Translator:new()", function()
             assert.is_same(arg3, givenArg3)
         end)
 
+        it("transliterates german characters into ASCII", function()
+            local translator = Translator:new()
+            translator:register("umlaut", "Falsches Üben von Xylophonmusik quält jeden größeren Zwerg")
+
+            assert.is_same("Falsches Ueben von Xylophonmusik quaelt jeden groesseren Zwerg", translator.translate("umlaut"))
+        end)
+
     end)
 
     describe(":useLocale()", function()
