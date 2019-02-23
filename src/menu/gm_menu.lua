@@ -3,7 +3,7 @@ Menu = Menu or {}
 local menu = Menu:new()
 local currentlyDrawnIds = {}
 local isOnMainMenu = true
-local itemsPerPage = 12
+local itemsPerPage = 10
 local labelBack = "|<<"
 local labelPrevious = "<="
 local labelNext = "=>"
