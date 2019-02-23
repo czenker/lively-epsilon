@@ -234,8 +234,12 @@ insulate("Translator:new()", function()
         it("transliterates german characters into ASCII", function()
             local translator = Translator:new()
             translator:register("umlaut", "Falsches Üben von Xylophonmusik quält jeden größeren Zwerg")
+            translator:register("umlaut_func", function()
+                return "Falsches Üben von Xylophonmusik quält jeden größeren Zwerg"
+            end)
 
             assert.is_same("Falsches Ueben von Xylophonmusik quaelt jeden groesseren Zwerg", translator.translate("umlaut"))
+            assert.is_same("Falsches Ueben von Xylophonmusik quaelt jeden groesseren Zwerg", translator.translate("umlaut_func"))
         end)
 
     end)

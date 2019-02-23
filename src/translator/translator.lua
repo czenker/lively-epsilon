@@ -96,7 +96,7 @@ Translator.new = function(self, defaultLocale)
                         elseif not isString(message) then
                             logError("Expected translation for " .. key .. " in locale " .. locale .. " to return a string, but got " .. typeInspect(message))
                         else
-                            return message
+                            return transliterate(message)
                         end
                     else
                         return transliterate(trans)
