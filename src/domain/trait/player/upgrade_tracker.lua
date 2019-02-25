@@ -43,6 +43,8 @@ Player.withUpgradeTracker = function(self, player)
         end
         return ret
     end
+
+    return player
 end
 
 --- check if the player has an UpgradeTracker
