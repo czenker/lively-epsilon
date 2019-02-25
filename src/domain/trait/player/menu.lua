@@ -4,7 +4,24 @@ local function upperFirst(string)
     return string:sub(1,1):upper() .. string:sub(2)
 end
 
-local positions = {"helms", "relay", "science", "weapons", "engineering"}
+local positions = {
+    helms = { "helms", "tactical", "single" },
+    relay = { "relay", "operations", "single" },
+    science = { "science", "operations", "single" },
+    weapons = { "weapons", "tactical", "single" },
+    engineering = { "engineering", "engineering+", "single" },
+}
+
+local allPositions = {}
+for _, fallbacks in pairs(positions) do
+    for _, position in pairs(fallbacks) do
+        local doAdd = true
+        for _, allPosition in pairs(allPositions) do
+            if position == allPosition then doAdd = false end
+        end
+        if doAdd then table.insert(allPositions, position) end
+    end
+end
 
 --- Add menus to the player stations
 --- @param self
@@ -29,25 +46,24 @@ Player.withMenu = function(self, player, config)
     config.itemsPerPage = config.itemsPerPage or 12
     if isNumber(config.itemsPerPage) then
         local itemsPerPosition = {}
-        for _, position in pairs(positions) do
+        for _, position in pairs(allPositions) do
             itemsPerPosition[position] = config.itemsPerPage
         end
         config.itemsPerPage = itemsPerPosition
     end
     if not isTable(config.itemsPerPage) then error("Expected itemsPerPage to be a table, but got " .. typeInspect(config.itemsPerPage), 2) end
-    for _,position in pairs(positions) do
+    for _,position in pairs(allPositions) do
         if config.itemsPerPage[position] == nil then error("Expected itemsPerPage to be set for " .. position, 3) end
         if not isNumber(config.itemsPerPage[position]) then error("Expected itemsPerPage to be a positive number for " .. position .. ", but got " .. typeInspect(config.itemsPerPage[position]), 3) end
         if config.itemsPerPage[position] < 4 then error("Expected itemsPerPage for " .. position .. " to be larger than 4, but got " .. config.itemsPerPage[position], 3) end
         if config.itemsPerPage[position] > 16 then logWarning("Setting itemsPerPage higher than 16 can lead to cases where players can not see the back button. Got: " .. config.itemsPerPage) end
     end
 
-    for _,position in pairs(positions) do
-        local upper = upperFirst(position)
-        local adderName = "add" .. upper .. "MenuItem"
-        local removerName = "remove" .. upper .. "MenuItem"
-        local drawName = "draw" .. upper .. "Menu"
+    local adders = {}
+    local removers = {}
+    local drawers = {}
 
+    for _,position in pairs(allPositions) do
         local menu = Menu:new()
         local isOnMainMenu = true
 
@@ -185,15 +201,38 @@ Player.withMenu = function(self, player, config)
                     draw()
                 end)
             end
-
         end
+
+        drawers[position] = function(self, menu)
+            draw(menu)
+            return self
+        end
+        adders[position] = function(self, id, menuItem)
+            menu:addItem(id, menuItem)
+            if isOnMainMenu == true then draw() end
+            return self
+        end
+        removers[position] = function(self, id)
+            menu:removeItem(id)
+            if isOnMainMenu == true then draw() end
+            return self
+        end
+    end
+
+    for position, fallbackPositions in pairs(positions) do
+        local upper = upperFirst(position)
+        local adderName = "add" .. upper .. "MenuItem"
+        local removerName = "remove" .. upper .. "MenuItem"
+        local drawName = "draw" .. upper .. "Menu"
 
         --- draw menu for station
         --- @param self
         --- @param menu Menu (optional) If not given draws the main menu
         --- @return PlayerSpaceship
         player[drawName] = function(self, menu)
-            draw(menu)
+            for _, position in pairs(fallbackPositions) do
+                drawers[position](self, menu)
+            end
             return self
         end
 
@@ -203,8 +242,9 @@ Player.withMenu = function(self, player, config)
         --- @param menuItem MenuItem
         --- @return PlayerSpaceship
         player[adderName] = function(self, id, menuItem)
-            menu:addItem(id, menuItem)
-            if isOnMainMenu == true then draw() end
+            for _, position in pairs(fallbackPositions) do
+                adders[position](self, id, menuItem)
+            end
             return self
         end
 
@@ -213,8 +253,9 @@ Player.withMenu = function(self, player, config)
         --- @param id string
         --- @return PlayerSpaceship
         player[removerName] = function(self, id)
-            menu:removeItem(id)
-            if isOnMainMenu == true then draw() end
+            for _, position in pairs(fallbackPositions) do
+                removers[position](self, id)
+            end
             return self
         end
     end

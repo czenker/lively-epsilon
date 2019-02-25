@@ -314,6 +314,11 @@ function PlayerSpaceship()
         getCustomMessage = function(self, position)
             return lastCustomMessage[position]
         end,
+        closeCustomMessage = function(self, position)
+            if self:getCustomMessage(position) == nil then error("There was no custom message open for " .. position) end
+            lastCustomMessage = nil
+            return self
+        end,
         commandMainScreenOverlay = noop,
         addCustomButton = function(self, pos, id, label, callback)
             playerButtons[id] = {

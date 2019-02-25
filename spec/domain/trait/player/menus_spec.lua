@@ -73,6 +73,89 @@ insulate("Player:withMenu()", function()
         assert.is_same(player, callArg1)
         assert.is_same("relay", callArg2)
     end)
+
+    it("lets menus fall back to the 4/3 station and single pilot", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
+
+        local helmsCalled = 0
+        local weaponsCalled = 0
+        local relayCalled = 0
+        local scienceCalled = 0
+        local engineeringCalled = 0
+        player:addHelmsMenuItem("helms", Menu:newItem("Helms", function() helmsCalled = helmsCalled + 1 end))
+        player:addWeaponsMenuItem("weapons", Menu:newItem("Weapons", function() weaponsCalled = weaponsCalled + 1 end))
+        player:addRelayMenuItem("relay", Menu:newItem("Relay", function() relayCalled = relayCalled + 1 end))
+        player:addScienceMenuItem("science", Menu:newItem("Science", function() scienceCalled = scienceCalled + 1 end))
+        player:addEngineeringMenuItem("engineering", Menu:newItem("Engineering", function() engineeringCalled = engineeringCalled + 1 end))
+
+        assert.is_true(player:hasButton("tactical", "Helms"))
+        assert.is_true(player:hasButton("tactical", "Weapons"))
+        assert.is_true(player:hasButton("operations", "Relay"))
+        assert.is_true(player:hasButton("operations", "Science"))
+        assert.is_true(player:hasButton("engineering+", "Engineering"))
+
+        assert.is_true(player:hasButton("single", "Helms"))
+        assert.is_true(player:hasButton("single", "Weapons"))
+        assert.is_true(player:hasButton("single", "Relay"))
+        assert.is_true(player:hasButton("single", "Science"))
+        assert.is_true(player:hasButton("single", "Engineering"))
+    end)
+
+    it("does not change menus on the 6/5 stations when buttons on the 4/3 stations are clicked", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player, {
+            backLabel = "Back",
+        })
+
+        local submenu = mockSubmenu("Submenu", function(menu)
+            menu:addItem(mockMenuLabel("You are in a submenu"))
+        end)
+
+        player:addScienceMenuItem(submenu)
+
+        assert.is_true(player:hasButton("science", "Submenu"))
+        assert.is_true(player:hasButton("operations", "Submenu"))
+        assert.is_false(player:hasButton("science", "Back"))
+        assert.is_false(player:hasButton("operations", "Back"))
+
+        player:clickButton("operations", "Submenu")
+        assert.is_false(player:hasButton("operations", "Submenu"))
+        assert.is_true(player:hasButton("operations", "You are in a submenu"))
+        assert.is_true(player:hasButton("operations", "Back"))
+
+        assert.is_true(player:hasButton("science", "Submenu"))
+        assert.is_false(player:hasButton("science", "You are in a submenu"))
+        assert.is_false(player:hasButton("science", "Back"))
+
+        player:clickButton("science", "Submenu")
+        assert.is_false(player:hasButton("science", "Submenu"))
+        assert.is_true(player:hasButton("science", "You are in a submenu"))
+        assert.is_true(player:hasButton("science", "Back"))
+
+        player:clickButton("operations", "Back")
+        assert.is_true(player:hasButton("operations", "Submenu"))
+        assert.is_false(player:hasButton("operations", "Back"))
+
+        assert.is_false(player:hasButton("science", "Submenu"))
+        assert.is_true(player:hasButton("science", "You are in a submenu"))
+        assert.is_true(player:hasButton("science", "Back"))
+    end)
+
+    it("only shows a message on the station where the button was clicked", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
+
+        player:addHelmsMenuItem("button", Menu:newItem("Click Me", function() return "Hey, it's me: your friendly pop up" end))
+
+        player:clickButton("tactical", "Click Me")
+        assert.is_same("Hey, it's me: your friendly pop up", player:getCustomMessage("tactical"))
+        assert.is_nil(player:getCustomMessage("helms"))
+
+        player:clickButton("helms", "Click Me")
+        assert.is_same("Hey, it's me: your friendly pop up", player:getCustomMessage("helms"))
+    end)
+
     describe("addHelmsMenuItem(), removeHelmsMenuItem(), drawHelmsMenu()", function()
         it("adds and removes menu items", function()
             local player = PlayerSpaceship()
@@ -106,6 +189,35 @@ insulate("Player:withMenu()", function()
             player:drawHelmsMenu()
         end)
     end)
+
+    it("should not have functions for tactical, operations, engineering+ and single pilot", function()
+        local player = PlayerSpaceship()
+        Player:withMenu(player)
+
+        assert.is_nil(player.addTacticalMenuItem)
+        assert.is_nil(player.addOperationsMenuItem)
+        assert.is_nil(player.addSingleMenuItem)
+        assert.is_nil(player.removeTacticalMenuItem)
+        assert.is_nil(player.removeOperationsMenuItem)
+        assert.is_nil(player.removeSingleMenuItem)
+        assert.is_nil(player.drawTacticalMenu)
+        assert.is_nil(player.drawOperationsMenu)
+        assert.is_nil(player.drawSingleMenu)
+
+        assert.has_error(function()
+            player:addMenuItem("operations", Menu:newItem("Boom", "This should not work"))
+        end)
+        assert.has_error(function()
+            player:addMenuItem("tactical", Menu:newItem("Boom", "This should not work"))
+        end)
+        assert.has_error(function()
+            player:addMenuItem("engineering+", Menu:newItem("Boom", "This should not work"))
+        end)
+        assert.has_error(function()
+            player:addMenuItem("single", Menu:newItem("Boom", "This should not work"))
+        end)
+    end)
+
     describe("addMenuItem(), removeMenuItem(), drawMenu()", function()
         it("adds and removes menu items", function()
             local player = PlayerSpaceship()
