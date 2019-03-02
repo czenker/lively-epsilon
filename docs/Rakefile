@@ -1,7 +1,7 @@
 require 'tilt'
 require 'asciidoctor'
 
-version = `git describe HEAD`
+version = `git describe --tags HEAD`
 if version == "" then version = "dev" end
 date = `git log -1 --format=%ci | grep -o '^\\S*'`
 

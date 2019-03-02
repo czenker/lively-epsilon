@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-VERSION=$(git describe HEAD || echo "dev")
+VERSION=$(git describe --tags HEAD || echo "dev")
 BUILD_DIR="_build/lively_epsilon/"
 
 echo "Building version ${VERSION}..."
