@@ -26,6 +26,10 @@ insulate("documentation on Comms", function()
         withUniverse(function()
             local player = PlayerSpaceship()
 
+            local humanNavy = FactionInfo():setName("Human Navy")
+            local kraylor = FactionInfo():setName("Kraylor")
+            kraylor:setEnemy(humanNavy)
+
             -- tag::reply-functions[]
             local station = SpaceStation()
             Station:withComms(station)
@@ -56,9 +60,9 @@ insulate("documentation on Comms", function()
             ))
             -- end::reply-functions[]
 
-            station:setCallSign("Station"):setPosition(0, 0):setFactionId(1):setHullMax(100):setHull(100)
-            player:setCallSign("Player"):setPosition(0, 0):setFactionId(1)
-            local enemy = CpuShip():setCallSign("Enemy"):setPosition(99999, 0):setFactionId(2)
+            station:setCallSign("Station"):setPosition(0, 0):setFaction("Human Navy"):setHullMax(100):setHull(100)
+            player:setCallSign("Player"):setPosition(0, 0):setFaction("Human Navy")
+            local enemy = CpuShip():setCallSign("Enemy"):setPosition(99999, 0):setFaction("Kraylor")
 
             player:commandOpenTextComm(station)
             assert.is_same("Hello Player. This is Station. How can we help?", player:getCurrentCommsText())
