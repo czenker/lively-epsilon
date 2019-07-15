@@ -21,6 +21,7 @@ function withUniverse(func)
     local knownObjects = {}
     local knownObjectsByType = {}
     local backup = {
+        getScenarioVariation = _G.getScenarioVariation,
         getObjectsInRadius = _G.getObjectsInRadius,
         getPlayerShip = _G.getPlayerShip,
         addGMFunction = _G.addGMFunction,
@@ -197,6 +198,7 @@ function withUniverse(func)
 
     _G.addGMFunction = function() end
     _G.removeGMFunction = function() end
+    _G.getScenarioVariation = function() end
 
     local success, err = pcall(func)
 
