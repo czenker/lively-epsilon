@@ -150,13 +150,31 @@ Util = {
     end,
 
     --- returns the heading in the coordinate system used for the science station
-    --- @param spaceShip1 SpaceShip
-    --- @param spaceShip2 SpaceShip
+    --- @param a SpaceShip|integer
+    --- @param b SpaceShip|integer
+    --- @param c SpaceShip|integer|nil
+    --- @param d integer|nil
     --- @return number
-    heading = function(spaceShip1, spaceShip2)
-        local s1x, s1y = spaceShip1:getPosition()
-        local s2x, s2y = spaceShip2:getPosition()
-        return (Util.angleFromVector(s2x - s1x, s2y - s1y) + 90) % 360
+    heading = function(a, b, c, d)
+        local x1, y1 = 0, 0
+        local x2, y2 = 0, 0
+        if isEeObject(a) and isEeObject(b) then
+            x1, y1 = a:getPosition()
+            x2, y2 = b:getPosition()
+        elseif isEeObject(a) and isNumber(b) and isNumber(c) then
+            x1, y1 = a:getPosition()
+            x2, y2 = b, c
+        elseif isNumber(a) and isNumber(b) and isEeObject(c) then
+            x1, y1 = a, b
+            x2, y2 = c:getPosition()
+        elseif isNumber(a) and isNumber(b) and isNumber(c) and isNumber(d) then
+            x1, y1 = a, b
+            x2, y2 = c, d
+        else
+            error(string.format("heading() function used incorrectly. Expected coordinates or two Space objects, but got %s, %s, %s, %s.", typeInspect(a), typeInspect(b), typeInspect(c), typeInspect(d)) , 2)
+        end
+
+        return (Util.angleFromVector(x2 - x1, y2 - y1) + 90) % 360
     end,
 
     --- calculates the difference between to angles - which ever direction is shorter
