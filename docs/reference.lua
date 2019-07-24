@@ -28,6 +28,7 @@ local returnValues = {
     Chatter_newFactory = Chatter:newFactory(1, function() end),
     Chatter_newNoise = Chatter:newNoise(Chatter:new()),
     Player_withMenu = Player:withMenu(PlayerSpaceship()),
+    Player_withQuickDial = Player:withQuickDial(Player:withMenu(PlayerSpaceship()), { label = "Quick Dial" }),
     Player_withMissionTracker = Player:withMissionTracker(PlayerSpaceship()),
     Player_withStorage = Player:withStorage(PlayerSpaceship()),
     Player_withUpgradeTracker = Player:withUpgradeTracker(PlayerSpaceship()),

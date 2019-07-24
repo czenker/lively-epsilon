@@ -66,6 +66,7 @@ local myPackages = {
     "lively_epsilon/src/domain/trait/player/mission_tracker.lua",
     "lively_epsilon/src/domain/trait/player/mission_display.lua",
     "lively_epsilon/src/domain/trait/player/power_presets.lua",
+    "lively_epsilon/src/domain/trait/player/quick_dial.lua",
     "lively_epsilon/src/domain/trait/player/storage.lua",
     "lively_epsilon/src/domain/trait/player/storage_display.lua",
     "lively_epsilon/src/domain/trait/player/upgrade_tracker.lua",

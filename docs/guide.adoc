@@ -477,6 +477,24 @@ include::examples/30_menu_spec.lua[tag=pagination-configuration]
 
 ==== Menus for GM
 
+=== Quick Dial
+
+Quick Dial shows the relay station a number of targets that they can open a connection to without
+having to select the target on the map.
+
+[source,lua,indent=0]
+----
+include::examples/31_quick_dial_spec.lua[tag=basic]
+----
+
+Even though invalid targets are automatically not displayed it is also possible to remove targets explicitly.
+
+[source,lua,indent=0]
+----
+include::examples/31_quick_dial_spec.lua[tag=remove]
+----
+
+Read more on Quick Dial in the link:reference.html#player-withquickdial[Reference] and the link:spec.html#player-withquickdial[Specification].
 
 === Missions
 
