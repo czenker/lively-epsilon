@@ -44,7 +44,7 @@ Comms.upgradeBrokerFactory = function(self, config)
         return ret
     end
 
-    mainMenu = function(self, comms_target, comms_source)
+    mainMenu = function(comms_target, comms_source)
         local screen = Comms:newScreen()
         config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             upgrades = formatUpgrades(comms_target, comms_source),
@@ -53,7 +53,7 @@ Comms.upgradeBrokerFactory = function(self, config)
     end
 
     detailMenu = function(upgrade)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             config.detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatUpgrade(upgrade, comms_target, comms_source)))
             return screen
@@ -61,7 +61,7 @@ Comms.upgradeBrokerFactory = function(self, config)
     end
 
     installMenu = function(upgrade)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local upgradeInfo = formatUpgrade(upgrade, comms_target, comms_source)
             local screen = Comms:newScreen()
             local success = config.installScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, upgradeInfo))
@@ -87,7 +87,7 @@ Comms.upgradeBrokerFactory = function(self, config)
         linkToMainScreen = mainMenu,
     }
 
-    return Comms:newReply(config.label, mainMenu, function(self, comms_target, comms_source)
+    return Comms:newReply(config.label, mainMenu, function(comms_target, comms_source)
         if not Station:hasUpgradeBroker(comms_target) then
             logInfo("not displaying upgrade_broker in Comms, because target has no upgrade_broker.")
             return false

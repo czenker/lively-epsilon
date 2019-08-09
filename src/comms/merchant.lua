@@ -89,7 +89,7 @@ Comms.merchantFactory = function(self, config)
         return ret
     end
 
-    mainMenu = function(self, comms_target, comms_source)
+    mainMenu = function(comms_target, comms_source)
         local screen = Comms:newScreen()
         config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
@@ -98,7 +98,7 @@ Comms.merchantFactory = function(self, config)
         return screen
     end
 
-    buyMenu = function(self, comms_target, comms_source)
+    buyMenu = function(comms_target, comms_source)
         local screen = Comms:newScreen()
         config.buyScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             buying = formatBoughtProducts(comms_target, comms_source),
@@ -108,7 +108,7 @@ Comms.merchantFactory = function(self, config)
 
     buyProductMenu = function(product, amount)
         amount = amount or 0
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             local info = formatBoughtProduct(product, comms_target, comms_source)
             config.buyProductScreen(screen, comms_target, comms_source, Util.mergeTables(
@@ -124,7 +124,7 @@ Comms.merchantFactory = function(self, config)
     end
 
     buyProductConfirmMenu = function(product, amount)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             local info = formatBoughtProduct(product, comms_target, comms_source)
             amount = math.min(
@@ -152,7 +152,7 @@ Comms.merchantFactory = function(self, config)
         end
     end
 
-    sellMenu = function(self, comms_target, comms_source)
+    sellMenu = function(comms_target, comms_source)
         local screen = Comms:newScreen()
         config.sellScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             selling = formatSoldProducts(comms_target, comms_source),
@@ -162,7 +162,7 @@ Comms.merchantFactory = function(self, config)
 
     sellProductMenu = function(product, amount)
         amount = amount or 0
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             local info = formatSoldProduct(product, comms_target, comms_source)
             config.sellProductScreen(screen, comms_target, comms_source, Util.mergeTables(
@@ -178,7 +178,7 @@ Comms.merchantFactory = function(self, config)
     end
 
     sellProductConfirmMenu = function(product, amount)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             local info = formatSoldProduct(product, comms_target, comms_source)
             amount = math.min(
@@ -214,7 +214,7 @@ Comms.merchantFactory = function(self, config)
         linkToSellScreen = sellMenu,
     }
 
-    return Comms:newReply(config.label, mainMenu, function(self, comms_target, comms_source)
+    return Comms:newReply(config.label, mainMenu, function(comms_target, comms_source)
         if not Station:hasMerchant(comms_target) or not Player:hasStorage(comms_source) then
             logInfo("not displaying merchant in Comms, because target has no merchant.")
             return false

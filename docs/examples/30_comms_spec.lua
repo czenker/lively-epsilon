@@ -39,14 +39,14 @@ insulate("documentation on Comms", function()
             end)
 
             station:addComms(Comms:newReply(
-                function(self, comms_target, comms_source) -- what player says
+                function(comms_target, comms_source) -- what player says
                     if comms_target:getHull() < comms_target:getHullMax() then
                         return "Your station took damage. What is your status?"
                     else
                         return "What is your status?"
                     end
                 end,
-                function(self, comms_target, comms_source) -- next screen
+                function(comms_target, comms_source) -- next screen
                     if comms_target:areEnemiesInRange(10000) then
                         return Comms:newScreen("We are currently under attack.")
                     else
@@ -54,7 +54,7 @@ insulate("documentation on Comms", function()
                     end
 
                 end,
-                function(self, comms_target, comms_source) -- condition
+                function(comms_target, comms_source) -- condition
                     return comms_source:isDocked(comms_target)
                 end
             ))

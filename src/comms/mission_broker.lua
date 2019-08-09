@@ -48,7 +48,7 @@ Comms.missionBrokerFactory = function(self, config)
         return ret
     end
 
-    mainMenu = function(self, comms_target, comms_source)
+    mainMenu = function(comms_target, comms_source)
         local screen = Comms:newScreen()
         config.mainScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, {
             missions = formatMissions(comms_target, comms_source),
@@ -57,7 +57,7 @@ Comms.missionBrokerFactory = function(self, config)
     end
 
     detailMenu = function(mission)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local screen = Comms:newScreen()
             config.detailScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, formatMission(mission, comms_target, comms_source)))
             return screen
@@ -65,7 +65,7 @@ Comms.missionBrokerFactory = function(self, config)
     end
 
     acceptMenu = function(mission)
-        return function(self, comms_target, comms_source)
+        return function(comms_target, comms_source)
             local missionInfo = formatMission(mission, comms_target, comms_source)
             local screen = Comms:newScreen()
             local success = config.acceptScreen(screen, comms_target, comms_source, Util.mergeTables(defaultCallbackConfig, missionInfo))
@@ -102,7 +102,7 @@ Comms.missionBrokerFactory = function(self, config)
         linkToMainScreen = mainMenu,
     }
 
-    return Comms:newReply(config.label, mainMenu, function(self, comms_target, comms_source)
+    return Comms:newReply(config.label, mainMenu, function(comms_target, comms_source)
         if not Station:hasMissionBroker(comms_target) then
             logInfo("not displaying mission_broker in Comms, because target has no mission_broker.")
             return false

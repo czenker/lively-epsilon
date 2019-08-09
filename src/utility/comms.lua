@@ -87,7 +87,9 @@ Comms.newReply = function(self, playerSays, nextScreen, condition)
         --- @param player PlayerSpaceship
         getWhatPlayerSays = function(self, station, player) return playerSays end
     elseif isFunction(playerSays) then
-        getWhatPlayerSays = playerSays
+        getWhatPlayerSays = function(self, station, player)
+            return playerSays(station, player)
+        end
     else
         error("Expected playerSays to be a string or function, but got " .. typeInspect(playerSays), 2)
     end
@@ -100,7 +102,9 @@ Comms.newReply = function(self, playerSays, nextScreen, condition)
         --- @param player PlayerSpaceship
         getNextScreen = function(self, station, player) return nextScreen end
     elseif isFunction(nextScreen) then
-        getNextScreen = nextScreen
+        getNextScreen = function(self, station, player)
+            return nextScreen(station, player)
+        end
     else
         error("Expected nextScreen to be nil or a function, but got " .. typeInspect(nextScreen), 2)
     end
@@ -116,7 +120,9 @@ Comms.newReply = function(self, playerSays, nextScreen, condition)
             return true
         end
     elseif isFunction(condition) then
-        checkCondition = condition
+        checkCondition = function(self, station, player)
+            return condition(station, player)
+        end
     else
         error("Expected condition to be nil or a function, but got " .. typeInspect(condition), 2)
     end
