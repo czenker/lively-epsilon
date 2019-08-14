@@ -53,7 +53,12 @@ function SpaceObject()
         getRadarSignatureGravity = function(self) return 1 end,
         getRadarSignatureElectrical = function(self) return 1 end,
         getRadarSignatureBiological = function(self) return 1 end,
-        sendCommsMessage = function(self) return self end,
+        sendCommsMessage = function(self, player, content)
+            self:overrideComms(Comms:newScreen(content), true)
+            local success = player:isCommsInactive()
+            player:commandOpenTextComm(self)
+            return success
+         end,
         openCommsTo = function(self, player)
             player:commandOpenTextComm(self)
         end,
@@ -368,6 +373,9 @@ function PlayerSpaceship()
             currentCommsTarget = nil
             return self
         end,
+        isCommsInactive = function(self)
+            return currentCommsScreen == nil and currentCommsTarget == nil
+        end,
         hasComms = function(self, label)
             if currentCommsScreen == nil then error("There is currently no comms open.", 2) end
             for _, reply in pairs(currentCommsScreen:getHowPlayerCanReact()) do
@@ -392,7 +400,7 @@ function PlayerSpaceship()
                             currentCommsScreen = next
                             return
                         elseif isNil(next) then
-                            currentCommsScreen = target:getComms(self)
+                            currentCommsScreen = currentCommsTarget:getComms(self)
                             return
                         else
                             error("Expected comms labeled \"" .. label .. "\" to return a screen or nil, but got " .. typeInspect(next), 2)

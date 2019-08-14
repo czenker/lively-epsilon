@@ -25,8 +25,10 @@ Tools.storyComms = function(self, shipTemplateBased, player, screen)
 
     cronId = Util.randomUuid()
 
-    Cron.regular(cronId, function()
-        if player:isCommsInactive() then
+    local tryFunc = function()
+        if not player:isValid() then
+            Tools:endStoryComms()
+        elseif player:isCommsInactive() then
             if not shipTemplateBased:isValid() then
                 Tools:endStoryComms()
             else
@@ -34,7 +36,11 @@ Tools.storyComms = function(self, shipTemplateBased, player, screen)
                 player:commandMainScreenOverlay("showcomms")
             end
         end
-    end, 0.1, 0)
+    end
+
+    tryFunc()
+
+    Cron.regular(cronId, tryFunc)
 end
 
 --- End the story comms

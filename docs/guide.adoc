@@ -406,10 +406,39 @@ include::examples/30_comms_spec.lua[tag=guess-my-number]
 
 Read more on `Comms:newScreen` and `Comms:newReply` this topic in the link:reference.html#comms-newreply[Reference] and the link:spec.html#comms-newreply[Specification].
 
+=== Tools.ensureComms
 
-=== Comms.storyComms
+One issue when initiating comms from a script is that you never know if the players are currently
+involved in a different communication. `Tools:ensureComms` make sure the players at least have
+the choice to accept or decline a communication once. It does not ensure that the message is read
+(use `Tools.storyComms` if you need that), but it has to be intentionally ignored.
 
-// === Narrative
+[source,lua,indent=0]
+----
+include::examples/30_comms_spec.lua[tag=ensure-comms]
+----
+
+Read more on Tools:ensureComms` in the link:reference.html#tools-ensurecomms[Reference] and the link:spec.html#tools-ensurecomms[Specification].
+
+=== Tools.storyComms
+
+To make sure a conversation is not skipped use `Tools:storyComms`. The players are not able to
+ignore the communication as it will pop up over and over again. The conversation could be rather
+complex and span multiple screens. When the crew aborts the conversation they will have to start again
+from the beginning. To mark the conversation as "finished", call `Tools:endStoryComms` in the final screen(s).
+
+It is intended for story relevant conversations that should not be skipped.
+
+[source,lua,indent=0]
+----
+include::examples/30_comms_spec.lua[tag=story-comms]
+----
+
+WARNING: Take into consideration that players _can_ abort the conversation and start over again.
+This could potentially lead to exploids if there is a screen in the conversation that gives the players something
+valuable. There is no guarantee it is not called multiple times.
+
+Read more on Tools:storyComms` in the link:reference.html#tools-storycomms[Reference] and the link:spec.html#tools-storycomms[Specification].
 
 === Menu
 

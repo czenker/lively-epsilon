@@ -158,4 +158,51 @@ insulate("documentation on Comms", function()
         player:commandOpenTextComm(station)
         assert.is_false(player:hasComms("I want to play a game"))
     end)
+    it("Tools:ensureComms()", function()
+        -- tag::ensure-comms[]
+        local station = SpaceStation()
+        Station:withComms(station)
+        station:setHailText("Hello World")
+        local player = PlayerSpaceship()
+
+        Tools:ensureComms(station, player)
+        -- end::ensure-comms[]
+        assert.same("Hello World", player:getCurrentCommsText())
+        player:commandCloseTextComm()
+
+        -- tag::ensure-comms[]
+
+        -- ... or ...
+
+        Tools:ensureComms(station, player, "We have a special delivery for I. C. Weiner.")
+        -- end::ensure-comms[]
+        assert.same("We have a special delivery for I. C. Weiner.", player:getCurrentCommsText())
+    end)
+    it("Tools:storyComms()", function()
+        -- tag::story-comms[]
+        local station = SpaceStation()
+        Station:withComms(station)
+        local player = PlayerSpaceship()
+
+        local comms = Comms:newScreen("Help us, almighty player! We are attacked.")
+        comms:addReply(Comms:newReply("We are on our way", function()
+            Tools:endStoryComms()
+            return Comms:newScreen("Thanks")
+        end))
+
+        Tools:storyComms(station, player, comms)
+        -- end::story-comms[]
+        assert.same("Help us, almighty player! We are attacked.", player:getCurrentCommsText())
+
+        player:commandCloseTextComm()
+        Cron.tick(1)
+        assert.same("Help us, almighty player! We are attacked.", player:getCurrentCommsText())
+
+        player:selectComms("We are on our way")
+        assert.same("Thanks", player:getCurrentCommsText())
+        player:commandCloseTextComm()
+        Cron.tick(1)
+
+        assert.is_true(player:isCommsInactive())
+    end)
 end)

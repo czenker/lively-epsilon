@@ -8,20 +8,6 @@ insulate("Tools:storyComms()", function()
         require "init"
         require "spec.mocks"
 
-        it("can be created", function()
-            finally(function() Tools:endStoryComms() end)
-
-            local station = SpaceStation()
-            Station:withComms(station)
-            local player = PlayerSpaceship()
-            local screen = commsScreenMock()
-            Tools:storyComms(station, player, screen)
-        end)
-    end)
-    insulate("valid call", function()
-        require "init"
-        require "spec.mocks"
-
         local station = SpaceStation()
         Station:withComms(station)
         local player = PlayerSpaceship()
@@ -40,6 +26,101 @@ insulate("Tools:storyComms()", function()
             Tools:storyComms(station, player, screen)
         end)
     end)
+
+    it("pops up if it is closed before dialog finished", function()
+        finally(function() Tools:endStoryComms() end)
+
+        local station = SpaceStation()
+        Station:withComms(station)
+        local player = PlayerSpaceship()
+        local comms = Comms:newScreen("screen one")
+        comms:addReply(Comms:newReply("reply one", function()
+            local screen2 = Comms:newScreen("screen two")
+            screen2:addReply(Comms:newReply("reply two", function()
+                Tools:endStoryComms()
+
+                return Comms:newScreen("screen three")
+            end))
+
+            return screen2
+        end))
+
+        Tools:storyComms(station, player, comms)
+        assert.same("screen one", player:getCurrentCommsText())
+
+        -- screen one pops up again if comms is closed
+        player:commandCloseTextComm()
+        Cron.tick(1)
+        assert.same("screen one", player:getCurrentCommsText())
+
+        player:selectComms("reply one")
+        assert.same("screen two", player:getCurrentCommsText())
+        player:commandCloseTextComm()
+
+        -- conversation starts at screen one again
+        player:commandCloseTextComm()
+        Cron.tick(1)
+        assert.same("screen one", player:getCurrentCommsText())
+
+        player:selectComms("reply one")
+        assert.same("screen two", player:getCurrentCommsText())
+        player:selectComms("reply two")
+        assert.same("screen three", player:getCurrentCommsText())
+        player:commandCloseTextComm()
+        Cron.tick(1)
+
+        -- comms stays closed
+        assert.is_true(player:isCommsInactive())
+    end)
+    it("ends when player is destroyed", function()
+        finally(function() Tools:endStoryComms() end)
+
+        local station = SpaceStation()
+        Station:withComms(station)
+        local player = PlayerSpaceship()
+        local comms = Comms:newScreen("screen one")
+        comms:addReply(Comms:newReply("reply one", function()
+            Tools:endStoryComms()
+
+            return Comms:newScreen("screen two")
+        end))
+
+        Tools:storyComms(station, player, comms)
+        assert.same("screen one", player:getCurrentCommsText())
+
+        -- screen one pops up again if comms is closed
+        player:commandCloseTextComm()
+        player:destroy()
+        Cron.tick(1)
+
+        -- comms stays closed
+        assert.is_true(player:isCommsInactive())
+    end)
+    it("ends when station is destroyed", function()
+        finally(function() Tools:endStoryComms() end)
+
+        local station = SpaceStation()
+        Station:withComms(station)
+        local player = PlayerSpaceship()
+        local comms = Comms:newScreen("screen one")
+        comms:addReply(Comms:newReply("reply one", function()
+            Tools:endStoryComms()
+
+            return Comms:newScreen("screen two")
+        end))
+
+        Tools:storyComms(station, player, comms)
+        assert.same("screen one", player:getCurrentCommsText())
+
+        -- screen one pops up again if comms is closed
+        player:commandCloseTextComm()
+        station:destroy()
+        Cron.tick(1)
+
+        -- comms stays closed
+        assert.is_true(player:isCommsInactive())
+    end)
+
     insulate("invalid calls", function()
         require "init"
         require "spec.mocks"
