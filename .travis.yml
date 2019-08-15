@@ -18,6 +18,7 @@ install:
 #  - luarocks install luacov-coveralls
   - wget "https://raw.githubusercontent.com/daid/EmptyEpsilon/${EE_BRANCH}/scripts/utils.lua" -O utils.lua
   - bundle install --gemfile=docs/Gemfile
+  - pip install -r docs/requirements.txt
 
 script:
 #  - luacheck --no-unused-args --std max+busted *.lua spec

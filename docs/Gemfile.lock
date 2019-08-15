@@ -2,6 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     asciidoctor (1.5.7)
+    asciidoctor-diagram (1.5.18)
+      asciidoctor (>= 1.5.0, < 3.x)
     coderay (1.1.2)
     rake (10.1.0)
     tilt (2.0.9)
@@ -11,6 +13,10 @@ PLATFORMS
 
 DEPENDENCIES
   asciidoctor
+  asciidoctor-diagram
   coderay
   rake
   tilt
+
+BUNDLED WITH
+   1.16.6

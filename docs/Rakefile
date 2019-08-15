@@ -1,5 +1,6 @@
 require 'tilt'
 require 'asciidoctor'
+require 'asciidoctor-diagram'
 
 version = `git describe --tags HEAD`
 if version == "" then version = "dev" end

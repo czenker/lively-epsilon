@@ -527,13 +527,92 @@ Read more on Quick Dial in the link:reference.html#player-withquickdial[Referenc
 
 === Missions
 
-==== Mission Brokers & Comms
+In its basic form a `Mission` is nothing more than a state machine that keeps track in what state
+a mission is (started, failed, successful) and prevents transitions that would not make sense (a
+failed mission can not become successful or be started again).
 
-==== Missions for Players
+These are all possible states and their transitions:
+
+[blockdiag, "mission-sequence"]
+....
+blockdiag {
+    orientation = portrait;
+
+    new
+    accepted
+    declined
+    started
+    successful
+    failed
+
+    new -> accepted [label = "accept()"]
+    new -> declined [label = "decline()"]
+    accepted -> started [label = "start()"]
+    started -> successful [label = "success()"]
+    started -> failed [label = "fail()"]
+}
+....
+
+When creating a mission, you can add callbacks that are called when the mission changes state.
+As there are no loops in the state transitions, it is guaranteed that every callback will be
+called one time at most:
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=basic]
+----
+
+The callback `onEnd` is special in the regards that it will be called as soon as the mission is
+`successful` or has `failed`.
+
+Read more on Missions in the link:reference.html#mission-new[Reference] and the link:spec.html#mission-new[Specification].
+
+==== Mission Traits
+
+There are multiple traits that can modify the way a mission works.
+
+===== Mission:forPlayer
+
+A mission could be bound to a player. This can be done with `Mission:forPlayer`. Such a mission
+will automatically be added to the Mission Tracker of the player (if the player ship has it) and the mission
+will automatically fail if the player is destroyed.
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=for-player]
+----
+
+Read more in the link:reference.html#mission-forplayer[Reference] and the link:spec.html#mission-forplayer[Specification].
+
+===== Mission:withBroker
+
+When missions are given by someone `Mission:withBroker` comes into play. It also allows to give
+the mission a humanly readable title, a description and set hints.
+
+The mission will automatically fail if the broker is destroyed.
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=with-broker]
+----
+
+Read more in the link:reference.html#mission-withbroker[Reference] and the link:spec.html#mission-withbroker[Specification].
+
+===== Mission:withTimeLimit
+
+Missions can have a time limit. If it is exceeded the mission fails automatically. The timer
+will start as soon as the mission is started.
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=with-timeLimit]
+----
+
+Read more in the link:reference.html#mission-withtimelimit[Reference] and the link:spec.html#mission-withtimelimit[Specification].
 
 ==== Mission Tracker & Display
 
-==== Mission Display
+==== Predefined missions
 
 === Upgrade
 

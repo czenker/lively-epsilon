@@ -17,6 +17,10 @@ Mission.forPlayer = function(self, mission, initPlayer)
     ---@param self
     mission.accept = function(self)
         if player == nil then error("The player needs to be set before calling accept", 2) end
+
+        if Player:hasMissionTracker(player) then
+            player:addMission(self)
+        end
         return parentAccept(self)
     end
 
@@ -41,6 +45,7 @@ Mission.forPlayer = function(self, mission, initPlayer)
     ---@param thing PlayerSpaceship
     mission.setPlayer = function(self, thing)
         if not isEePlayer(thing) then error("Expected player to be a Player, but " .. typeInspect(thing) .. " given.", 2) end
+        if mission:getState() ~= "new" then error("Player can only be changed on a new mission, not on state " .. mission:getState(), 2) end
         player = thing
     end
 

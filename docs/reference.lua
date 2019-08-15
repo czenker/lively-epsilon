@@ -21,6 +21,7 @@ local returnValues = {
     Mission_new = Mission:new(),
     Mission_withBroker = Mission:withBroker(Mission:new(), "Foobar"),
     Mission_forPlayer = Mission:forPlayer(Mission:new(), player),
+    Mission_withTimeLimit = Mission:withTimeLimit(Mission:new(), 10),
     Ship_withFleet = Ship:withFleet(CpuShip(), Fleet:new({})),
     Ship_withOrderQueue = Ship:withOrderQueue(CpuShip()),
     Fleet_withOrderQueue = Fleet:withOrderQueue(Fleet:new({})),

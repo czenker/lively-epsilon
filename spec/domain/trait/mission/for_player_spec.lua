@@ -67,6 +67,20 @@ insulate("Mission:forPlayer()", function()
             assert.has_error(function() mission:accept() end)
         end)
 
+        it("adds the mission to the mission tracker if the player has one", function()
+            local player = PlayerSpaceship()
+            Player:withMissionTracker(player)
+
+            local mission = Mission:new()
+            Mission:forPlayer(mission, player)
+            mission:setPlayer(player)
+
+            mission:accept()
+            mission:start()
+
+            assert.is_same({mission}, player:getStartedMissions())
+        end)
+
     end)
 
     describe(":setPlayer()", function()
@@ -74,6 +88,20 @@ insulate("Mission:forPlayer()", function()
             local mission = missionWithPlayerMock()
 
             assert.has_error(function()mission:setPlayer(42) end)
+        end)
+
+        it("can not be changed on an accepted mission", function()
+            local player = PlayerSpaceship()
+
+            local mission = Mission:new()
+            Mission:forPlayer(mission, player)
+            mission:setPlayer(player)
+
+            mission:accept()
+
+            assert.has_error(function()
+                mission:setPlayer(player)
+            end)
         end)
     end)
     describe(":getPlayer()", function()

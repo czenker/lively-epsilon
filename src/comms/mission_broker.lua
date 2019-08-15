@@ -85,9 +85,6 @@ Comms.missionBrokerFactory = function(self, config)
                     mission:setMissionBroker(comms_target)
                 end
                 comms_target:removeMission(mission)
-                if Player:hasMissionTracker(comms_source) then
-                    comms_source:addMission(mission)
-                end
 
                 mission:accept()
                 mission:start()
