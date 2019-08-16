@@ -35,7 +35,7 @@ Player.withMissionDisplay = function(self, player, config)
             for _, mission in pairs(missions) do
                 text = text .. " * ".. mission:getTitle() .. "\n"
                 if mission:getHint() then
-                    text = text .. "        " .. mission:getHint() .. "\n"
+                    text = text .. "        " .. mission:getHint():gsub("\n", "\n        ") .. "\n"
                 end
             end
         end
