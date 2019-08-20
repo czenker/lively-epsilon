@@ -1,13 +1,15 @@
 Mission = Mission or {}
 
--- config:
---  * id           string
---  * onAccept     function
---  * onDecline    function
---  * onStart      function
---  * onSuccess    function
---  * onFailure    function
---  * onEnd        function
+local eventHandler = EventHandler:new({allowedEvents = {
+    "onCreation",
+    "onAccept",
+    "onDecline",
+    "onStart",
+    "onSuccess",
+    "onFailure",
+    "onEnd",
+}})
+
 --- A mission
 --- @param self
 --- @param config table
@@ -93,6 +95,7 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onAccept) then config.onAccept(self) end
+            eventHandler:fire("onAccept", self)
 
             state = 5
         end,
@@ -103,6 +106,7 @@ Mission.new = function(self, config)
                 error("Mission \"" .. self:getId() .. "\" can not be declined, because it was already started.", 2)
             end
             if isFunction(config.onDecline) then config.onDecline(self) end
+            eventHandler:fire("onDecline", self)
             state = 98
         end,
         ---mark the mission as started
@@ -112,6 +116,7 @@ Mission.new = function(self, config)
                 error("Mission \"" .. self:getId() .. "\" can not be started, because it was not accepted.", 2)
             end
             if isFunction(config.onStart) then config.onStart(self) end
+            eventHandler:fire("onStart", self)
             state = 10
         end,
         ---mark the mission as failed
@@ -122,7 +127,9 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onFailure) then config.onFailure(self) end
+            eventHandler:fire("onFailure", self)
             if isFunction(config.onEnd) then config.onEnd(self) end
+            eventHandler:fire("onEnd", self)
             state = 99
         end,
         ---mark the mission as successful
@@ -133,10 +140,14 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onSuccess) then config.onSuccess(self) end
+            eventHandler:fire("onSuccess", self)
             if isFunction(config.onEnd) then config.onEnd(self) end
+            eventHandler:fire("onEnd", self)
             state = 100
         end,
     }
+
+    eventHandler:fire("onCreation", mission)
 
     return mission
 end
@@ -155,6 +166,62 @@ Mission.isMission = function(self, mission)
             isFunction(mission.success) and
             isFunction(mission.fail) and
             isFunction(mission.getState)
+end
+
+--- Event listener if any mission is created
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionCreationListener = function(self, handler, priority)
+    eventHandler:register("onCreation", handler, priority)
+end
+
+--- Event listener if any mission is accepted
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionAcceptListener = function(self, handler, priority)
+    eventHandler:register("onAccept", handler, priority)
+end
+
+--- Event listener if any mission is declined
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionDeclineListener = function(self, handler, priority)
+    eventHandler:register("onDecline", handler, priority)
+end
+
+--- Event listener if any mission is started
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionStartListener = function(self, handler, priority)
+    eventHandler:register("onStart", handler, priority)
+end
+
+--- Event listener if any mission is successful
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionSuccessListener = function(self, handler, priority)
+    eventHandler:register("onSuccess", handler, priority)
+end
+
+--- Event listener if any mission failed
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionFailureListener = function(self, handler, priority)
+    eventHandler:register("onFailure", handler, priority)
+end
+
+--- Event listener if any mission ended
+--- @param self
+--- @param handler function gets `self` and the `mission` as arguments
+--- @param priority number
+Mission.registerMissionEndListener = function(self, handler, priority)
+    eventHandler:register("onEnd", handler, priority)
 end
 
 setmetatable(Mission,{
