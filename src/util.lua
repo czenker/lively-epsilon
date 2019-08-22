@@ -3,6 +3,7 @@ Util = {
     --- @param table table
     --- @return number
     size = function(table)
+        if not isTable(table) then error("Expected parameter a table, but got " .. typeInspect(table), 2) end
         local cnt = 0
         for _, _ in pairs(table) do
             cnt = cnt + 1
