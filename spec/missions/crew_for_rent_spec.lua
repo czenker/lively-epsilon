@@ -13,11 +13,24 @@ insulate("Missions:crewForRent()", function()
         assert.is_same(0, mission:getRepairCrewCount())
     end)
 
+    it("fails to be accepted if player ship does not have Menus", function()
+        local ship = CpuShip()
+        local mission = Missions:crewForRent(ship)
+        local player = PlayerSpaceship()
+
+        mission:setPlayer(player)
+
+        assert.has_error(function()
+            mission:accept()
+        end)
+    end)
+
     describe("sending crew", function()
         it("should only display the button when the player is close enough to the ship", function()
             local label = "Hello World"
             local ship = CpuShip()
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission = Missions:crewForRent(ship, {
                 distance = 1000,
                 sendCrewLabel = label,
@@ -31,18 +44,22 @@ insulate("Missions:crewForRent()", function()
 
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
 
             mission:getNeedy():setPosition(1001, 0)
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
 
             mission:getNeedy():setPosition(999, 0)
             Cron.tick(1)
             assert.is_true(player:hasButton("engineering", label))
+            assert.is_true(player:hasButton("engineering+", label))
 
             mission:getNeedy():setPosition(1001, 0)
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
 
         end)
         it("succeeds when crew count is high enough", function()
@@ -50,6 +67,7 @@ insulate("Missions:crewForRent()", function()
             local sendCrewFailedCalled = 0
             local ship = CpuShip()
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission
             mission = Missions:crewForRent(ship, {
                 distance = 1000,
@@ -91,6 +109,7 @@ insulate("Missions:crewForRent()", function()
             local sendCrewFailedCalled = 0
             local ship = CpuShip()
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission
             mission = Missions:crewForRent(ship, {
                 distance = 1000,
@@ -131,6 +150,7 @@ insulate("Missions:crewForRent()", function()
         it("is called when the crew can be picked up again", function()
             local onCrewReadyCalled = 0
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission
             mission = Missions:crewForRent(CpuShip(), {
                 duration = 3,
@@ -170,6 +190,7 @@ insulate("Missions:crewForRent()", function()
             local label = "Come Back"
             local ship = CpuShip()
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission = Missions:crewForRent(ship, {
                 distance = 1000,
                 crewCount = 4,
@@ -196,23 +217,28 @@ insulate("Missions:crewForRent()", function()
             player:setPosition(10000, 0)
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
 
             player:setPosition(1001, 0)
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
 
             player:setPosition(999, 0)
             Cron.tick(1)
             assert.is_true(player:hasButton("engineering", label))
+            assert.is_true(player:hasButton("engineering+", label))
 
             player:setPosition(1001, 0)
             Cron.tick(1)
             assert.is_false(player:hasButton("engineering", label))
+            assert.is_false(player:hasButton("engineering+", label))
         end)
         it("should return the crew", function()
             local onCrewReturnedCalled = 0
             local ship = CpuShip()
             local player = PlayerSpaceship()
+            Player:withMenu(player)
             local mission
             mission = Missions:crewForRent(ship, {
                 distance = 1000,
@@ -245,6 +271,7 @@ insulate("Missions:crewForRent()", function()
 
     it("successful mission", function()
         local player = PlayerSpaceship()
+        Player:withMenu(player)
         local mission
         mission = Missions:crewForRent(CpuShip(), {
             distance = 1000,
@@ -273,6 +300,7 @@ insulate("Missions:crewForRent()", function()
         assert.is_same(5, player:getRepairCrewCount())
 
         assert.is_false(player:hasButton("engineering", "Come Back"))
+        assert.is_false(player:hasButton("engineering+", "Come Back"))
         assert.is_same("successful", mission:getState())
     end)
 

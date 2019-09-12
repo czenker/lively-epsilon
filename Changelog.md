@@ -16,5 +16,6 @@
       end, function(comms_target, comms_source)
           return comms_source:isDocked(comms_target)
       end)
-  
+
+* `Missions:crewForRent` now requires the player to have `Player:withMenu` set
 * added `Player:withQuickDial()` to display quick dials on the relay station

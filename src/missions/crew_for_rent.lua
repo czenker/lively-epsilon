@@ -39,7 +39,10 @@ Missions.crewForRent = function(self, needy, config)
     local mission
     mission = Mission:new({
         acceptCondition = config.acceptCondition,
-        onAccept = config.onAccept,
+        onAccept = function(self)
+            if not Player:hasMenu(self:getPlayer()) then error("Expected player for crew_for_rent mission to have Player:withMenu(), but they don't.") end
+            if isFunction(config.onAccept) then config.onAccept(self) end
+        end,
         onDecline = config.onDecline,
         onStart = function(self)
             if isFunction(needy) then
@@ -66,20 +69,20 @@ Missions.crewForRent = function(self, needy, config)
                 if failOnDestruction() then
                     return
                 elseif not inRange and distance(self:getPlayer(), needy) <= maxDistance then
-                    self:getPlayer():addCustomButton("engineering", buttonId, sendCrewLabel, function()
+                    self:getPlayer():addEngineeringMenuItem(buttonId, Menu:newItem(sendCrewLabel, function()
                         if self:getPlayer():getRepairCrewCount() >= crewCount then
                             self:getPlayer():setRepairCrewCount(self:getPlayer():getRepairCrewCount() - crewCount)
                             currentRepairCrewCount = crewCount
-                            self:getPlayer():removeCustom(buttonId)
+                            self:getPlayer():removeEngineeringMenuItem(buttonId)
                             Cron.once(cronId, step2WaitForCrewReady, duration)
                             if isFunction(config.onCrewArrived) then config.onCrewArrived(mission) end
                         else
                             if isFunction(config.sendCrewFailed) then config.sendCrewFailed(mission) end
                         end
-                    end)
+                    end))
                     inRange = true
                 elseif inRange and distance(self:getPlayer(), needy) > maxDistance then
-                    self:getPlayer():removeCustom(buttonId)
+                    self:getPlayer():removeEngineeringMenuItem(buttonId)
                     inRange = false
                 end
             end
@@ -99,15 +102,15 @@ Missions.crewForRent = function(self, needy, config)
                 if failOnDestruction() then
                     return
                 elseif not inRange and distance(self:getPlayer(), needy) <= maxDistance then
-                    self:getPlayer():addCustomButton("engineering", buttonId, returnCrewLabel, function()
+                    self:getPlayer():addEngineeringMenuItem(buttonId, Menu:newItem(returnCrewLabel, function()
                         self:getPlayer():setRepairCrewCount(self:getPlayer():getRepairCrewCount() + currentRepairCrewCount)
                         currentRepairCrewCount = 0
                         if isFunction(config.onCrewReturned) then config.onCrewReturned(mission) end
                         self:success()
-                    end)
+                    end))
                     inRange = true
                 elseif inRange and distance(self:getPlayer(), needy) > maxDistance then
-                    self:getPlayer():removeCustom(buttonId)
+                    self:getPlayer():removeEngineeringMenuItem(buttonId)
                     inRange = false
                 end
             end
@@ -119,7 +122,7 @@ Missions.crewForRent = function(self, needy, config)
         onFailure = config.onFailure,
         onEnd = function(self)
             Cron.abort(cronId)
-            self:getPlayer():removeCustom(buttonId)
+            self:getPlayer():removeEngineeringMenuItem(buttonId)
 
             if isFunction(config.onEnd) then config.onEnd(self) end
         end,
