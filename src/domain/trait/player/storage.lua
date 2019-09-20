@@ -4,6 +4,10 @@ local function isWeapon(product)
     return product:getId() == "hvli" or product:getId() == "homing" or product:getId() == "mine" or product:getId() == "emp" or product:getId() == "nuke"
 end
 
+local function isScanProbe(product)
+    return product:getId() == "scanProbe"
+end
+
 --- configure storage for a player
 --- @param self
 --- @param player PlayerSpaceship
@@ -42,6 +46,8 @@ Player.withStorage = function(self, player, config)
         if not Product:isProduct(product) then error("Expected a product, but got " .. typeInspect(product)) end
         if isWeapon(product) then
             return player:getWeaponStorage(product:getId())
+        elseif isScanProbe(product) then
+            return player:getScanProbeCount()
         elseif storage[product] == nil then
             return 0
         else
@@ -58,6 +64,8 @@ Player.withStorage = function(self, player, config)
 
         if isWeapon(product) then
             return player:getWeaponStorageMax(product:getId())
+        elseif isScanProbe(product) then
+            return player:getMaxScanProbeCount()
         else
             return math.min(self:getEmptyProductStorage(product) + self:getProductStorage(product), maxStorage)
         end
@@ -72,6 +80,8 @@ Player.withStorage = function(self, player, config)
 
         if isWeapon(product) then
             return player:getWeaponStorageMax(product:getId()) - player:getWeaponStorage(product:getId())
+        elseif isScanProbe(product) then
+            return player:getMaxScanProbeCount() - player:getScanProbeCount()
         else
             return math.floor(self:getEmptyStorageSpace() / product:getSize())
         end
@@ -88,6 +98,8 @@ Player.withStorage = function(self, player, config)
 
         if isWeapon(product) then
             player:setWeaponStorage(product:getId(), player:getWeaponStorage(product:getId()) + amount)
+        elseif isScanProbe(product) then
+            player:setScanProbeCount(player:getScanProbeCount() + amount)
         else
             storage[product] = (storage[product] or 0) + amount
             if storage[product] <= 0 then storage[product] = nil end

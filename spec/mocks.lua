@@ -306,6 +306,8 @@ function PlayerSpaceship()
     local lastCustomMessage = {}
     local currentCommsScreen = nil
     local currentCommsTarget = nil
+    local maxNumberScanProbes = 8
+    local numberScanProbes = 8
 
     local player = {
         typeName = "PlayerSpaceship",
@@ -417,6 +419,19 @@ function PlayerSpaceship()
         getCurrentCommsText = function(self)
             if currentCommsScreen == nil then error("There is currently no comms open.", 2) end
             return currentCommsScreen:getWhatNpcSays(currentCommsTarget, self)
+        end,
+        getScanProbeCount = function(self)
+            return numberScanProbes
+        end,
+        getMaxScanProbeCount = function(self)
+            return maxNumberScanProbes
+        end,
+        setScanProbeCount = function(self, amount)
+            numberScanProbes = math.min(math.max(0, amount), maxNumberScanProbes)
+        end,
+        setMaxScanProbeCount = function(self, amount)
+            maxNumberScanProbes = math.max(0, amount)
+            numberScanProbes = math.min(numberScanProbes, maxNumberScanProbes)
         end,
     }
 

@@ -32,6 +32,11 @@ Station.withMerchant = function (self, station, configuration)
             error("there is no storage for " .. product .. " configured in " .. station:getCallSign(), 2)
         end
 
+        -- getRestocksScanProbes() is a new method. We do not want to fail on older versions - so keep the check for now.
+        if productId == "scanProbe" and isFunction(station.getRestocksScanProbes) and station:getRestocksScanProbes() then
+            logWarning(string.format("Station \"%s\" trades with scan probes, but also restocks them on player ships automatically for free. Consider setting station:setRestocksScanProbes(false) to disable automatic scan probe restocking.", station:getCallSign()))
+        end
+
         if conf.buyingPrice == nil and conf.sellingPrice == nil then
             error("configuration for " .. product .. " either needs a buyingPrice or a sellingPrice", 3)
         elseif conf.buyingPrice ~= nil and conf.sellingPrice ~= nil then

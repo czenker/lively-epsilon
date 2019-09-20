@@ -55,7 +55,7 @@ insulate("Player:withStorage()", function()
             assert.not_contains_value(product2, player:getStoredProducts())
         end)
 
-        it("does not return rockets, because we might not know the correct object to return", function()
+        it("does not return rockets and probes, because we might not know the correct object to return", function()
             local player = PlayerSpaceship()
             Player:withStorage(player)
 
@@ -69,6 +69,8 @@ insulate("Player:withStorage()", function()
             player:setWeaponStorage("emp", 2)
             player:setWeaponStorageMax("nuke", 1)
             player:setWeaponStorage("nuke", 1)
+            player:setMaxScanProbeCount(4)
+            player:setScanProbeCount(4)
 
             assert.is_same({}, player:getStoredProducts())
         end)
@@ -223,6 +225,24 @@ insulate("Player:withStorage()", function()
                 assert.is_same(0, player:getEmptyProductStorage(rocket))
             end
         end)
+        it("works with scan probes", function()
+            local probe = Product:new("Scan Probe", {id = "scanProbe"})
+            local player = PlayerSpaceship()
+            Player:withStorage(player)
+            player:setMaxScanProbeCount(8)
+            player:setScanProbeCount(6)
+
+            assert.is_same(6, player:getProductStorage(probe))
+            assert.is_same(8, player:getMaxProductStorage(probe))
+            assert.is_same(2, player:getEmptyProductStorage(probe))
+
+            player:setMaxScanProbeCount(0)
+            player:setScanProbeCount(0)
+
+            assert.is_same(0, player:getProductStorage(probe))
+            assert.is_same(0, player:getMaxProductStorage(probe))
+            assert.is_same(0, player:getEmptyProductStorage(probe))
+        end)
     end)
 
     describe("getStorageSpace(), getEmptyStorageSpace(), getMaxStorageSpace()", function()
@@ -373,6 +393,18 @@ insulate("Player:withStorage()", function()
                 player:modifyProductStorage(rocket, 2)
                 assert.is_same(2, player:getWeaponStorage(weapon))
             end
+        end)
+
+        it("allows to handle scan probes", function()
+            local probe = Product:new("Scan Probe", {id = "scanProbe"})
+            local player = PlayerSpaceship()
+            Player:withStorage(player)
+
+            player:setMaxScanProbeCount(4)
+            player:setScanProbeCount(0)
+
+            player:modifyProductStorage(probe, 2)
+            assert.is_same(2, player:getScanProbeCount())
         end)
     end)
 
