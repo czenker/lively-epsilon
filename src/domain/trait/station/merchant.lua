@@ -29,7 +29,7 @@ Station.withMerchant = function (self, station, configuration)
         local productId = Product:toId(product)
 
         if not station:canStoreProduct(product) then
-            error("there is no storage for " .. product .. " configured in " .. station:getCallSign(), 2)
+            error("there is no storage for " .. productId .. " configured in " .. station:getCallSign(), 2)
         end
 
         -- getRestocksScanProbes() is a new method. We do not want to fail on older versions - so keep the check for now.
