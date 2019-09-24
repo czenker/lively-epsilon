@@ -148,6 +148,28 @@ insulate("Util", function()
         end)
     end)
 
+    describe(":keys()", function()
+        it("returns the keys of a table in an arbitrary order", function()
+            local input = {
+                foo = "bar",
+                baz = "blubb",
+                number = 42,
+            }
+            local output = Util.keys(input)
+
+            assert.is_table(output)
+            assert.is_same(3, Util.size(output))
+            assert.contains_value("foo", output)
+            assert.contains_value("baz", output)
+            assert.contains_value("number", output)
+            assert.is_true(Util.isNumericTable(output))
+        end)
+        it("fails if no table is given", function()
+            assert.has_error(function() Util.keys() end)
+            assert.has_error(function() Util.keys(42) end)
+        end)
+    end)
+
     describe(":onVector()", function()
         it("returns point 1 when ratio is 0", function()
             local x, y = Util.onVector(1000, 2000, 3000, 4000, 0)

@@ -44,6 +44,18 @@ Util = {
         end
     end,
 
+    --- returns the keys of a table in an arbitrary order
+    --- @param input table
+    --- @return table
+    keys = function(input)
+        if not isTable(input) then error("expected table, but got " .. typeInspect(input), 2) end
+        local keys = {}
+        for k, _ in pairs(input) do
+            table.insert(keys, k)
+        end
+        return keys
+    end,
+
     --- generate a random unique id
     --- @return string
     randomUuid = function()
