@@ -36,6 +36,16 @@ Player.withQuickDial = function(self, player, config)
         end
     end
 
+    --- get quick dials
+    --- @return table[ShipTemplateBased|Fleet]
+    player.getQuickDials = function(self)
+        local ret = {}
+        for _, quickDial in pairs(quickDials) do
+            if quickDial:isValid() then table.insert(ret, quickDial) end
+        end
+        return ret
+    end
+
     player:addRelayMenuItem(Menu:newItem(config.label, function()
         local targets = {}
         for _, target in pairs(quickDials) do
@@ -71,5 +81,8 @@ end
 --- @param player any
 --- @return boolean
 Player.hasQuickDial = function(self, player)
-    return isTable(player) and isFunction(player.addQuickDial) and isFunction(player.removeQuickDial)
+    return isTable(player) and
+            isFunction(player.addQuickDial) and
+            isFunction(player.removeQuickDial) and
+            isFunction(player.getQuickDials)
 end
