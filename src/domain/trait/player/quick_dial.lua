@@ -37,6 +37,7 @@ Player.withQuickDial = function(self, player, config)
     end
 
     --- get quick dials
+    --- @param self
     --- @return table[ShipTemplateBased|Fleet]
     player.getQuickDials = function(self)
         local ret = {}
