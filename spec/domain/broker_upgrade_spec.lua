@@ -230,8 +230,9 @@ insulate("BrokerUpgrade:new()", function()
         it("returns the description if it is a function", function()
             local description = "This is an upate"
             local upgrade
-            upgrade = upgradeMock({description = function(callBrokerUpgrade)
-                assert.is_same(upgrade, callBrokerUpgrade)
+            upgrade = upgradeMock({description = function(arg1, arg2)
+                assert.is_same(upgrade, arg1)
+                assert.is_same(player, arg2)
                 return description
             end})
 
@@ -262,8 +263,9 @@ insulate("BrokerUpgrade:new()", function()
         it("returns the message if it is a function", function()
             local message = "Thanks for buying that upgrade"
             local upgrade
-            upgrade = upgradeMock({installMessage = function(callBrokerUpgrade)
-                assert.is_same(upgrade, callBrokerUpgrade)
+            upgrade = upgradeMock({installMessage = function(arg1, arg2)
+                assert.is_same(upgrade, arg1)
+                assert.is_same(player, arg2)
                 return message
             end})
 

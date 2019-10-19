@@ -143,4 +143,51 @@ insulate("Missions:answer()", function()
         player:selectComms("Rumpelstiltskin")
         player:commandCloseTextComm(station)
     end)
+
+    it("can have dynamic questions and answers", function()
+        local station = SpaceStation():setCallSign("Station")
+        local player = PlayerSpaceship():setCallSign("Player")
+        Station:withComms(station)
+
+        local questionCallArg1, questionCallArg2
+        local correctAnswerCallArg1, correctAnswerCallArg2
+        local wrongAnswerCallArg1, wrongAnswerCallArg2
+
+        local mission = Missions:answer(
+                station,
+                function(arg1, arg2)
+                    questionCallArg1, questionCallArg2 = arg1, arg2
+                    return "What is your ships call sign?"
+                end,
+                "I want to answer your question.", {
+                    correctAnswer = function(arg1, arg2)
+                        correctAnswerCallArg1, correctAnswerCallArg2 = arg1, arg2
+                        return arg2:getCallSign()
+                    end,
+                    correctAnswerResponse = "You are right.",
+                    wrongAnswers = function(arg1, arg2)
+                        wrongAnswerCallArg1, wrongAnswerCallArg2 = arg1, arg2
+                        return {
+                            "Not " .. arg2:getCallSign()
+                        }
+                    end,
+                    wrongAnswerResponse = "You are wrong.",
+                }
+        )
+
+        assert.is_true(Mission:isMission(mission))
+        mission:accept()
+        mission:start()
+
+        player:commandOpenTextComm(station)
+        player:selectComms("I want to answer your question.")
+        assert.is_same(mission, questionCallArg1)
+        assert.is_same(player, questionCallArg2)
+        assert.is_same("What is your ships call sign?", player:getCurrentCommsText())
+        assert.is_same(mission, correctAnswerCallArg1)
+        assert.is_same(player, correctAnswerCallArg2)
+        assert.is_same(mission, wrongAnswerCallArg1)
+        assert.is_same(player, wrongAnswerCallArg2)
+        player:commandCloseTextComm(station)
+    end)
 end)

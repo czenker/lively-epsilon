@@ -120,7 +120,7 @@ BrokerUpgrade = {
             getDescription = function(self, player)
                 if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(description) then
-                    return description(self)
+                    return description(self, player)
                 else
                     return description
                 end
@@ -132,7 +132,7 @@ BrokerUpgrade = {
             getInstallMessage = function(self, player)
                 if not isEePlayer(player) then error("Expected player to be a player object, but got " .. typeInspect(player), 2) end
                 if isFunction(installMessage) then
-                    return installMessage(self)
+                    return installMessage(self, player)
                 else
                     return installMessage
                 end
