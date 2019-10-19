@@ -67,7 +67,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
     local mission
 
     local correctScreen = function(answer)
-        return function(self, station, player)
+        return function(station, player)
             local responseText = config.correctAnswerResponse
             if isFunction(config.correctAnswerResponse) then
                 userCallback(config.correctAnswerResponse, mission, answer, player)
@@ -78,7 +78,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         end
     end
     local wrongScreen = function(answer)
-        return function(self, station, player)
+        return function(station, player)
             local responseText = config.wrongAnswerResponse
             if isFunction(config.wrongAnswerResponse) then
                 userCallback(config.wrongAnswerResponse, mission, answer, player)
@@ -89,7 +89,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         end
     end
 
-    local questionScreen = function(self, station, player)
+    local questionScreen = function(station, player)
         local questionText
         if isFunction(question) then
             questionText = question(mission, player)
@@ -103,7 +103,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         if isTable(config.wrongAnswers) then
             wrongAnswers = config.wrongAnswers
         elseif isFunction(config.wrongAnswers) then
-            wrongAnswers = config.wrongAnswers(mission)
+            wrongAnswers = config.wrongAnswers(mission, player)
             if not isTable(wrongAnswers) then
                 logError("Expected answers to be a table, but got " .. typeInspect(wrongAnswers) .. ". Assuming nil.")
                 wrongAnswers = {}
@@ -124,7 +124,7 @@ Missions.answer = function(self, commable, question, playerSays, config)
         if isString(config.correctAnswer) then
             correctAnswer = config.correctAnswer
         elseif isFunction(config.correctAnswer) then
-            correctAnswer = config.correctAnswer(mission)
+            correctAnswer = config.correctAnswer(mission, player)
             if not isNil(correctAnswer) and not isString(correctAnswer) then
                 logError("Expected correct answer to be nil or string, but got " .. typeInspect(correctAnswer) .. ". Assuming nil.")
                 correctAnswer = nil
