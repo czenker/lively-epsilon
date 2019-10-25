@@ -269,7 +269,7 @@ Util = {
 
         local ret = {}
         for k,v in pairs(table) do
-            ret[k] = mappingFunc(v)
+            ret[k] = mappingFunc(v, k)
         end
 
         return ret

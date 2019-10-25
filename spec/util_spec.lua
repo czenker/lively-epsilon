@@ -555,6 +555,13 @@ insulate("Util", function()
             assert.is_same({a=2, b=3, c=4}, output)
             assert.not_same(input, output) -- it should not change in-place
         end)
+        it("makes the keys available in the function", function()
+            local input = {a=1, b=2, c=3}
+            local output = Util.map(input, function(value, key) return key .. value end)
+
+            assert.is_same({a="a1", b="b2", c="c3"}, output)
+            assert.not_same(input, output) -- it should not change in-place
+        end)
         it("maps a numberic table", function()
             local input = {1, 2, 3, 4}
             local output = Util.map(input, function(value) return value+1 end)
