@@ -1,11 +1,16 @@
 Missions = Missions or {}
 
-local function validateThings(things)
-    if isEeShip(things) then things = {things} end
-    if not isTable(things) then error("things needs to be a table of space ships, but " .. typeInspect(things) .. " given", 3) end
+local function validate(thing)
+    return isEeObject(thing) and isFunction(thing.isScannedBy)
+end
+
+local function validateThings(things, scanLevel)
+    if validate(things) then things = {things} end
+    if not isTable(things) then error("things needs to be a table of space objects, but " .. typeInspect(things) .. " given", 3) end
 
     for _,v in pairs(things) do
-        if not isEeShip(v) then error("all things need to be space ships, but " .. typeInspect(v) .. " given", 3) end
+        if not validate(v) then error("all things need to be spaceObjects, but " .. typeInspect(v) .. " given", 3) end
+        if scanLevel ~= "simple" and not isEeShip(v) then error("ScanLevel \"" .. scanLevel .. "\" only works with spaceShips, but " .. typeInspect(v) .. " given.", 3) end
     end
 
     return things
@@ -28,12 +33,15 @@ local function initThings(things, player, isTargetScannedBy)
     return targets, knownValidTargets, knownScannedTargets
 end
 
---- The players have to scan some ``SpaceShip``s. The mission is successful when all valid targets are scanned.
+--- The players have to scan some ``SpaceShip``s or other ``SpaceObjects``. The mission is successful when all valid targets are scanned.
+--- It fails only if **all** targets are destroyed.
 ---
 --- @param self
 --- @param things function|table[CpuShip]|CpuShip a CpuShip, a table of ``CpuShip``s or a function returning a table of ``CpuShip``s
 --- @param config table
----   @field scan string (default: `full`) the required scan level
+---   @field scan string (default: `simple`) the required scan level (`fof`, `simple` or `full`)
+---   @field onScan function function(mission,thing)
+---   @field onDestruction function function(mission,thing)
 --- @return Mission
 Missions.scan = function(self, things, config)
     local cronId = Util.randomUuid()
@@ -41,14 +49,18 @@ Missions.scan = function(self, things, config)
     local knownValidTargets -- this is to keep track which targets where recently destroyed
     local knownScannedTargets
 
-    if not isFunction(things) then
-        things = validateThings(things)
-    end
-
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
-    local isTargetScannedBy = function(target, player) return target:isFriendOrFoeIdentifiedBy(player) end
+    config.scan = config.scan or "simple"
+    if config.scan ~= "fof" and config.scan ~= "simple" and config.scan ~= "full" then error("Expected a valid identifier for config.scan, but got " .. typeInspect(config.scan), 2) end
+
+    local isTargetScannedBy = function(target, player) return target:isScannedBy(player) end
+    if config.scan == "fof" then isTargetScannedBy = function(target, player) return target:isFriendOrFoeIdentifiedBy(player) end end
     if config.scan == "full" then isTargetScannedBy = function(target, player) return target:isFullyScannedBy(player) end end
+
+    if not isFunction(things) then
+        things = validateThings(things, config.scan)
+    end
 
     local mission
     mission = Mission:new({
@@ -57,7 +69,7 @@ Missions.scan = function(self, things, config)
         onDecline = config.onDecline,
         onStart = function(self)
             if isFunction(things) then
-                things = validateThings(things())
+                things = validateThings(things(), config.scan)
             end
             targets, knownValidTargets, knownScannedTargets = initThings(things, self:getPlayer(), isTargetScannedBy)
 
@@ -65,14 +77,14 @@ Missions.scan = function(self, things, config)
 
             Cron.regular(cronId, function()
                 for _, target in pairs(targets) do
-                    if not target:isValid() then
-                        if isFunction(config.onDestruction) and knownValidTargets[target] == true then
+                    if not target:isValid() and knownValidTargets[target] == true then
+                        knownValidTargets[target] = nil
+                        if isFunction(config.onDestruction) then
                             config.onDestruction(mission, target)
                         end
-                        knownValidTargets[target] = nil
                     elseif knownScannedTargets[target] == nil and isTargetScannedBy(target, self:getPlayer()) then
-                        if isFunction(config.onScan) then config.onScan(mission, target) end
                         knownScannedTargets[target] = true
+                        if isFunction(config.onScan) then config.onScan(mission, target) end
                     end
                 end
                 if mission:countUnscannedTargets() == 0 then

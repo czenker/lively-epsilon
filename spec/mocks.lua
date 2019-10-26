@@ -16,6 +16,7 @@ function SpaceObject()
     local reputationPoints = 0
     local factionId = 0
     local faction = "Independent"
+    local scannedState = "not" -- simplified version that does not take factions into account
 
     local obj = {
         setCallSign = function(self, sign)
@@ -44,6 +45,11 @@ function SpaceObject()
         getFaction = function(self) return faction end,
         isEnemy = function(self, other) return self:getFactionId() > 0 and other:getFactionId() > 0 and self:getFactionId() ~= other:getFactionId() end,
         isFriendly = function(self, other) return self:getFactionId() == other:getFactionId() end,
+        isScannedBy = function(self, player)
+            if not isEePlayer(player) then error("Mock only works for player", 2) end
+            return scannedState == "simple"
+        end,
+        scannedByPlayer = function(self) scannedState = "simple" end,
         setDescription = noop,
         setDescriptionForScanState = noop,
         getDescription = function(self) return "" end,
@@ -186,12 +192,17 @@ function SpaceShip()
             if not isEePlayer(player) then error("Mock only works for player", 2) end
             return scannedState ~= "not"
         end,
+        isScannedBy = function(self, player)
+            if not isEePlayer(player) then error("Mock only works for player", 2) end
+            return scannedState == "simple" or scannedState == "full"
+        end,
         isFullyScannedBy = function(self, player)
             if not isEePlayer(player) then error("Mock only works for player", 2) end
             return scannedState == "full"
         end,
         notScannedByPlayer = function(self) scannedState = "not"; return self end,
         friendOrFoeIdentifiedByPlayer = function(self) scannedState = "friendorfoeidentified"; return self end,
+        scannedByPlayer = function(self) scannedState = "simple" end,
         fullScannedByPlayer = function(self) scannedState = "full"; return self end,
         setDockedAt = function(self, station) docked = station end,
         isDocked = function(self, station) return station == docked end,
