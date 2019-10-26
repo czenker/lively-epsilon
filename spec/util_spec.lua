@@ -106,6 +106,10 @@ insulate("Util", function()
             assert.is_true(thing2Seen)
             assert.is_false(thing3Seen)
         end)
+
+        it("returns nil if the filter does not leave any item", function()
+            assert.is_nil(Util.random({1, 2, 3, 4}, function() return false end))
+        end)
     end)
 
     describe(":randomSort()", function()

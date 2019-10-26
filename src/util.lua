@@ -37,7 +37,9 @@ Util = {
                     keys[#keys+1] = key --Store keys in another table
                 end
             end
-            local index = keys[math.random(1, Util.size(keys))]
+            local maxIndex = Util.size(keys)
+            if maxIndex < 1 then return nil end
+            local index = keys[math.random(1, maxIndex)]
             return table[index]
         else
             return nil
