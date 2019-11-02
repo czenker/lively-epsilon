@@ -38,35 +38,35 @@ Station.withMerchant = function (self, station, configuration)
         end
 
         if conf.buyingPrice == nil and conf.sellingPrice == nil then
-            error("configuration for " .. product .. " either needs a buyingPrice or a sellingPrice", 3)
-        elseif conf.buyingPrice ~= nil and conf.sellingPrice ~= nil then
-            error("configuration for " .. product .. " can only have a buyingPrice or a sellingPrice - not both", 3)
-        elseif conf.buyingPrice ~= nil then
-            local buyingPriceFunc
-            if isNumber(conf.buyingPrice) or isNil(conf.buyingPrice) then
-                buyingPriceFunc = function() return conf.buyingPrice end
-            elseif isFunction(conf.buyingPrice) then
-                buyingPriceFunc = conf.buyingPrice
-            else error("buyingPrice needs to be a number or a function", 4)
-            end
+            error("configuration for " .. Product:toId(product) .. " either needs a buyingPrice or a sellingPrice", 3)
+        else
             merchant[productId] = {
                 product = product,
-                buyingPrice = buyingPriceFunc,
-                buyingLimit = conf.buyingLimit or nil
             }
-        elseif conf.sellingPrice ~= nil then
-            local sellingPriceFunc
-            if isNumber(conf.sellingPrice) or isNil(conf.sellingPrice) then
-                sellingPriceFunc = function() return conf.sellingPrice end
-            elseif isFunction(conf.sellingPrice) then
-                sellingPriceFunc = conf.sellingPrice
-            else error("sellingPrice needs to be a number or a function", 4)
+            if conf.buyingPrice ~= nil then
+                local buyingPriceFunc
+                if isNumber(conf.buyingPrice) or isNil(conf.buyingPrice) then
+                    buyingPriceFunc = function() return conf.buyingPrice end
+                elseif isFunction(conf.buyingPrice) then
+                    buyingPriceFunc = conf.buyingPrice
+                else
+                    error("buyingPrice needs to be a number or a function", 5)
+                end
+                merchant[productId].buyingPrice = buyingPriceFunc
+                merchant[productId].buyingLimit = conf.buyingLimit or nil
             end
-            merchant[productId] = {
-                product = product,
-                sellingPrice = sellingPriceFunc,
-                sellingLimit = conf.sellingLimit or nil
-            }
+            if conf.sellingPrice ~= nil then
+                local sellingPriceFunc
+                if isNumber(conf.sellingPrice) or isNil(conf.sellingPrice) then
+                    sellingPriceFunc = function() return conf.sellingPrice end
+                elseif isFunction(conf.sellingPrice) then
+                    sellingPriceFunc = conf.sellingPrice
+                else
+                    error("sellingPrice needs to be a number or a function", 5)
+                end
+                merchant[productId].sellingPrice = sellingPriceFunc
+                merchant[productId].sellingLimit = conf.sellingLimit or nil
+            end
         end
     end
 

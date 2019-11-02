@@ -6,6 +6,19 @@ insulate("Station:withMerchant()", function()
 
     local product = Product:new("Power Cells", {id="power"})
 
+    it("throws an error if neither buying nor selling price is set", function()
+        local station = SpaceStation()
+        Station:withStorageRooms(station, {
+            [product] = 1000
+        })
+
+        assert.has_error(function()
+            Station:withMerchant(station, {
+                [product] = {}
+            })
+        end)
+    end)
+
     describe("when configuring a bought product", function()
         local station = SpaceStation()
         Station:withStorageRooms(station, {
@@ -132,7 +145,7 @@ insulate("Station:withMerchant()", function()
             assert.is_same(42, station:getProductSellingPrice(product))
         end)
 
-        it("returns no buingPrice", function()
+        it("returns no buyingPrice", function()
             assert.is_nil(station:getProductBuyingPrice(product))
         end)
 
@@ -181,6 +194,65 @@ insulate("Station:withMerchant()", function()
         })
 
         assert.is_same(42, station:getProductSellingPrice(product))
+    end)
+    describe("when configuring a bought and sold product", function()
+        local station = SpaceStation()
+        Station:withStorageRooms(station, {
+            [product] = 1000
+        })
+        Station:withMerchant(station, {
+            [product] = { sellingPrice = 42, buyingPrice = 21 }
+        })
+
+        it("causes hasMerchant() to be true", function()
+            assert.is_true(Station:hasMerchant(station))
+        end)
+
+        it("causes isBuyingProduct() to be true", function()
+            assert.is_true(station:isBuyingProduct(product))
+        end)
+
+        it("causes isSellingProduct() to be true", function()
+            assert.is_true(station:isSellingProduct(product))
+        end)
+
+        it("does not sell below 0", function()
+            station:modifyProductStorage(product, -9999)
+            assert.is_same(0, station:getMaxProductSelling(product))
+
+            station:modifyProductStorage(product, 300)
+            assert.is_same(300, station:getMaxProductSelling(product))
+
+            station:modifyProductStorage(product, 700)
+            assert.is_same(1000, station:getMaxProductSelling(product))
+        end)
+
+        it("does not buy above the maxStorage", function()
+            station:modifyProductStorage(product, -9999)
+            assert.is_same(1000, station:getMaxProductBuying(product))
+
+            station:modifyProductStorage(product, 300)
+            assert.is_same(700, station:getMaxProductBuying(product))
+
+            station:modifyProductStorage(product, 700)
+            assert.is_same(0, station:getMaxProductBuying(product))
+        end)
+
+        it("returns the correct selling price", function()
+            assert.is_same(42, station:getProductSellingPrice(product))
+        end)
+
+        it("returns the correct buying price", function()
+            assert.is_same(21, station:getProductBuyingPrice(product))
+        end)
+
+        it("returns a list of bought products", function()
+            assert.is_same({[product:getId()] = product}, station:getProductsBought(product))
+        end)
+
+        it("returns a list of sold products", function()
+            assert.is_same({[product:getId()] = product}, station:getProductsSold(product))
+        end)
     end)
     describe("player-dependent offers", function()
         local productForFriends = Product:new("Friendly Item")
