@@ -182,8 +182,10 @@ Ship.behaveAsMiner = function (self, ship, homeStation, whenMined, config)
                         logInfo(string.format("Going to mine asteroid at %d,%d because of GM interaction", math.floor(x), math.floor(y)))
                     end
                 end
-                if ship:getOrder() == "Attack" and isEeAsteroid(ship:getOrderTarget()) then
-                    if distance(ship, ship:getOrderTarget()) < config.mineDistance then
+                if ship:getOrder() == "Attack" then
+                    if not isEeAsteroid(ship:getOrderTarget()) then
+                        decideWhatToDo()
+                    elseif distance(ship, ship:getOrderTarget()) < config.mineDistance then
                         stepMineAsteroid(ship:getOrderTarget())
                     end
                 else

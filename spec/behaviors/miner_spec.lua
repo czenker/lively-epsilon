@@ -265,6 +265,72 @@ insulate("Ship:behaveAsMiner()", function()
 
         end) end)
     end)
+
+    it("selects a new asteroid if the current target is destroyed", function()
+        withUniverse(function(logs)
+            local station = mockValidStation():setCallSign("Home")
+            local miner = mockValidMiner():setCallSign("Dummy")
+            local asteroid1 = Asteroid():setCallSign("one")
+            local asteroid2 = Asteroid():setCallSign("two")
+
+            station:setPosition(0, 0)
+            miner:setPosition(0, 0)
+            miner:setDockedAt(station)
+            asteroid1:setPosition(1000, 0)
+            asteroid2:setPosition(2000, 0)
+
+            Ship:behaveAsMiner(miner, station, function()
+                return {
+                    [product] = 42,
+                }
+            end)
+
+            Cron.tick(1)
+            assert.is_same("asteroid", miner:getMinerState())
+            assert.is_same("Attack", miner:getOrder())
+
+            local target = miner:getOrderTarget()
+
+            target:destroy()
+            Cron.tick(1)
+            assert.is_same("asteroid", miner:getMinerState())
+            assert.is_same("Attack", miner:getOrder())
+            assert.not_is_same(target, miner:getOrderTarget())
+        end)
+    end)
+
+    it("selects a new asteroid if the current target is destroyed while mining", function()
+        withUniverse(function(logs)
+            local station = mockValidStation():setCallSign("Home")
+            local miner = mockValidMiner():setCallSign("Dummy")
+            local asteroid1 = Asteroid():setCallSign("one")
+            local asteroid2 = Asteroid():setCallSign("two")
+
+            station:setPosition(100, 0)
+            miner:setPosition(0, 100)
+            miner:setDockedAt(station)
+            asteroid1:setPosition(0, 0)
+            asteroid2:setPosition(0, 500)
+
+            Ship:behaveAsMiner(miner, station, function()
+                return {
+                    [product] = 42,
+                }
+            end)
+
+            Cron.tick(1)
+            assert.is_same("mining", miner:getMinerState())
+            assert.is_same("Attack", miner:getOrder())
+
+            local target = miner:getOrderTarget()
+
+            target:destroy()
+            Cron.tick(1)
+            assert.is_same("asteroid", miner:getMinerState())
+            assert.is_same("Attack", miner:getOrder())
+            assert.not_is_same(target, miner:getOrderTarget())
+        end)
+    end)
     it("GM can change the mined asteroid", function()
         withUniverse(function()
 

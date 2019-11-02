@@ -300,7 +300,12 @@ function CpuShip()
         getOrderTargetLocation = function(self) return orderX, orderY end,
         getOrderTargetLocationX = function(self) return orderX end,
         getOrderTargetLocationY = function(self) return orderY end,
-        getOrderTarget = function(self) return orderTarget end,
+        getOrderTarget = function(self)
+            if isEeObject(orderTarget) and orderTarget:isValid() then
+                return orderTarget
+            end
+            return nil
+        end,
 
         typeName = "CpuShip",
     })
