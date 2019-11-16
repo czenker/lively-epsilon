@@ -152,6 +152,20 @@ insulate("Mission", function()
                 mission:accept()
                 assert.is_true(callbackCalled)
             end)
+            it ("calls the onAccept eventListener", function()
+                local listenerCalled = false
+                local calledArg1
+                local mission = newMission()
+                mission:addAcceptListener(function(_, arg1)
+                    calledArg1 = arg1
+                    listenerCalled = true
+                end)
+
+                assert.is_false(listenerCalled)
+                mission:accept()
+                assert.is_true(listenerCalled)
+                assert.is_same(mission, calledArg1)
+            end)
             it("fails when acceptCondition callback returns false", function()
                 local mission = newMission({acceptCondition = function() return false end})
 
@@ -181,6 +195,20 @@ insulate("Mission", function()
                 mission:decline()
                 assert.is_true(callbackCalled)
             end)
+            it ("calls the onDecline eventListener", function()
+                local listenerCalled = false
+                local calledArg1
+                local mission = newMission()
+                mission:addDeclineListener(function(_, arg1)
+                    calledArg1 = arg1
+                    listenerCalled = true
+                end)
+
+                assert.is_false(listenerCalled)
+                mission:decline()
+                assert.is_true(listenerCalled)
+                assert.is_same(mission, calledArg1)
+            end)
 
             it("fails if onDecline callback fails", function()
                 local mission = newMission({onDecline = function() error("boom") end})
@@ -200,6 +228,20 @@ insulate("Mission", function()
 
                 mission:start()
                 assert.is_true(callbackCalled)
+            end)
+            it ("calls the onStart eventListener", function()
+                local listenerCalled = false
+                local calledArg1
+                local mission = acceptedMission()
+                mission:addStartListener(function(_, arg1)
+                    calledArg1 = arg1
+                    listenerCalled = true
+                end)
+
+                assert.is_false(listenerCalled)
+                mission:start()
+                assert.is_true(listenerCalled)
+                assert.is_same(mission, calledArg1)
             end)
 
             it("fails if onDecline callback fails", function()
@@ -230,6 +272,33 @@ insulate("Mission", function()
                 mission:fail()
                 assert.is_true(onFailure)
                 assert.is_true(onEndCalled)
+            end)
+
+            it ("calls the onFailure eventListener and then the onEnd eventListener", function()
+                local onFailureCalled = false
+                local onFailureCalledArg1
+                local onEndCalled = false
+                local onEndCalledArg1
+                local wasOnFailureCalled = false
+                local mission = startedMission()
+                mission:addFailureListener(function(_, arg1)
+                    onFailureCalledArg1 = arg1
+                    onFailureCalled = true
+                end)
+                mission:addEndListener(function(_, arg1)
+                    wasOnFailureCalled = onFailureCalled
+                    onEndCalledArg1 = arg1
+                    onEndCalled = true
+                end)
+
+                assert.is_false(onFailureCalled)
+                assert.is_false(onEndCalled)
+                mission:fail()
+                assert.is_true(onFailureCalled)
+                assert.is_same(mission, onFailureCalledArg1)
+                assert.is_true(wasOnFailureCalled)
+                assert.is_true(onEndCalled)
+                assert.is_same(mission, onEndCalledArg1)
             end)
 
             it("fails if onFailure callback fails", function()
@@ -266,6 +335,33 @@ insulate("Mission", function()
                 mission:success()
                 assert.is_true(onSuccessCalled)
                 assert.is_true(onEndCalled)
+            end)
+
+            it ("calls the onFailure eventListener and then the onEnd eventListener", function()
+                local onSuccessCalled = false
+                local onSuccessCalledArg1
+                local onEndCalled = false
+                local onEndCalledArg1
+                local wasOnSuccessCalled = false
+                local mission = startedMission()
+                mission:addSuccessListener(function(_, arg1)
+                    onSuccessCalledArg1 = arg1
+                    onSuccessCalled = true
+                end)
+                mission:addEndListener(function(_, arg1)
+                    wasOnSuccessCalled = onSuccessCalled
+                    onEndCalledArg1 = arg1
+                    onEndCalled = true
+                end)
+
+                assert.is_false(onSuccessCalled)
+                assert.is_false(onEndCalled)
+                mission:success()
+                assert.is_true(onSuccessCalled)
+                assert.is_same(mission, onSuccessCalledArg1)
+                assert.is_true(wasOnSuccessCalled)
+                assert.is_true(onEndCalled)
+                assert.is_same(mission, onEndCalledArg1)
             end)
 
             it("fails if onSuccess callback fails", function()

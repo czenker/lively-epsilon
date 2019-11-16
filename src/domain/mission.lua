@@ -35,6 +35,15 @@ Mission.new = function(self, config)
 
     local id = config.id or Util.randomUuid()
 
+    local selfEventHandler = EventHandler:new({allowedEvents = {
+        "onAccept",
+        "onDecline",
+        "onStart",
+        "onSuccess",
+        "onFailure",
+        "onEnd",
+    }})
+
     local state = 0
 
     local mission = {
@@ -95,9 +104,20 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onAccept) then config.onAccept(self) end
+            selfEventHandler:fire("onAccept", self)
             eventHandler:fire("onAccept", self)
 
             state = 5
+        end,
+        --- Event listener if this mission is accepted
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addAcceptListener = function(self, handler, priority)
+            if state ~= 0 then
+                logWarning("Accept Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onAccept", handler, priority)
         end,
         ---mark the mission as declined
         ---@param self
@@ -106,8 +126,19 @@ Mission.new = function(self, config)
                 error("Mission \"" .. self:getId() .. "\" can not be declined, because it was already started.", 2)
             end
             if isFunction(config.onDecline) then config.onDecline(self) end
+            selfEventHandler:fire("onDecline", self)
             eventHandler:fire("onDecline", self)
             state = 98
+        end,
+        --- Event listener if this mission is declined
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addDeclineListener = function(self, handler, priority)
+            if state ~= 0 then
+                logWarning("Decline Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onDecline", handler, priority)
         end,
         ---mark the mission as started
         ---@param self
@@ -116,8 +147,19 @@ Mission.new = function(self, config)
                 error("Mission \"" .. self:getId() .. "\" can not be started, because it was not accepted.", 2)
             end
             if isFunction(config.onStart) then config.onStart(self) end
+            selfEventHandler:fire("onStart", self)
             eventHandler:fire("onStart", self)
             state = 10
+        end,
+        --- Event listener if this mission is started
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addStartListener = function(self, handler, priority)
+            if state >= 10 then
+                logWarning("Start Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onStart", handler, priority)
         end,
         ---mark the mission as failed
         ---@param self
@@ -127,10 +169,22 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onFailure) then config.onFailure(self) end
+            selfEventHandler:fire("onFailure", self)
             eventHandler:fire("onFailure", self)
             if isFunction(config.onEnd) then config.onEnd(self) end
+            selfEventHandler:fire("onEnd", self)
             eventHandler:fire("onEnd", self)
             state = 99
+        end,
+        --- Event listener if this mission fails
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addFailureListener = function(self, handler, priority)
+            if state > 10 then
+                logWarning("Fail Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onFailure", handler, priority)
         end,
         ---mark the mission as successful
         ---@param self
@@ -140,10 +194,32 @@ Mission.new = function(self, config)
             end
 
             if isFunction(config.onSuccess) then config.onSuccess(self) end
+            selfEventHandler:fire("onSuccess", self)
             eventHandler:fire("onSuccess", self)
             if isFunction(config.onEnd) then config.onEnd(self) end
+            selfEventHandler:fire("onEnd", self)
             eventHandler:fire("onEnd", self)
             state = 100
+        end,
+        --- Event listener if this mission is successful
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addSuccessListener = function(self, handler, priority)
+            if state > 10 then
+                logWarning("Fail Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onSuccess", handler, priority)
+        end,
+        --- Event listener if this mission end
+        --- @param self
+        --- @param handler function gets `self` and the `mission` as arguments
+        --- @param priority number
+        addEndListener = function(self, handler, priority)
+            if state > 10 then
+                logWarning("End Listener added to Mission \"" .. self:getId() .. "\" will never be called, because mission is in state " .. self:getState() .. ".")
+            end
+            selfEventHandler:register("onEnd", handler, priority)
         end,
     }
 
