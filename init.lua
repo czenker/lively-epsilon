@@ -43,6 +43,7 @@ local myPackages = {
     "lively_epsilon/src/domain/trait/station/production.lua",
 
     "lively_epsilon/src/domain/mission.lua",
+    "lively_epsilon/src/domain/mission_chain.lua",
     "lively_epsilon/src/domain/trait/mission/broker.lua",
     "lively_epsilon/src/domain/trait/mission/for_player.lua",
     "lively_epsilon/src/domain/trait/mission/time_limit.lua",
