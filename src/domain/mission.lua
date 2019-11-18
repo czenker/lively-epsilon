@@ -244,6 +244,15 @@ Mission.isMission = function(self, mission)
             isFunction(mission.getState)
 end
 
+--- check if a thing is a `Mission` and has a parent mission
+--- @param self
+--- @param mission any
+--- @return boolean
+Mission.isSubMission = function(self, mission)
+    return Mission:isMission(mission) and
+            isFunction(mission.getParentMission)
+end
+
 --- Event listener if any mission is created
 --- @param self
 --- @param handler function gets `self` and the `mission` as arguments

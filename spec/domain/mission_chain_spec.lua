@@ -5,13 +5,17 @@ insulate("Mission:newChain()", function()
     require "spec.asserts"
 
     describe(":newChain()", function()
-        it("creates a valid mission", function()
+        it("creates a valid mission and sets the parent mission", function()
             local subMission1 = Mission:new()
             local subMission2 = Mission:new()
 
             local mission = Mission:newChain(subMission1, subMission2)
 
             assert.is_true(Mission:isMission(mission))
+            assert.is_true(Mission:isSubMission(subMission1))
+            assert.is_same(mission, subMission1:getParentMission())
+            assert.is_true(Mission:isSubMission(subMission2))
+            assert.is_same(mission, subMission2:getParentMission())
         end)
         it("allows to set config", function()
             local subMission1 = Mission:new()
@@ -57,6 +61,17 @@ insulate("Mission:newChain()", function()
             assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
 
             subMission3:success()
+            assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
+        end)
+
+        it("fails if any sub mission is already part of another mission container", function()
+            local subMission1 = Mission:new()
+            local subMission2 = Mission:new()
+            local subMission3 = Mission:new()
+            local subMission4 = Mission:new()
+
+            Mission:newChain(subMission1, subMission4)
+
             assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
         end)
     end)

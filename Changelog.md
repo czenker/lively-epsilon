@@ -27,3 +27,4 @@
 * added `Player:withQuickDial()` to display quick dials on the relay station
 * `Station:withStorage` can now handle Scan Probes as products. Use the id `scanProbe`.
 * Missions can have event listeners added from outside via `mission:addSuccessListener()`, etc.
+* `Mision:newChain()` allows to create chained missions where the next starts when the previous is finished

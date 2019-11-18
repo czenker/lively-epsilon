@@ -17,6 +17,7 @@ Mission.newChain = function(self, ...)
 
     for _, arg in pairs({...}) do
         if Mission:isMission(arg) then
+            if Mission:isSubMission(arg) then error("Submissions can not be part of other mission containers, but " .. arg:getId() " is already part of " .. arg:getParentMission():getId() .. ".", 2) end
             if arg:getState() ~= "new" then error("Expected all missions for mission chain, to be new, but " .. arg:getId() .. " is " .. arg:getState(), 2) end
             table.insert(subMissions, arg)
         elseif isTable(arg) then
@@ -86,6 +87,10 @@ Mission.newChain = function(self, ...)
         if currentMission ~= nil and currentMission:getState() == "started" then
             currentMission:fail()
         end
+    end
+
+    for _, subMission in pairs(subMissions) do
+        subMission.getParentMission = function() return mission end
     end
 
     return mission
