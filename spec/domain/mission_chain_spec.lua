@@ -231,4 +231,31 @@ insulate("Mission:newChain()", function()
 
         -- behavior on any further sub mission state changes are undefined
     end)
+
+    describe(":getCurrentMission()", function()
+        it("returns the correct currently running mission", function()
+            local subMission1 = Mission:new()
+            local subMission2 = Mission:new()
+            local subMission3 = Mission:new()
+
+            local mission = Mission:newChain(subMission1, subMission2, subMission3)
+
+            assert.is_nil(mission:getCurrentMission())
+
+            mission:accept()
+            assert.is_nil(mission:getCurrentMission())
+
+            mission:start()
+            assert.is_same(subMission1, mission:getCurrentMission())
+
+            subMission1:success()
+            assert.is_same(subMission2, mission:getCurrentMission())
+
+            subMission2:success()
+            assert.is_same(subMission3, mission:getCurrentMission())
+
+            subMission3:success()
+            assert.is_nil(mission:getCurrentMission())
+        end)
+    end)
 end)

@@ -89,6 +89,14 @@ Mission.newChain = function(self, ...)
         end
     end
 
+    mission.getCurrentMission = function()
+        if mission:getState() == "started" then
+            return subMissions[currentMissionKey]
+        else
+            return nil
+        end
+    end
+
     for _, subMission in pairs(subMissions) do
         subMission.getParentMission = function() return mission end
     end
