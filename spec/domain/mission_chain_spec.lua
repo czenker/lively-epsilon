@@ -1,15 +1,15 @@
-insulate("Mission:newChain()", function()
+insulate("Mission:chain()", function()
 
     require "init"
     require "spec.mocks"
     require "spec.asserts"
 
-    describe(":newChain()", function()
+    describe(":chain()", function()
         it("creates a valid mission and sets the parent mission", function()
             local subMission1 = Mission:new()
             local subMission2 = Mission:new()
 
-            local mission = Mission:newChain(subMission1, subMission2)
+            local mission = Mission:chain(subMission1, subMission2)
 
             assert.is_true(Mission:isMission(mission))
             assert.is_true(Mission:isSubMission(subMission1))
@@ -22,7 +22,7 @@ insulate("Mission:newChain()", function()
             local subMission2 = Mission:new()
 
             local onAcceptCalled = false
-            local mission = Mission:newChain(subMission1, subMission2, {onAccept = function()
+            local mission = Mission:chain(subMission1, subMission2, {onAccept = function()
                 onAcceptCalled = true
             end})
 
@@ -32,21 +32,21 @@ insulate("Mission:newChain()", function()
 
         it("fails if no sub missions are given", function()
             assert.has_error(function()
-                Mission:newChain()
+                Mission:chain()
             end)
         end)
 
         it("fails if no sub missions are given", function()
             assert.has_error(function()
-                Mission:newChain()
+                Mission:chain()
             end)
         end)
 
         it("fails on invalid parameters", function()
-            assert.has_error(function() Mission:newChain(42) end)
-            assert.has_error(function() Mission:newChain({}) end)
-            assert.has_error(function() Mission:newChain("broken") end)
-            assert.has_error(function() Mission:newChain(CpuShip()) end)
+            assert.has_error(function() Mission:chain(42) end)
+            assert.has_error(function() Mission:chain({}) end)
+            assert.has_error(function() Mission:chain("broken") end)
+            assert.has_error(function() Mission:chain(CpuShip()) end)
         end)
 
         it("fails if any sub mission is not \"new\"", function()
@@ -55,13 +55,13 @@ insulate("Mission:newChain()", function()
             local subMission3 = Mission:new()
 
             subMission3:accept()
-            assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
+            assert.has_error(function() Mission:chain(subMission1, subMission2, subMission3) end)
 
             subMission3:start()
-            assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
+            assert.has_error(function() Mission:chain(subMission1, subMission2, subMission3) end)
 
             subMission3:success()
-            assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
+            assert.has_error(function() Mission:chain(subMission1, subMission2, subMission3) end)
         end)
 
         it("fails if any sub mission is already part of another mission container", function()
@@ -70,9 +70,9 @@ insulate("Mission:newChain()", function()
             local subMission3 = Mission:new()
             local subMission4 = Mission:new()
 
-            Mission:newChain(subMission1, subMission4)
+            Mission:chain(subMission1, subMission4)
 
-            assert.has_error(function() Mission:newChain(subMission1, subMission2, subMission3) end)
+            assert.has_error(function() Mission:chain(subMission1, subMission2, subMission3) end)
         end)
     end)
 
@@ -81,7 +81,7 @@ insulate("Mission:newChain()", function()
         local subMission2 = Mission:new()
         local subMission3 = Mission:new()
 
-        local mission = Mission:newChain(subMission1, subMission2, subMission3)
+        local mission = Mission:chain(subMission1, subMission2, subMission3)
 
         assert.is_same("new", mission:getState())
         assert.is_same("new", subMission1:getState())
@@ -123,7 +123,7 @@ insulate("Mission:newChain()", function()
         local subMission1 = Mission:new()
         local subMission2 = Mission:new()
 
-        local mission = Mission:newChain(subMission1, subMission2)
+        local mission = Mission:chain(subMission1, subMission2)
 
         assert.is_same("new", mission:getState())
         assert.is_same("new", subMission1:getState())
@@ -149,7 +149,7 @@ insulate("Mission:newChain()", function()
         local subMission1 = Mission:new()
         local subMission2 = Mission:new()
 
-        local mission = Mission:newChain(subMission1, subMission2)
+        local mission = Mission:chain(subMission1, subMission2)
 
         assert.is_same("new", mission:getState())
         assert.is_same("new", subMission1:getState())
@@ -180,7 +180,7 @@ insulate("Mission:newChain()", function()
         local subMission1 = Mission:new()
         local subMission2 = Mission:new()
 
-        local mission = Mission:newChain(subMission1, subMission2)
+        local mission = Mission:chain(subMission1, subMission2)
 
         assert.is_same("new", mission:getState())
         assert.is_same("new", subMission1:getState())
@@ -208,7 +208,7 @@ insulate("Mission:newChain()", function()
         local subMission1 = Mission:new()
         local subMission2 = Mission:new()
 
-        local mission = Mission:newChain(subMission1, subMission2)
+        local mission = Mission:chain(subMission1, subMission2)
 
         assert.is_same("new", mission:getState())
         assert.is_same("new", subMission1:getState())
@@ -238,7 +238,7 @@ insulate("Mission:newChain()", function()
             local subMission2 = Mission:new()
             local subMission3 = Mission:new()
 
-            local mission = Mission:newChain(subMission1, subMission2, subMission3)
+            local mission = Mission:chain(subMission1, subMission2, subMission3)
 
             assert.is_nil(mission:getCurrentMission())
 

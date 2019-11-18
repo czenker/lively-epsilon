@@ -11,7 +11,7 @@ Mission = Mission or {}
 ---   @field onSuccess function gets `self` as argument
 ---   @field onFailure function gets `self` as argument
 ---   @field onEnd function gets `self` as argument
-Mission.newChain = function(self, ...)
+Mission.chain = function(self, ...)
     local config = nil
     local subMissions = {}
 
