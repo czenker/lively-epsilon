@@ -24,6 +24,66 @@ insulate("documentation on Mission", function()
             mission:success()
         end)
     end)
+    it("chain", function()
+        withUniverse(function()
+            -- tag::chain[]
+            local subMission1 = Mission:new({})
+            local subMission2 = Mission:new({})
+
+            local mission = Mission:chain(subMission1, subMission2)
+
+            mission:accept()
+            -- this starts subMission1
+            mission:start()
+            -- end::chain[]
+            assert.is_same("started", subMission1:getState())
+            -- tag::chain[]
+
+            -- this will start subMission2
+            subMission1:success()
+            -- end::chain[]
+            assert.is_same("successful", subMission1:getState())
+            assert.is_same("started", subMission2:getState())
+            -- tag::chain[]
+
+            -- this will mark the mission as successful
+            subMission2:success()
+            -- end::chain[]
+            assert.is_same("successful", subMission2:getState())
+            assert.is_same("successful", mission:getState())
+        end)
+    end)
+    it("allOf", function()
+        withUniverse(function()
+            -- tag::allOf[]
+            local subMission1 = Mission:new({})
+            local subMission2 = Mission:new({})
+
+            local mission = Mission:allOf(subMission1, subMission2)
+
+            mission:accept()
+            -- this starts subMission1 and subMission2
+            mission:start()
+            -- end::allOf[]
+            assert.is_same("started", subMission1:getState())
+            assert.is_same("started", subMission2:getState())
+            -- tag::allOf[]
+
+            -- this will not yet finish the mission
+            subMission1:success()
+            -- end::allOf[]
+            assert.is_same("successful", subMission1:getState())
+            assert.is_same("started", subMission2:getState())
+            assert.is_same("started", mission:getState())
+            -- tag::allOf[]
+
+            -- this will mark the mission as successful
+            subMission2:success()
+            -- end::allOf[]
+            assert.is_same("successful", subMission2:getState())
+            assert.is_same("successful", mission:getState())
+        end)
+    end)
     it("forPlayer", function()
         withUniverse(function()
             -- tag::for-player[]

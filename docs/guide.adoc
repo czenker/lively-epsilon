@@ -567,6 +567,32 @@ The callback `onEnd` is special in the regards that it will be called as soon as
 
 Read more on Missions in the link:reference.html#mission-new[Reference] and the link:spec.html#mission-new[Specification].
 
+==== Combining missions
+
+`Mission:chain()` combines multiple missions in a daisy chain: The next mission is started as soon
+as the previous is successful. In case any sub mission fails the whole chain of missions fail.
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=chain]
+----
+
+Read more on `Mission:chain()` in the link:reference.html#mission-chain[Reference] and the link:spec.html#mission-chain[Specification].
+
+`Mission:allOf()` needs to finish all the sub missions. They are all started at the same time and
+can be finished in any order. Should any of them fail, then the whole mission fails.
+
+[source,lua,indent=0]
+----
+include::examples/60_mission_spec.lua[tag=allOf]
+----
+
+Read more on `Mission:allOf()` in the link:reference.html#mission-allof[Reference] and the link:spec.html#mission-allof[Specification].
+
+Apart from that, missions created with `Mission:chain()` and `Mission:allOf()` behave the same way
+as missions created with `Mission:new()`: You can add event listeners to it, traverse the states
+and apply any of the mission traits.
+
 ==== Mission Traits
 
 There are multiple traits that can modify the way a mission works.
