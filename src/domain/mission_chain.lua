@@ -2,8 +2,7 @@ Mission = Mission or {}
 
 --- A mission chain where all submissions have to be run in the specified order
 --- @param self
---- @param ... Mission
---- @param config table
+--- @param ... Mission|table
 ---   @field acceptCondition function gets `self` as arguments. should return `true` or `false` whether the mission can be accepted
 ---   @field onAccept function gets `self` as argument
 ---   @field onDecline function gets `self` as argument

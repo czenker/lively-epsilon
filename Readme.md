@@ -18,7 +18,12 @@ you find useful or drop me a line if you like it.
 
 ### Documentation
 
-The documentation can be read online at <https://czenker.github.io/lively-epsilon/>.
+The documentation can be [read online](https://czenker.github.io/lively-epsilon/).
+
+[![Guide](https://img.shields.io/badge/-Guide-green)](https://czenker.github.io/lively-epsilon/guide.html)
+[![API Reference](https://img.shields.io/badge/-API_Reference-yellowgreen)](https://czenker.github.io/lively-epsilon/reference.html)
+[![Specification](https://img.shields.io/badge/-Specification-grey)](https://czenker.github.io/lively-epsilon/spec.html)
+
 
 ### Development
 
