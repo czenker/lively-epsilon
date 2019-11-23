@@ -492,6 +492,94 @@ insulate("Util", function()
         end)
     end)
 
+    describe(":distanceToLineSegment()", function()
+        it("fails if any argument is not a number", function()
+            assert.has_error(function() Util.distanceToLineSegment(0, 0, 1000, 0, 0, "") end)
+            assert.has_error(function() Util.distanceToLineSegment(0, 0, 1000, 0, "", 0) end)
+            assert.has_error(function() Util.distanceToLineSegment(0, 0, 1000, "", 0, 0) end)
+            assert.has_error(function() Util.distanceToLineSegment(0, 0, "fo", 0, 0, 0) end)
+            assert.has_error(function() Util.distanceToLineSegment(0, "", 1000, 0, 0, 0) end)
+            assert.has_error(function() Util.distanceToLineSegment("", 0, 1000, 0, 0, 0) end)
+        end)
+        it("fails if start and end are identical", function()
+            assert.has_error(function() Util.distanceToLineSegment(0, 0, 0, 0, 0, 0) end)
+            assert.has_error(function() Util.distanceToLineSegment(100, 0, 100, 0, 0, 0) end)
+        end)
+        it("returns 0 if point is on the line segment", function()
+            assert.is_same(0, Util.distanceToLineSegment(0, 0, 1000, 0, 0, 0))
+            assert.is_same(0, Util.distanceToLineSegment(0, 0, 1000, 0, 1000, 0))
+            assert.is_same(0, Util.distanceToLineSegment(0, 0, 1000, 0, 500, 0))
+        end)
+        it("returns distance if point is on the line, but outside the segment", function()
+            assert.is_same(1000, Util.distanceToLineSegment(0, 0, 1000, 0, 2000, 0))
+            assert.is_same(500, Util.distanceToLineSegment(0, 0, 1000, 0, -500, 0))
+        end)
+        it("returns distance of a point from a line segment (when closest point is on the line)", function()
+            assert.is_same(200, Util.distanceToLineSegment(
+                0, 0,
+                1000, 0,
+                500, 200
+            ))
+            assert.is_same(200, Util.distanceToLineSegment(
+                0, 0,
+                1000, 0,
+                500, -200
+            ))
+
+            -- the same shifted to the right
+            assert.is_same(200, Util.distanceToLineSegment(
+                300, 0,
+                1300, 0,
+                800, 200
+            ))
+            assert.is_same(200, Util.distanceToLineSegment(
+                300, 0,
+                1300, 0,
+                800, -200
+            ))
+
+            -- and now rotate the whole thing
+            for _, deg in pairs({30, 45, 60, 90, 120, 150}) do
+                deg = deg / 180 * math.pi
+                local rotate = function(x, y)
+                    return math.cos(deg) * x - math.sin(deg) * y, math.sin(deg) * x + math.cos(deg) * y
+                end
+
+                local startX, startY = rotate(300, 0)
+                local endX, endY = rotate(1300, 0)
+
+                local x1, y1 = rotate(800, 200)
+                assert.is_same(200, Util.round(Util.distanceToLineSegment(startX, startY, endX, endY, x1, y1)))
+
+                local x2, y2 = rotate(800, -200)
+                assert.is_same(200, Util.round(Util.distanceToLineSegment(startX, startY, endX, endY, x2, y2)))
+            end
+        end)
+        it("returns distance of a point from a line segment (when closest point is the end)", function()
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, 1300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, 1300, -200))
+        end)
+
+        it("returns distance of a point from a line segment (when closest point is the start)", function()
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, 300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, 300, -200))
+        end)
+        it("can use objects instead of positions", function()
+            local start = CpuShip():setPosition(300, 0)
+            local stop = CpuShip():setPosition(1300, 0)
+            local point = CpuShip():setPosition(1300, 200)
+
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, 1300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(start, 1300, 0, 1300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, stop, 1300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, 1300, 0, point))
+            assert.is_same(200, Util.distanceToLineSegment(start, stop, 1300, 200))
+            assert.is_same(200, Util.distanceToLineSegment(start, 1300, 0, point))
+            assert.is_same(200, Util.distanceToLineSegment(300, 0, stop, point))
+            assert.is_same(200, Util.distanceToLineSegment(start, stop, point))
+        end)
+    end)
+
     describe(":heading()", function()
         it("takes positive y axis as 180°", function()
             local one, two = CpuShip(), CpuShip()

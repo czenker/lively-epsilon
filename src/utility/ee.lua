@@ -67,6 +67,10 @@ end
 function isEeScanProbe(thing)
     return isEeObject(thing) and thing.typeName == "ScanProbe"
 end
+-- check if the given variable is a Planet object from EmptyEpsilon
+function isEePlanet(thing)
+    return isEeObject(thing) and thing.typeName == "Planet"
+end
 
 function isVector2f(thing)
     return Util.isNumericTable(thing) and isNumber(thing[1]) and isNumber(thing[2])

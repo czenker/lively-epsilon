@@ -164,6 +164,55 @@ Util = {
         return math.deg(math.atan(dy, dx)), math.sqrt(dx * dx + dy * dy)
     end,
 
+    --- calculate the minimum distance of a point to a line segment
+    ---
+    --- You can either give two arguments for x and y coordinates or one for a SpaceObject
+    ---
+    --- @param startX number|SpaceObject x-coordinate of line start
+    --- @param startY number|SpaceObject y-coordinate of line start
+    --- @param endX number|SpaceObject x-coordinate of line end
+    --- @param endY number|SpaceObject|nil y-coordinate of line end
+    --- @param x number|SpaceObject|nil x-coordinate of point
+    --- @param y number|nil y-coordinate of point
+    --- @return number
+    distanceToLineSegment = function(startX, startY, endX, endY, x, y)
+        if isEeObject(startX) then
+            endX, endY, x, y = startY, endX, endY, x
+            startX, startY = startX:getPosition()
+        end
+        if isEeObject(endX) then
+            x, y = endY, x
+            endX, endY = endX:getPosition()
+        end
+        if isEeObject(x) then
+            x, y = x:getPosition()
+        end
+        if not isNumber(startX) then error("All arguments have to be numbers, but got " .. typeInspect(startX) .. " as first argument.", 2) end
+        if not isNumber(startY) then error("All arguments have to be numbers, but got " .. typeInspect(startY) .. " as second argument.", 2) end
+        if not isNumber(endX) then error("All arguments have to be numbers, but got " .. typeInspect(endX) .. " as third argument.", 2) end
+        if not isNumber(endY) then error("All arguments have to be numbers, but got " .. typeInspect(endY) .. " as fourth argument.", 2) end
+        if not isNumber(x) then error("All arguments have to be numbers, but got " .. typeInspect(x) .. " as fifth argument.", 2) end
+        if not isNumber(y) then error("All arguments have to be numbers, but got " .. typeInspect(y) .. " as sixth argument.", 2) end
+        if startX == endX and startY == endY then error(string.format("start and end should not be the same point, but got (%f, %f).", startX, startY), 2) end
+
+        local xd = endX - startX
+        local yd = endY - startY
+
+        local d = (xd * (x - startX) + yd * (y - startY)) / (xd*xd + yd*yd)
+
+        if d < 0 then
+            return distance(startX, startY, x, y)
+        elseif d > 1 then
+            return distance(endX, endY, x, y)
+        else
+            -- this is the closest location to the point on the line segment
+            local px = d * xd + startX
+            local py = d * yd + startY
+
+            return distance(x, y, px, py)
+        end
+    end,
+
     --- returns the heading in the coordinate system used for the science station
     --- @param a SpaceShip|integer
     --- @param b SpaceShip|integer
