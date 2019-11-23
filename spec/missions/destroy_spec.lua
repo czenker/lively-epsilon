@@ -309,6 +309,31 @@ insulate("Missions:destroy()", function()
             assert.is_same(1, callback4Called)
             assert.is_same(1, callback5Called)
         end)
+        it("is only called once if callback errors", function()
+            local enemy1 = CpuShip()
+            local enemy2 = CpuShip()
+            local onDestructionCalled = 0
+            local mission
+            mission = Missions:destroy({enemy1, enemy2}, {onDestruction = function(_)
+                onDestructionCalled = onDestructionCalled + 1
+                error("Intentional error")
+            end})
+
+            mission:setPlayer(player)
+            mission:accept()
+            mission:start()
+
+            Cron.tick(1)
+            assert.is_same(0, onDestructionCalled)
+
+            enemy1:destroy()
+            Cron.tick(1)
+            assert.is_same(1, onDestructionCalled)
+            -- it should not be called again
+            Cron.tick(1)
+            assert.is_same(1, onDestructionCalled)
+
+        end)
     end)
 
     describe("config.onApproach", function()

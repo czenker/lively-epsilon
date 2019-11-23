@@ -66,12 +66,12 @@ Missions.destroy = function(self, things, config)
                 for _, enemy in pairs(enemies) do
                     if not enemy:isValid() then
                         if isFunction(config.onDestruction) and knownValidEnemies[enemy] == true then
-                            config.onDestruction(mission, enemy)
+                            userCallback(config.onDestruction, mission, enemy)
                         end
                         knownValidEnemies[enemy] = nil
                     elseif onApproachTriggered == false then
                         if distance(enemy, self:getPlayer()) < approachDistance then
-                            config.onApproach(self, enemy)
+                            userCallback(config.onApproach, self, enemy)
                             onApproachTriggered = true
                         end
                     end
@@ -86,7 +86,7 @@ Missions.destroy = function(self, things, config)
         onEnd = function(self)
             Cron.abort(cronId)
 
-            if isFunction(config.onEnd) then config.onEnd(self) end
+            if isFunction(config.onEnd) then userCallback(config.onEnd, self) end
         end,
     })
 
