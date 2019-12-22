@@ -1,5 +1,8 @@
 Chatter = Chatter or {}
 
+-- track the last 10 used factory keys
+local lastUsedFactoryKeysSize = 10
+
 local find
 -- returns nil or a table of valid shipTemplateBaseds
 find = function(factory, found, others)
@@ -69,6 +72,7 @@ Chatter.newNoise = function(self, chatter, config)
 
     local factories = {}
     local factoryKeys = {}
+    local lastUsedFactoryKeys = {}
 
     local doit = function()
         if Util.size(factories) == 0 then
@@ -96,13 +100,31 @@ Chatter.newNoise = function(self, chatter, config)
 
         shipTemplateBaseds = Util.randomSort(shipTemplateBaseds)
 
-        for _,factoryKey in pairs(Util.randomSort(factoryKeys)) do
+        local keys = Util.randomSort(factoryKeys)
+
+        -- prevent repetition of chats
+        local malusByKey = {}
+        for i=1,lastUsedFactoryKeysSize do
+            local key = lastUsedFactoryKeys[i]
+            if key ~= nil then
+                malusByKey[key] = (malusByKey[key] or 0) + (lastUsedFactoryKeysSize - i + 1)
+            end
+        end
+
+        table.sort(keys, function(keyA, keyB)
+            return (malusByKey[keyA] or 0) < (malusByKey[keyB] or 0)
+        end)
+
+        for _,factoryKey in pairs(keys) do
             local factory = factories[factoryKey]
 
             local arguments = findParameters(factory, shipTemplateBaseds)
 
             if arguments ~= nil then
                 logDebug("Running Chat " .. factoryKey .. " with " .. Util.mkString(Util.map(arguments, function(v) return v:getCallSign() end), ", ", " and ") .. ".")
+
+                table.insert(lastUsedFactoryKeys, 1, factoryKey)
+                lastUsedFactoryKeys[10] = nil
 
                 local chat = factory:createChat(table.unpack(arguments))
                 chatter:converse(chat)

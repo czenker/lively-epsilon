@@ -140,10 +140,52 @@ insulate("Chatter:newNoise()", function()
             assert.is_same(0, errorsSeen)
             assert(chat1Seen >= 2 and chat1Seen <= 25, "chat1 should occur between 1 and 25 times. Got " .. chat1Seen)
             assert(chat2Seen >= 2 and chat2Seen <= 25, "chat2 should occur between 1 and 25 times. Got " .. chat2Seen)
-            assert(chat3SeenWithShip >= 1 and chat3SeenWithShip <= 12, "chat3 should occur between 1 and 25 times with ship. Got " .. chat3SeenWithShip)
-            assert(chat3SeenWithStation >= 1 and chat3SeenWithStation <= 12, "chat3 should occur between 1 and 25 times with station. Got " .. chat3SeenWithStation)
+            assert(chat3SeenWithShip >= 1 and chat3SeenWithShip <= 12, "chat3 should occur between 1 and 12 times with ship. Got " .. chat3SeenWithShip)
+            assert(chat3SeenWithStation >= 1 and chat3SeenWithStation <= 12, "chat3 should occur between 1 and 12 times with station. Got " .. chat3SeenWithStation)
             assert(chat4Seen >= 2 and chat4Seen <= 25, "chat4 should occur between 1 and 25 times. Got " .. chat4Seen)
             assert(chat5Seen >= 2 and chat5Seen <= 25, "chat5 should occur between 1 and 25 times. Got " .. chat5Seen)
+        end)
+    end)
+
+    it("tries to prevent repetition of chats", function()
+        withUniverse(function()
+            local player = PlayerSpaceship():setCallSign("player"):setPosition(0, 0)
+            local ship1 = CpuShip():setCallSign("ship"):setPosition(1000, 0)
+            local ship2 = CpuShip():setCallSign("ship"):setPosition(2000, 0)
+
+            -- mock chatter to easily track which chats we have seen
+            local chat1 = { { ship1, "one"} }
+            local chat2 = { { ship2, "two"} }
+
+            local secondToLastChat
+            local lastChat
+
+            local chatter = mockChatter()
+            chatter.converse = function(_, conversation)
+                local pretty = require 'pl.pretty'
+
+                secondToLastChat = lastChat
+                if conversation == chat1 then
+                    lastChat = "norep_chat1"
+                elseif conversation == chat2 then
+                    lastChat = "norep_chat2"
+                end
+
+                conversation = lastChat
+            end
+            assert(Chatter:isChatter(chatter))
+
+            local noise = Chatter:newNoise(chatter, {preventRepetition = true})
+
+            -- chat for first chat
+            noise:addChatFactory(Chatter:newFactory(1, function() return chat1 end, {filters = { function() return true end }}), "norep_chat1")
+            noise:addChatFactory(Chatter:newFactory(1, function() return chat2 end, {filters = { function() return true end }}), "norep_chat2")
+
+            for _=1,120 do Cron.tick(1) end
+            for _=1,60 * 6 * 10 do
+                Cron.tick(1)
+                assert.not_same(secondToLastChat, lastChat)
+            end
         end)
     end)
 
