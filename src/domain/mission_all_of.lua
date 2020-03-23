@@ -55,6 +55,12 @@ Mission.allOf = function(self, ...)
     mission.accept = function(self)
         parentAccept(self)
         for _, subMission in pairs(subMissions) do
+            if Mission:isPlayerMission(self) then
+                if not Mission:isPlayerMission(subMission) then
+                    Mission:forPlayer(subMission)
+                end
+                subMission:setPlayer(self:getPlayer())
+            end
             if subMission:getState() == "new" then subMission:accept() end
         end
     end

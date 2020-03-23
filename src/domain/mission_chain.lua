@@ -37,11 +37,21 @@ Mission.chain = function(self, ...)
     local currentMissionKey = 1
     local registerEventListeners
 
+    local playerMissionCheck = function(subMission)
+        if Mission:isPlayerMission(mission) then
+            if not Mission:isPlayerMission(subMission) then
+                Mission:forPlayer(subMission)
+            end
+            subMission:setPlayer(mission:getPlayer())
+        end
+    end
+
     registerEventListeners = function(subMission)
         subMission:addSuccessListener(function()
             currentMissionKey = currentMissionKey + 1
             if subMissions[currentMissionKey] ~= nil and mission:getState() == "started" then
                 local nextMission = subMissions[currentMissionKey]
+                playerMissionCheck(nextMission)
                 registerEventListeners(nextMission)
                 nextMission:accept()
                 nextMission:start()
@@ -60,6 +70,7 @@ Mission.chain = function(self, ...)
     local parentAccept = mission.accept
     mission.accept = function(self)
         parentAccept(self)
+        playerMissionCheck(subMissions[1])
         subMissions[1]:accept()
     end
 

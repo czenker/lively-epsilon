@@ -213,4 +213,27 @@ insulate("Mission:allOf()", function()
         assert.is_same("successful", subMission2:getState())
         assert.is_same("failed", subMission3:getState())
     end)
+
+    it("makes every sub mission a PlayerMission if it is a PlayerMission itself", function()
+        local subMission1 = Mission:new()
+        local subMission2 = Mission:new()
+        Mission:forPlayer(subMission2)
+        local subMission3 = Mission:new()
+        local player = PlayerSpaceship()
+
+        local mission = Mission:allOf(subMission1, subMission2, subMission3)
+        Mission:forPlayer(mission)
+        mission:setPlayer(player)
+
+        mission:accept()
+        mission:start()
+
+        assert.is_true(Mission:isPlayerMission(subMission1))
+        assert.is_same(player, subMission1:getPlayer())
+        -- subMission2 was already a player mission, but the player should be set anyways
+        assert.is_true(Mission:isPlayerMission(subMission2))
+        assert.is_same(player, subMission2:getPlayer())
+        assert.is_true(Mission:isPlayerMission(subMission3))
+        assert.is_same(player, subMission3:getPlayer())
+    end)
 end)
