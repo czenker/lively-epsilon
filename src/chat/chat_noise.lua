@@ -68,7 +68,6 @@ Chatter.newNoise = function(self, chatter, config)
 
     local cronId = "chatter-" .. Util.randomUuid()
     local delay = 60
-    local range = getLongRangeRadarRange()
 
     local factories = {}
     local factoryKeys = {}
@@ -87,7 +86,7 @@ Chatter.newNoise = function(self, chatter, config)
 
         local shipTemplateBaseds = {}
 
-        for _,v in pairs(player:getObjectsInRange(range)) do
+        for _,v in pairs(player:getObjectsInRange(player:getLongRangeRadarRange())) do
             if isEeShipTemplateBased(v) and not isEePlayer(v) and v:isValid() then
                 table.insert(shipTemplateBaseds, v)
             end

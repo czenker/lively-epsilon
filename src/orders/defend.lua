@@ -136,7 +136,7 @@ end
 --- @param config table (optional)
 ---   @field minDefendTime number (default: 60) the number of seconds to execute this order at least
 ---   @field minClearTime number (default: 10) the minimum number of seconds there should be no enemies in range
----   @field range number (default: longRangeRadar) how far to check for enemies
+---   @field range number (default: `30000`) how far to check for enemies
 ---   @field onExecution function the callback when the order is started to being executed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
 ---   @field onCompletion function the callback when the order is completed. Gets the `OrderObject` and the `CpuShip` or `Fleet` that executed the order.
 ---   @field onAbort function the callback when the order is aborted. Gets the `OrderObject`, a `string` reason and the `CpuShip` or `Fleet` that executed the order.
@@ -165,7 +165,7 @@ Order.defend = function(self, arg1, arg2, config)
     if not isNumber(config.minDefendTime) or config.minDefendTime < 0 then error("Expected minDefendTime to be a positive number, but got " .. typeInspect(config.minDefendTime), 2) end
     config.minClearTime = config.minClearTime or 10
     if not isNumber(config.minClearTime) or config.minClearTime < 0 then error("Expected minClearTime to be a positive number, but got " .. typeInspect(config.minClearTime), 2) end
-    config.range = config.range or getLongRangeRadarRange()
+    config.range = config.range or 30000
     if not isNumber(config.range) or config.range < 0 then error("Expected range to be a positive number, but got " .. typeInspect(config.range), 2) end
     local order = Order:_generic(config)
 

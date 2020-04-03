@@ -37,10 +37,15 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
 
         local waitForEnter, waitForLeave
 
+        local longRangeRadarRange = 30000
+        if isFunction(shipTemplateBased.getLongRangeRadarRange) then
+            longRangeRadarRange = shipTemplateBased:getLongRangeRadarRange()
+        end
+
         waitForEnter = function()
             if not shipTemplateBased:isValid() then
                 Cron.abort(tick)
-            elseif shipTemplateBased:areEnemiesInRange(getLongRangeRadarRange()) then
+            elseif shipTemplateBased:areEnemiesInRange(longRangeRadarRange) then
                 Cron.regular(cronId, waitForLeave, tick, tick)
                 userCallback(config.onEnemyDetection, shipTemplateBased)
             end
@@ -49,7 +54,7 @@ ShipTemplateBased.withEvents  = function(self, shipTemplateBased, config)
         waitForLeave = function()
             if not shipTemplateBased:isValid() then
                 Cron.abort(tick)
-            elseif not shipTemplateBased:areEnemiesInRange(getLongRangeRadarRange()) then
+            elseif not shipTemplateBased:areEnemiesInRange(longRangeRadarRange) then
                 Cron.regular(cronId, waitForEnter, tick, tick)
                 userCallback(config.onEnemyClear, shipTemplateBased)
             end

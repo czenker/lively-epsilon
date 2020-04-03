@@ -17,7 +17,7 @@ end
 --- @param homeStation SpaceStation
 --- @param product Product
 --- @param config table
----   @field maxDistanceFromHome number (default: `getLongRangeRadarRange`)
+---   @field maxDistanceFromHome number (default: `30000`)
 Ship.behaveAsBuyer = function (self, ship, homeStation, product, config)
     product = Product:toId(product)
 
@@ -42,7 +42,7 @@ Ship.behaveAsBuyer = function (self, ship, homeStation, product, config)
 
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but " .. typeInspect(config) .. " given.", 2) end
-    config.maxDistanceFromHome = config.maxDistanceFromHome or getLongRangeRadarRange()
+    config.maxDistanceFromHome = config.maxDistanceFromHome or 30000
 
     local cronId = "trader" .. ship:getCallSign()
     local target

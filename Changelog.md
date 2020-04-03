@@ -17,6 +17,10 @@
           return comms_source:isDocked(comms_target)
       end)
 
+* **[BREAKING]** `getLongRangeRadarRange()` has been removed from Empty Epsilon, so every place where
+  it has been used in the code is replaced with a hardcoded value `30000` or uses the new
+  `PlayerSpaceship:getLongRangeRadarRange()`. Check your configuration if the exact value is important for you. 
+
 * defaults for `Mission:scan`'s `scan` parameter have been changed. Up to now a friend-or-foe detection
   was sufficient to have a ship scanned (this could have happened without player interaction, if the enemy
   attacks the player). Now a `simple` scan is necessary. To get the old behavior back set `scan = "fof"`

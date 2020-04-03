@@ -14,6 +14,8 @@ local myPackages = {
     "lively_epsilon/src/utility/type_inspect.lua",
     "lively_epsilon/src/utility/comms.lua",
 
+    "lively_epsilon/src/shim.lua",
+
     "lively_epsilon/src/chat/chatter.lua",
     "lively_epsilon/src/chat/chat_factory.lua",
     "lively_epsilon/src/chat/chat_noise.lua",

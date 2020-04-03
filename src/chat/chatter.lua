@@ -13,13 +13,12 @@ end
 ---
 --- @param self
 --- @param config table
----    @field maxRange number (default: `getLongRangeRadarRange * 1.5`) the maximum range the player receives chats from their surrounding.
+---    @field maxRange number (default: `PlayerSpaceship:getLongRangeRadarRange() * 1.5`) the maximum range the player receives chats from their surrounding.
 Chatter.new = function(self, config)
     config = config or {}
     if not isTable(config) then error("Expected config to be a table, but got " .. typeInspect(config), 2) end
-    local maxRange = config.maxRange or (getLongRangeRadarRange() * 1.5)
-    if not isNumber(maxRange) then error("maxRange needs to be a number, but got " .. typeInspect(config.maxRange), 2) end
-
+    local maxRange = config.maxRange
+    if not isNumber(maxRange) and not isNil(maxRange) then error("maxRange needs to be a number or nil, but got " .. typeInspect(config.maxRange), 2) end
 
     local function send(sender, message)
         local senderName
@@ -38,7 +37,8 @@ Chatter.new = function(self, config)
         end
 
         while player ~= nil do
-            if sender == nil or distance(player, sender) < maxRange then
+            local playerRange = maxRange or player:getLongRangeRadarRange() * 1.5
+            if sender == nil or distance(player, sender) < playerRange then
                 player:addToShipLog(senderName .. ": " .. message, "128,128,128")
             end
 

@@ -1,6 +1,5 @@
 local noop = function(self) return self end
 
-function _G.getLongRangeRadarRange() return 30000 end
 function _G.getObjectsInRadius() return {} end
 
 local function mergeObjects(...)
@@ -324,6 +323,8 @@ function PlayerSpaceship()
     local currentCommsTarget = nil
     local maxNumberScanProbes = 8
     local numberScanProbes = 8
+    local shortRangeRadarRange = 5000
+    local longRangeRadarRange = 30000
 
     local player = {
         typeName = "PlayerSpaceship",
@@ -448,6 +449,20 @@ function PlayerSpaceship()
         setMaxScanProbeCount = function(self, amount)
             maxNumberScanProbes = math.max(0, amount)
             numberScanProbes = math.min(numberScanProbes, maxNumberScanProbes)
+        end,
+        setShortRangeRadarRange = function(self, range)
+            shortRangeRadarRange = range
+            return self
+        end,
+        getShortRangeRadarRange = function(self)
+            return shortRangeRadarRange
+        end,
+        setLongRangeRadarRange = function(self, range)
+            longRangeRadarRange = range
+            return self
+        end,
+        getLongRangeRadarRange = function(self)
+            return longRangeRadarRange
         end,
     }
 
