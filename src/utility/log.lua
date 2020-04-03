@@ -2,6 +2,10 @@ local function useAnsi()
     return (LivelyEpsilonConfig or {}).useAnsi or false
 end
 
+local function showDeprecations()
+    return (LivelyEpsilonConfig or {}).logDeprecation or true
+end
+
 local function logLevel()
     local logLvl = (LivelyEpsilonConfig or {}).logLevel
     if isString(logLvl) then logLvl = logLvl:upper() end
@@ -19,7 +23,8 @@ end
 local red = "\u{001b}[41m\u{001b}[37m"
 local yellow = "\u{001b}[33m"
 local cyan = "\u{001b}[36m"
-local grey = "\u{001b}[30;1m"
+local grey = "\u{001b}[90;1m"
+local magenta = "\u{001b}[95m"
 local reset = "\u{001b}[0m"
 
 logError = function (message)
@@ -47,5 +52,11 @@ logDebug = function (message)
     local logLvl = logLevel()
     if logLvl == nil or logLvl == "DEBUG" then
         print(timestamp() .. (useAnsi() and grey or "") .. "[DEBUG] " .. message .. (useAnsi() and reset or ""))
+    end
+end
+
+logDeprecation = function(message)
+    if showDeprecations() then
+        print(timestamp() .. (useAnsi() and magenta or "") .. "[DEPRECATION] " .. message .. (useAnsi() and reset or ""))
     end
 end
