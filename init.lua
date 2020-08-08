@@ -94,6 +94,7 @@ local myPackages = {
     "lively_epsilon/src/missions/transport_token.lua",
     "lively_epsilon/src/missions/transport_product.lua",
     "lively_epsilon/src/missions/visit.lua",
+    "lively_epsilon/src/missions/way_points.lua",
 
     "lively_epsilon/src/tools/story_comms.lua",
     "lively_epsilon/src/tools/comms.lua",

@@ -32,3 +32,4 @@
 * `Station:withStorage` can now handle Scan Probes as products. Use the id `scanProbe`.
 * Missions can have event listeners added from outside via `mission:addSuccessListener()`, etc.
 * `Mision:newChain()` allows to create chained missions where the next starts when the previous is finished
+* added `Missions:wayPoints()` that requires the players to visit a sequence of waypoints
