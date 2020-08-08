@@ -13,18 +13,24 @@ insulate("Missions:wayPoints()", function()
         assert.has_error(function() Missions:wayPoints(42) end)
     end)
     it("fails if first parameter does not contain valid data", function()
-        -- empty waypoint list
         assert.has_error(function() Missions:wayPoints({ 42, "foobar"}) end)
         assert.has_error(function() Missions:wayPoints({ { 42, 42}, { 0, 0}, { "this", "is", "invalid"}}) end)
     end)
 
     describe(":addWayPoint()", function()
+        it("allows to add coordinates", function()
+            local mission = Missions:wayPoints()
+            mission:addWayPoint(2000, -2000)
+        end)
+        it("allows to add an EE object", function()
+            local mission = Missions:wayPoints()
+            mission:addWayPoint(Artifact():setPosition(2000, -2000))
+        end)
         it("fails if first parameter is not a number", function()
             local mission = Missions:wayPoints()
 
             assert.has_error(function() mission:addWayPoint(nil, 0) end)
             assert.has_error(function() mission:addWayPoint("foobar", 0) end)
-            assert.has_error(function() mission:addWayPoint(SpaceShip(), 0) end)
         end)
         it("fails if second parameter is not a number", function()
             local mission = Missions:wayPoints()
@@ -41,11 +47,13 @@ insulate("Missions:wayPoints()", function()
         local callbackArg2 = nil
         local callbackArg3 = nil
 
+        local artifact = Artifact():setPosition(10000, 0)
+
         local player = PlayerSpaceship()
         local mission
         mission = Missions:wayPoints({
             {10000, 10000},
-            {20000, 0},
+            artifact,
             {0, 0}
         }, {
             minDistance = 1000,
@@ -67,6 +75,9 @@ insulate("Missions:wayPoints()", function()
         assert.is_same(0, mission:countVisitedWayPoints())
         assert.is_same(0, onWayPointCalled)
         assert.is_same("started", mission:getState())
+
+        -- move artifact to verify the current position of the object is used
+        artifact:setPosition(20000, 0)
 
         player:setPosition(20000, 0)
         Cron.tick(1)
@@ -94,8 +105,8 @@ insulate("Missions:wayPoints()", function()
         -- it should allow to be minDistance away
         assert.is_same(2, mission:countVisitedWayPoints())
         assert.is_same(2, onWayPointCalled)
-        assert.is_same(20000, callbackArg2)
-        assert.is_same(0, callbackArg3)
+        assert.is_same(artifact, callbackArg2)
+        assert.is_same(nil, callbackArg3)
         assert.is_same("started", mission:getState())
 
         player:setPosition(200, -300)
@@ -121,8 +132,19 @@ insulate("Missions:wayPoints()", function()
             end,
             onWayPoint = function(self, x, y)
                 onWayPointCalled = onWayPointCalled + 1
+                if isEeObject(x) then
+                    x, y = x:getPosition()
+                end
                 if x < 49999 then
-                    self:addWayPoint(x + 10000, y)
+                    x = x + 10000
+                    if x > 25000 then
+                        -- make sure the current position is used and not the one when it was added
+                        local artifact = Artifact():setPosition(x / 2, y / 2)
+                        self:addWayPoint(artifact)
+                        artifact:setPosition(x, y)
+                    else
+                        self:addWayPoint(x, y)
+                    end
                 end
             end,
         })

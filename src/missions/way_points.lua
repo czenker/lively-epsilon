@@ -5,14 +5,27 @@ local validateWayPoints = function(wayPoints)
         error("Expected wayPoints to be a table, but got " .. typeInspect(wayPoints), 2)
     end
     for i, entry in pairs(wayPoints) do
-        if not isTable(entry) or Util.size(entry) ~= 2 then
-            error("Expected wayPoint at position " .. i .. " to be a table with exactly two entries, but got " .. typeInspect(entry), 3)
-        end
-        if not isNumber(entry[1]) then
-            error("Expected first coordinate in wayPoint " .. i .. " to be a number, but got " .. typeInspect(entry[1]), 3)
-        end
-        if not isNumber(entry[2]) then
-            error("Expected second coordinate in wayPoint " .. i .. " to be a number, but got " .. typeInspect(entry[2]), 3)
+        if isEeObject(entry) then
+            if not isFunction(entry.getPosition) then
+                error("Expected waypoint at position " .. i .. " to have a getPosition function, but " .. typeInspect(entry) .. " does not.", 4)
+            end
+            local x, y = entry:getPosition()
+            if not isNumber(x) then
+                error("Expected getPosition in wayPoint " .. i .. " to return a valid x coordinate, but got " .. typeInspect(x), 4)
+            end
+            if not isNumber(y) then
+                error("Expected getPosition in wayPoint " .. i .. " to return a valid y coordinate, but got " .. typeInspect(y), 4)
+            end
+        else
+            if not isTable(entry) or Util.size(entry) ~= 2 then
+                error("Expected wayPoint at position " .. i .. " to be a table with exactly two entries, but got " .. typeInspect(entry), 4)
+            end
+            if not isNumber(entry[1]) then
+                error("Expected first coordinate in wayPoint " .. i .. " to be a number, but got " .. typeInspect(entry[1]), 4)
+            end
+            if not isNumber(entry[2]) then
+                error("Expected second coordinate in wayPoint " .. i .. " to be a number, but got " .. typeInspect(entry[2]), 4)
+            end
         end
     end
 end
@@ -46,10 +59,20 @@ Missions.wayPoints = function(self, wayPoints, config)
 
             Cron.regular(cronId, function()
                 if wayPoints[1] ~= nil then
-                    local x, y = table.unpack(wayPoints[1])
+                    local x, y
+                    if isEeObject(wayPoints[1]) then
+                        x, y = wayPoints[1]:getPosition()
+                    else
+                        x, y = table.unpack(wayPoints[1])
+                    end
+
                     if distance(x, y, self:getPlayer()) < config.minDistance then
                         if isFunction(config.onWayPoint) then
-                            userCallback(config.onWayPoint, self, x, y)
+                            local arg1, arg2 = x, y
+                            if isEeObject(wayPoints[1]) then
+                                arg1, arg2 = wayPoints[1], nil
+                            end
+                            userCallback(config.onWayPoint, self, arg1, arg2)
                         end
                         visitedWayPoints = visitedWayPoints + 1
                         table.remove(wayPoints, 1)
@@ -75,12 +98,26 @@ Missions.wayPoints = function(self, wayPoints, config)
     --- add a wayPoint to the mission.
     --- This can be done even if the mission is running, like in the onStart or onWayPoint callbacks.
     --- @param self
-    --- @param x number
+    --- @param xOrObject number|SpaceObject either an x/y coordinate or a SpaceObject
     --- @param y number
-    mission.addWayPoint = function(self, x, y)
-        if not isNumber(x) then error("Expected first parameter to be a number, but got " .. typeInspect(x), 2) end
-        if not isNumber(y) then error("Expected first parameter to be a number, but got " .. typeInspect(y), 2) end
-        table.insert(wayPoints, {x, y})
+    mission.addWayPoint = function(self, xOrObject, y)
+        if isEeObject(xOrObject) then
+            if not isFunction(xOrObject.getPosition) then
+                error("Expected space object to have a getPosition function, but " .. typeInspect(xOrObject) .. " does not.", 3)
+            end
+            local x, y = xOrObject:getPosition()
+            if not isNumber(x) then
+                error("Expected getPosition to return a valid x coordinate, but got " .. typeInspect(x), 3)
+            end
+            if not isNumber(y) then
+                error("Expected getPosition to return a valid y coordinate, but got " .. typeInspect(y), 3)
+            end
+            table.insert(wayPoints, xOrObject)
+        else
+            if not isNumber(xOrObject) then error("Expected first parameter to be a number, but got " .. typeInspect(xOrObject), 3) end
+            if not isNumber(y) then error("Expected first parameter to be a number, but got " .. typeInspect(y), 3) end
+            table.insert(wayPoints, { xOrObject, y})
+        end
     end
 
     --- get the number of wayPoints that have already been visited
