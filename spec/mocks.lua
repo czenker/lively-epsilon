@@ -516,6 +516,18 @@ function ElectricExplosionEffect()
     })
 end
 
+function BeamEffect()
+    return mergeObjects(SpaceObject(), {
+        setSource = noop,
+        setTarget = noop,
+        setTexture = noop,
+        setBeamFireSound = noop,
+        setBeamFireSoundPower = noop,
+        setDuration = noop,
+        setRing = noop,
+    })
+end
+
 function WarpJammer()
     return mergeObjects(SpaceObject(), {
         typeName = "WarpJammer",
@@ -585,6 +597,30 @@ function WormHole()
         end,
         onTeleportation = noop,
     })
+end
+
+function Zone()
+    return mergeObjects(SpaceObject(), {
+        typeName = "Zone",
+        setPoints = noop,
+        setColor = noop,
+        setLabel = noop,
+    })
+end
+
+function ScienceDatabase()
+    return {
+        typeName = "ScienceDatabase",
+        setName = noop,
+        getName = function() return "Dummy" end,
+        addEntry = function() return ScienceDatabase() end,
+        addKeyValue = noop,
+        getKeyValue = function() return "" end,
+        getKeyValues = function() return {} end,
+        removeKey = noop,
+        setLongDescription = noop,
+        getLongDescription = function() return "Dummy" end,
+    }
 end
 
 function personMock()

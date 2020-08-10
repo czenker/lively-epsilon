@@ -71,6 +71,14 @@ end
 function isEePlanet(thing)
     return isEeObject(thing) and thing.typeName == "Planet"
 end
+-- check if the given variable is a Zone object from EmptyEpsilon
+function isEeZone(thing)
+    return isEeObject(thing) and thing.typeName == "Zone"
+end
+-- check if the given variable is a ScienceDatabase object from EmptyEpsilon
+function isEeScienceDatabase(thing)
+    return isEeObject(thing) and thing.typeName == "ScienceDatabase"
+end
 
 function isVector2f(thing)
     return Util.isNumericTable(thing) and isNumber(thing[1]) and isNumber(thing[2])
