@@ -146,6 +146,45 @@ insulate("ShipTemplateBased:withUpgradeBroker()", function()
         end)
     end)
 
+    describe(":hasUpgrade()", function()
+        it("returns false if no upgrades where added", function()
+            local station = SpaceStation()
+            ShipTemplateBased:withUpgradeBroker(station)
+            local upgrade = upgradeMock()
+
+            assert.is_false(station:hasUpgrade(upgrade))
+        end)
+
+        it("returns true if a upgrade has been added via withUpgradeBroker()", function()
+            local station = SpaceStation()
+            local upgrade = upgradeMock()
+            ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgrade}})
+
+            assert.is_true(station:hasUpgrade(upgrade))
+            assert.is_true(station:hasUpgrade(upgrade:getId()))
+        end)
+
+        it("returns true if a upgrade has been added via addUpgrade()", function()
+            local station = SpaceStation()
+            local upgrade = upgradeMock()
+            ShipTemplateBased:withUpgradeBroker(station)
+            station:addUpgrade(upgrade)
+
+            assert.is_true(station:hasUpgrade(upgrade))
+            assert.is_true(station:hasUpgrade(upgrade:getId()))
+        end)
+
+        it("raises an error on invalid arguments", function()
+            local station = SpaceStation()
+            local upgrade = upgradeMock()
+            ShipTemplateBased:withUpgradeBroker(station, {upgrades = {upgrade}})
+
+            assert.has_error(function() station:hasUpgrade(42) end)
+            assert.has_error(function() station:hasUpgrade(SpaceStation()) end)
+            assert.has_error(function() station:hasUpgrade(nil) end)
+        end)
+    end)
+
     describe(":hasUpgrades()", function()
         it("returns false if no upgrades where added", function()
             local station = SpaceStation()

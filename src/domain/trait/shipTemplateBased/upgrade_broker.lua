@@ -58,6 +58,20 @@ ShipTemplateBased.withUpgradeBroker = function (self, spaceObject, config)
         return ret
     end
 
+    --- check if the broker has a specific upgrade to offer
+    --- @param self
+    --- @param string|Upgrade
+    --- @return boolean
+    spaceObject.hasUpgrade = function(self, upgrade)
+        if isString(upgrade) then
+            return upgrades[upgrade] ~= nil
+        elseif BrokerUpgrade:isUpgrade(upgrade) then
+            return upgrades[upgrade:getId()] ~= nil
+        else
+            error("Expected upgrade to be a upgrade or upgrade id, but " .. typeInspect(upgrade) .. " given.", 2)
+        end
+    end
+
     --- check if the broker has any upgrades to offer
     --- @param self
     --- @return boolean
