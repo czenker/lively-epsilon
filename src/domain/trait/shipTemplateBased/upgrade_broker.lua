@@ -98,5 +98,6 @@ ShipTemplateBased.hasUpgradeBroker = function(self, thing)
             isFunction(thing.addUpgrade) and
             isFunction(thing.removeUpgrade) and
             isFunction(thing.getUpgrades) and
-            isFunction(thing.hasUpgrades)
+            isFunction(thing.hasUpgrades) and
+            isFunction(thing.hasUpgrade)
 end
