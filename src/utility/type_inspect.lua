@@ -7,7 +7,7 @@ function typeInspect(thing)
     elseif t == "number" then
         return "<number>" .. thing
     elseif t == "string" then
-        if thing:len() > 30 then
+        if thing:len() > 33 then
             thing = thing:sub(1, 30) .. "..."
         end
         return "<string>\"" .. thing .. "\""
